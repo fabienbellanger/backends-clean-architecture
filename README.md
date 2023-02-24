@@ -1,2 +1,2 @@
-# backends-clean-architecture
+# backends clean architecture
 Backend clean architecture examples
