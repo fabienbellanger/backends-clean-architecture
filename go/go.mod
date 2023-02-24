@@ -1,3 +1,3 @@
-module go-clean-architecture
+module clean-architecture
 
 go 1.20
