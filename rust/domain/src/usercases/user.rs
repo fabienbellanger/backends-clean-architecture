@@ -1,13 +1,23 @@
 //! User use cases
+#![allow(dead_code)]
 
-/// Create new user use case
-struct CreateUser {
-    user_repository: String, // TODO: change by UserRepository
+use std::error::Error;
+use crate::entities::user;
+
+trait User {
+    fn get_users(&self) -> Result<Vec<user::User>, Box<dyn Error>> {
+        unimplemented!()
+    }
 }
 
-impl CreateUser {
-    /// Create a new `CreateUser` type
-    fn new(repo: String) -> Self { // TODO: change by UserRepository
-        Self { user_repository: repo }
+/// Create new user use case
+struct UserUseCase {
+    user_repository: String, // TODO: Change
+}
+
+impl User for UserUseCase {
+    /// Get all users
+    fn get_users(&self) -> Result<Vec<user::User>, Box<dyn Error>> {
+        unimplemented!()
     }
 }
