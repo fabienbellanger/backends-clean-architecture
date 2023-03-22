@@ -14,7 +14,7 @@ pub struct User {
 }
 
 impl User {
-    /// Return user fullname
+    /// Return user full name
     ///
     /// ```
     /// use clean_architecture_domain::entities::user::User;

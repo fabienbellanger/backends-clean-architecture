@@ -1,3 +1,3 @@
 pub mod entities;
 pub mod ports;
-pub mod usercases;
+pub mod usecases;
