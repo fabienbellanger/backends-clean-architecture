@@ -1,3 +1,4 @@
 //! Domain entities
 
+pub mod error;
 pub mod user;
