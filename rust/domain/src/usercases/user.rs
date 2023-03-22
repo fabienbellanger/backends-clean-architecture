@@ -1,11 +1,11 @@
 //! User use cases
 #![allow(dead_code)]
 
+use crate::entities::error::UserError;
 use crate::ports::repositories::user::UserRepository;
 use crate::ports::requests::user::{GetUserRequest, LoginRequest};
 use crate::ports::responses::user::{GetUserResponse, GetUsersResponse, LoginResponse};
 use crate::ports::services::user::UserService;
-use std::error::Error;
 
 /// Create new user use case
 pub struct UserUseCase<R: UserRepository> {
@@ -18,19 +18,19 @@ where
 {
     /// Get all users
     // TODO: Add unit test
-    pub fn get_users(&self) -> Result<GetUsersResponse, Box<dyn Error>> {
-        self.user_service.get_users()
+    pub async fn get_users(&self) -> Result<GetUsersResponse, UserError> {
+        self.user_service.get_users().await
     }
 
     /// Get a user
     // TODO: Add unit test
-    pub fn get_user(&self, request: GetUserRequest) -> Result<GetUserResponse, Box<dyn Error>> {
-        self.user_service.get_user(request)
+    pub async fn get_user(&self, request: GetUserRequest) -> Result<GetUserResponse, UserError> {
+        self.user_service.get_user(request).await
     }
 
     /// Login
     // TODO: Add unit test
-    pub fn login(&self, request: LoginRequest) -> Result<LoginResponse, Box<dyn Error>> {
-        self.user_service.login(request)
+    pub async fn login(&self, request: LoginRequest) -> Result<LoginResponse, UserError> {
+        self.user_service.login(request).await
     }
 }
