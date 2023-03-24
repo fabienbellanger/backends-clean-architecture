@@ -1,8 +1,10 @@
 //! User responses module
 
+use serde::Serialize;
+
 use crate::entities::user::User;
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Serialize)]
 pub struct LoginResponse {
     pub id: String,
     pub lastname: String,
@@ -39,7 +41,7 @@ impl From<User> for LoginResponse {
     ///     lastname: "Doe".to_owned(),
     ///     firstname: "John".to_owned(),
     ///     email: "john.doe@test.com".to_owned(),
-    ///     token: "token".to_owned(),
+    ///     token: "".to_owned(),
     ///     created_at: now.to_rfc3339(),
     ///     updated_at: now.to_rfc3339(),
     /// };
@@ -52,14 +54,14 @@ impl From<User> for LoginResponse {
             lastname: user.lastname,
             firstname: user.firstname,
             email: user.email,
-            token: String::from("token"),
+            token: String::new(),
             created_at: user.created_at.to_rfc3339(),
             updated_at: user.updated_at.to_rfc3339(),
         }
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Serialize)]
 pub struct GetUserResponse {
     pub id: String,
     pub lastname: String,
@@ -113,7 +115,7 @@ impl From<User> for GetUserResponse {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Serialize)]
 pub struct GetUsersResponse {
     pub users: Vec<GetUserResponse>,
 }

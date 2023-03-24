@@ -1,8 +1,10 @@
 //! User requests modules
 
+use serde::Deserialize;
+use uuid::Uuid;
 use validator::Validate;
 
-#[derive(Debug, Validate)]
+#[derive(Debug, Validate, Deserialize)]
 pub struct LoginRequest {
     #[validate(email)]
     pub email: String,
@@ -10,8 +12,7 @@ pub struct LoginRequest {
     pub password: String,
 }
 
-#[derive(Debug, Validate)]
+#[derive(Debug, Validate, Deserialize)]
 pub struct GetUserRequest {
-    #[validate(length(equal = 36))]
-    pub id: String,
+    pub id: Uuid,
 }

@@ -17,7 +17,7 @@ async fn main() -> ApiResult<()> {
 
     let user = user_repository
         .get_user(GetUserRequest {
-            id: "262b7a80-4304-4979-ac20-0f828fe275fe".to_string(),
+            id: uuid::uuid!("262b7a80-4304-4979-ac20-0f828fe275fe"),
         })
         .await
         .unwrap();

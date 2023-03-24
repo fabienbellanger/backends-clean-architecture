@@ -45,10 +45,14 @@ impl<'a> UserRepository for UserMysqlRepository<'a> {
 
     #[instrument(skip(self))]
     async fn get_user(&self, request: GetUserRequest) -> ApiResult<User> {
-        let user = sqlx::query_as!(UserModel, "SELECT * FROM users WHERE id = ?", request.id)
-            .fetch_one(self.pool)
-            .await
-            .map_err(|err| api_error!(ApiErrorCode::InternalError, err))?;
+        let user = sqlx::query_as!(
+            UserModel,
+            "SELECT * FROM users WHERE id = ?",
+            request.id.to_string()
+        )
+        .fetch_one(self.pool)
+        .await
+        .map_err(|err| api_error!(ApiErrorCode::InternalError, err))?;
 
         user.try_into()
     }
