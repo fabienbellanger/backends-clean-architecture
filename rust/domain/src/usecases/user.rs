@@ -1,11 +1,13 @@
 //! User use cases
 #![allow(dead_code)]
 
-use crate::entities::error::UserError;
-use crate::ports::repositories::user::UserRepository;
-use crate::ports::requests::user::{GetUserRequest, LoginRequest};
-use crate::ports::responses::user::{GetUserResponse, GetUsersResponse, LoginResponse};
-use crate::ports::services::user::UserService;
+use crate::ports::{
+    repositories::user::UserRepository,
+    requests::user::{GetUserRequest, LoginRequest},
+    responses::user::{GetUserResponse, GetUsersResponse, LoginResponse},
+    services::user::UserService,
+};
+use clean_architecture_shared::error::ApiResult;
 
 /// Create new user use case
 pub struct UserUseCase<R: UserRepository> {
@@ -18,19 +20,21 @@ where
 {
     /// Get all users
     // TODO: Add unit test
-    pub async fn get_users(&self) -> Result<GetUsersResponse, UserError> {
+    pub async fn get_users(&self) -> ApiResult<GetUsersResponse> {
         self.user_service.get_users().await
     }
 
     /// Get a user
     // TODO: Add unit test
-    pub async fn get_user(&self, request: GetUserRequest) -> Result<GetUserResponse, UserError> {
+    pub async fn get_user(&self, request: GetUserRequest) -> ApiResult<GetUserResponse> {
+        // TODO: Validate request (in service?)
         self.user_service.get_user(request).await
     }
 
     /// Login
     // TODO: Add unit test
-    pub async fn login(&self, request: LoginRequest) -> Result<LoginResponse, UserError> {
+    pub async fn login(&self, request: LoginRequest) -> ApiResult<LoginResponse> {
+        // TODO: Validate request (in service?)
         self.user_service.login(request).await
     }
 }

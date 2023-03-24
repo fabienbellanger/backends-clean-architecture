@@ -1,5 +1,6 @@
 [workspace]
 members = [
-    "adapters",
-    "domain",
+  "domain",
+  "database",
+  "shared",
 ]

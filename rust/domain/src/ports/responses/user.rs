@@ -7,9 +7,10 @@ pub struct LoginResponse {
     pub id: String,
     pub lastname: String,
     pub firstname: String,
-    pub username: String,
+    pub email: String,
     pub token: String,
     pub created_at: String,
+    pub updated_at: String,
 }
 
 impl From<User> for LoginResponse {
@@ -26,18 +27,21 @@ impl From<User> for LoginResponse {
     ///     id: user_id,
     ///     lastname: "Doe".to_owned(),
     ///     firstname: "John".to_owned(),
-    ///     username: "john.doe@test.com".to_owned(),
+    ///     email: "john.doe@test.com".to_owned(),
     ///     password: "1234567890".to_owned(),
     ///     created_at: now,
+    ///     updated_at: now,
+    ///     deleted_at: None,
     /// };
     ///
     /// let response = LoginResponse {
     ///     id: user_id.to_string(),
     ///     lastname: "Doe".to_owned(),
     ///     firstname: "John".to_owned(),
-    ///     username: "john.doe@test.com".to_owned(),
+    ///     email: "john.doe@test.com".to_owned(),
     ///     token: "token".to_owned(),
     ///     created_at: now.to_rfc3339(),
+    ///     updated_at: now.to_rfc3339(),
     /// };
     ///
     /// assert_eq!(response, user.into());
@@ -47,9 +51,10 @@ impl From<User> for LoginResponse {
             id: user.id.to_string(),
             lastname: user.lastname,
             firstname: user.firstname,
-            username: user.username,
+            email: user.email,
             token: String::from("token"),
             created_at: user.created_at.to_rfc3339(),
+            updated_at: user.updated_at.to_rfc3339(),
         }
     }
 }
@@ -59,8 +64,9 @@ pub struct GetUserResponse {
     pub id: String,
     pub lastname: String,
     pub firstname: String,
-    pub username: String,
+    pub email: String,
     pub created_at: String,
+    pub updated_at: String,
 }
 
 impl From<User> for GetUserResponse {
@@ -77,17 +83,20 @@ impl From<User> for GetUserResponse {
     ///     id: user_id,
     ///     lastname: "Doe".to_owned(),
     ///     firstname: "John".to_owned(),
-    ///     username: "john.doe@test.com".to_owned(),
+    ///     email: "john.doe@test.com".to_owned(),
     ///     password: "1234567890".to_owned(),
     ///     created_at: now,
+    ///     updated_at: now,
+    ///     deleted_at: None,
     /// };
     ///
     /// let response = GetUserResponse {
     ///     id: user_id.to_string(),
     ///     lastname: "Doe".to_owned(),
     ///     firstname: "John".to_owned(),
-    ///     username: "john.doe@test.com".to_owned(),
+    ///     email: "john.doe@test.com".to_owned(),
     ///     created_at: now.to_rfc3339(),
+    ///     updated_at: now.to_rfc3339(),
     /// };
     ///
     /// assert_eq!(response, user.into());
@@ -97,8 +106,9 @@ impl From<User> for GetUserResponse {
             id: user.id.to_string(),
             lastname: user.lastname,
             firstname: user.firstname,
-            username: user.username,
+            email: user.email,
             created_at: user.created_at.to_rfc3339(),
+            updated_at: user.updated_at.to_rfc3339(),
         }
     }
 }
@@ -124,17 +134,21 @@ impl From<Vec<User>> for GetUsersResponse {
     ///         id: user_id_1,
     ///         lastname: "Doe".to_owned(),
     ///         firstname: "John".to_owned(),
-    ///         username: "john.doe@test.com".to_owned(),
+    ///         email: "john.doe@test.com".to_owned(),
     ///         password: "1234567890".to_owned(),
     ///         created_at: now,
+    ///         updated_at: now,
+    ///         deleted_at: None,
     ///     },
     ///     User {
     ///         id: user_id_2,
     ///         lastname: "Doe1".to_owned(),
     ///         firstname: "John".to_owned(),
-    ///         username: "john.doe.1@test.com".to_owned(),
+    ///         email: "john.doe.1@test.com".to_owned(),
     ///         password: "1234567899".to_owned(),
     ///         created_at: now,
+    ///         updated_at: now,
+    ///         deleted_at: None,
     ///     }
     /// ];
     ///
@@ -143,15 +157,17 @@ impl From<Vec<User>> for GetUsersResponse {
     ///         id: user_id_1.to_string(),
     ///         lastname: "Doe".to_owned(),
     ///         firstname: "John".to_owned(),
-    ///         username: "john.doe@test.com".to_owned(),
+    ///         email: "john.doe@test.com".to_owned(),
     ///         created_at: now.to_rfc3339(),
+    ///         updated_at: now.to_rfc3339(),
     ///     },
     ///     GetUserResponse {
     ///         id: user_id_2.to_string(),
     ///         lastname: "Doe1".to_owned(),
     ///         firstname: "John".to_owned(),
-    ///         username: "john.doe.1@test.com".to_owned(),
+    ///         email: "john.doe.1@test.com".to_owned(),
     ///         created_at: now.to_rfc3339(),
+    ///         updated_at: now.to_rfc3339(),
     ///     },
     /// ];
     /// let response = GetUsersResponse { users: users_response };

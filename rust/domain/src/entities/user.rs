@@ -3,14 +3,16 @@
 use chrono::{DateTime, Utc};
 use uuid::Uuid;
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, PartialEq, Eq)]
 pub struct User {
     pub id: Uuid,
     pub lastname: String,
     pub firstname: String,
-    pub username: String,
+    pub email: String,
     pub password: String,
     pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
+    pub deleted_at: Option<DateTime<Utc>>,
 }
 
 impl User {
@@ -25,9 +27,11 @@ impl User {
     ///     id: Uuid::new_v4(),
     ///     lastname: "Doe".to_owned(),
     ///     firstname: "John".to_owned(),
-    ///     username: "john.doe@test.com".to_owned(),
+    ///     email: "john.doe@test.com".to_owned(),
     ///     password: "1234567890".to_owned(),
     ///     created_at: Utc::now(),
+    ///     updated_at: Utc::now(),
+    ///     deleted_at: None,
     /// };
     ///
     /// assert_eq!(user.fullname(), "John Doe".to_owned());

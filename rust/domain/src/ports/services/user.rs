@@ -1,12 +1,11 @@
 //! User services module
 
-use crate::{
-    entities::error::UserError,
-    ports::{
-        repositories::user::UserRepository,
-        requests::user::{GetUserRequest, LoginRequest},
-        responses::user::{GetUserResponse, GetUsersResponse, LoginResponse},
-    },
+use clean_architecture_shared::error::ApiResult;
+
+use crate::ports::{
+    repositories::user::UserRepository,
+    requests::user::{GetUserRequest, LoginRequest},
+    responses::user::{GetUserResponse, GetUsersResponse, LoginResponse},
 };
 
 pub struct UserService<R: UserRepository> {
@@ -21,7 +20,7 @@ impl<R: UserRepository> UserService<R> {
 
     /// Login
     // TODO: Add unit test
-    pub async fn login(&self, request: LoginRequest) -> Result<LoginResponse, UserError> {
+    pub async fn login(&self, request: LoginRequest) -> ApiResult<LoginResponse> {
         self.user_repository
             .login(request)
             .await
@@ -30,7 +29,7 @@ impl<R: UserRepository> UserService<R> {
 
     /// Get all users
     // TODO: Add unit test
-    pub async fn get_users(&self) -> Result<GetUsersResponse, UserError> {
+    pub async fn get_users(&self) -> ApiResult<GetUsersResponse> {
         self.user_repository
             .get_users()
             .await
@@ -39,7 +38,7 @@ impl<R: UserRepository> UserService<R> {
 
     /// Get a user
     // TODO: Add unit test
-    pub async fn get_user(&self, request: GetUserRequest) -> Result<GetUserResponse, UserError> {
+    pub async fn get_user(&self, request: GetUserRequest) -> ApiResult<GetUserResponse> {
         self.user_repository
             .get_user(request)
             .await

@@ -1,19 +1,20 @@
 //! User repository module
 
 use crate::{
-    entities::{error::UserError, user::User},
+    entities::user::User,
     ports::requests::user::{GetUserRequest, LoginRequest},
 };
 use async_trait::async_trait;
+use clean_architecture_shared::error::ApiResult;
 
 #[async_trait]
 pub trait UserRepository {
     /// Get a list of users
-    async fn get_users(&self) -> Result<Vec<User>, UserError>;
+    async fn get_users(&self) -> ApiResult<Vec<User>>;
 
     /// Get a user
-    async fn get_user(&self, request: GetUserRequest) -> Result<User, UserError>;
+    async fn get_user(&self, request: GetUserRequest) -> ApiResult<User>;
 
     /// Login
-    async fn login(&self, request: LoginRequest) -> Result<User, UserError>;
+    async fn login(&self, request: LoginRequest) -> ApiResult<User>;
 }
