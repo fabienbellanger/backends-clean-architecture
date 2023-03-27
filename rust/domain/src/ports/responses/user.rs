@@ -11,54 +11,7 @@ pub struct LoginResponse {
     pub firstname: String,
     pub email: String,
     pub token: String,
-    pub created_at: String,
-    pub updated_at: String,
-}
-
-impl From<User> for LoginResponse {
-    /// Convert a `User` into `LoginResponse`
-    /// ```
-    /// use clean_architecture_domain::entities::user::User;
-    /// use clean_architecture_domain::ports::responses::user::LoginResponse;
-    /// use chrono::{DateTime, Utc};
-    /// use uuid::Uuid;
-    ///
-    /// let user_id = Uuid::new_v4();
-    /// let now = Utc::now();
-    /// let user = User {
-    ///     id: user_id,
-    ///     lastname: "Doe".to_owned(),
-    ///     firstname: "John".to_owned(),
-    ///     email: "john.doe@test.com".to_owned(),
-    ///     password: "1234567890".to_owned(),
-    ///     created_at: now,
-    ///     updated_at: now,
-    ///     deleted_at: None,
-    /// };
-    ///
-    /// let response = LoginResponse {
-    ///     id: user_id.to_string(),
-    ///     lastname: "Doe".to_owned(),
-    ///     firstname: "John".to_owned(),
-    ///     email: "john.doe@test.com".to_owned(),
-    ///     token: "".to_owned(),
-    ///     created_at: now.to_rfc3339(),
-    ///     updated_at: now.to_rfc3339(),
-    /// };
-    ///
-    /// assert_eq!(response, user.into());
-    /// ```
-    fn from(user: User) -> Self {
-        Self {
-            id: user.id.to_string(),
-            lastname: user.lastname,
-            firstname: user.firstname,
-            email: user.email,
-            token: String::new(),
-            created_at: user.created_at.to_rfc3339(),
-            updated_at: user.updated_at.to_rfc3339(),
-        }
-    }
+    pub expired_at: String,
 }
 
 #[derive(Debug, PartialEq, Eq, Serialize)]

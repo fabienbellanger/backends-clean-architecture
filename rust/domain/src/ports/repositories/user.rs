@@ -17,7 +17,7 @@ pub trait UserRepository {
     async fn get_user(&self, request: GetUserRequest) -> ApiResult<User>;
 
     /// Login
-    async fn login(&self, request: LoginRequest) -> ApiResult<User>;
+    async fn login(&self, request: LoginRequest) -> ApiResult<Option<User>>;
 
     /// Create user
     async fn create_user(&self, request: CreateUserRequest) -> ApiResult<User>;

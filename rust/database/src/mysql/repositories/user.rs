@@ -113,7 +113,7 @@ impl<'a> UserRepository for UserMysqlRepository<'a> {
     }
 
     #[instrument(skip(self))]
-    async fn login(&self, request: LoginRequest) -> ApiResult<User> {
+    async fn login(&self, request: LoginRequest) -> ApiResult<Option<User>> {
         let hashed_password = format!("{:x}", Sha512::digest(request.password.as_bytes()));
         let user = sqlx::query_as!(
             UserModel,
@@ -121,11 +121,14 @@ impl<'a> UserRepository for UserMysqlRepository<'a> {
             request.email,
             hashed_password
         )
-        .fetch_one(self.pool)
+        .fetch_optional(self.pool)
         .await
         .map_err(|err| api_error!(ApiErrorCode::InternalError, err))?;
 
-        user.try_into()
+        match user {
+            Some(user) => Ok(Some(user.try_into()?)),
+            None => Ok(None),
+        }
     }
 
     #[instrument(skip(self))]
