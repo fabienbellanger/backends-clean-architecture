@@ -15,9 +15,11 @@
 //!     let pool = init_mysql_pool().await?;
 //!     let user_repository = UserMysqlRepository::new(&pool);
 //!
+//!     // Get users
 //!     let users = user_repository.get_users().await.unwrap();
 //!     dbg!(users);
 //!
+//!     // Get one user
 //!     let user = user_repository
 //!         .get_user(GetUserRequest {
 //!             id: uuid::uuid!("262b7a80-4304-4979-ac20-0f828fe275fe"),
@@ -26,6 +28,7 @@
 //!         .unwrap();
 //!     dbg!(user);
 //!
+//!     // User login
 //!     let login = user_repository
 //!         .login(LoginRequest {
 //!             email: String::from("toto@apitic.com"),
@@ -35,7 +38,7 @@
 //!         .unwrap();
 //!     dbg!(login);
 //!
-//!
+//!     // Create new user
 //!     let new_user = CreateUserRequest {
 //!         email: "test@testest.com".to_owned(),
 //!         password: "11111111".to_owned(),
