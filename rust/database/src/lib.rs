@@ -15,6 +15,21 @@ fn init_config() -> ApiResult<Config> {
 }
 
 /// Initialize MySQL connection pool
+///
+/// ```ignore
+/// use clean_architecture_database::{
+///     init_mysql_pool, mysql::repositories::user::UserMysqlRepository,
+/// };
+/// use clean_architecture_shared::error::ApiResult;
+///
+/// #[tokio::main]
+/// async fn main() -> ApiResult<()> {
+///     let pool = init_mysql_pool().await?;
+///     let _user_repository = UserMysqlRepository::new(&pool);
+///
+///     Ok(())
+/// }
+/// ```
 pub async fn init_mysql_pool() -> ApiResult<Pool<MySql>> {
     databases::init_mysql(&init_config()?).await
 }

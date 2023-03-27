@@ -8,8 +8,8 @@ version = "0.1.0"
 [dependencies]
 axum = "0.6.12"
 log = "0.4.17"
-serde = {version = "1.0.158", features = ["derive"]}
+serde = { version = "1.0.158", features = ["derive"] }
 serde_json = "1.0.94"
-sqlx = {version = "0.6.3", features = ["runtime-tokio-native-tls"]}
+sqlx = { version = "0.6.3", features = ["runtime-tokio-native-tls"] }
 thiserror = "1.0.40"
 tracing = "0.1.37"

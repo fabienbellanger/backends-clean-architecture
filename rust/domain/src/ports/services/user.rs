@@ -2,6 +2,7 @@
 
 use clean_architecture_shared::error::ApiResult;
 
+use crate::ports::requests::user::CreateUserRequest;
 use crate::ports::{
     repositories::user::UserRepository,
     requests::user::{GetUserRequest, LoginRequest},
@@ -41,6 +42,15 @@ impl<R: UserRepository> UserService<R> {
     pub async fn get_user(&self, request: GetUserRequest) -> ApiResult<GetUserResponse> {
         self.user_repository
             .get_user(request)
+            .await
+            .map(|user| user.into())
+    }
+
+    /// Create a user
+    // TODO: Add unit test
+    pub async fn create_user(&self, request: CreateUserRequest) -> ApiResult<GetUserResponse> {
+        self.user_repository
+            .create_user(request)
             .await
             .map(|user| user.into())
     }

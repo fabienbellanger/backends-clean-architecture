@@ -16,3 +16,13 @@ pub struct LoginRequest {
 pub struct GetUserRequest {
     pub id: Uuid,
 }
+
+#[derive(Debug, Validate, Deserialize)]
+pub struct CreateUserRequest {
+    pub lastname: String,
+    pub firstname: String,
+    #[validate(email)]
+    pub email: String,
+    #[validate(length(min = 8))]
+    pub password: String,
+}

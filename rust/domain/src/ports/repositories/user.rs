@@ -1,5 +1,6 @@
 //! User repository module
 
+use crate::ports::requests::user::CreateUserRequest;
 use crate::{
     entities::user::User,
     ports::requests::user::{GetUserRequest, LoginRequest},
@@ -17,4 +18,7 @@ pub trait UserRepository {
 
     /// Login
     async fn login(&self, request: LoginRequest) -> ApiResult<User>;
+
+    /// Create user
+    async fn create_user(&self, request: CreateUserRequest) -> ApiResult<User>;
 }
