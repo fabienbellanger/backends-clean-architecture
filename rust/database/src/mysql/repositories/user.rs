@@ -35,11 +35,22 @@
 //!         .unwrap();
 //!     dbg!(login);
 //!
+//!
+//!     let new_user = CreateUserRequest {
+//!         email: "test@testest.com".to_owned(),
+//!         password: "11111111".to_owned(),
+//!         lastname: "Doe".to_owned(),
+//!         firstname: "Jane".to_owned(),
+//!     };
+//!     let user = user_repository.create_user(new_user).await.unwrap();
+//!     dbg!(user);
+//!
 //!     Ok(())
 //! }
 //! ```
 use crate::mysql::models::user::UserModel;
 use async_trait::async_trait;
+use chrono::Utc;
 use clean_architecture_domain::ports::requests::user::CreateUserRequest;
 use clean_architecture_domain::{
     entities::user::User,
@@ -114,6 +125,26 @@ impl<'a> UserRepository for UserMysqlRepository<'a> {
 
     #[instrument(skip(self))]
     async fn create_user(&self, request: CreateUserRequest) -> ApiResult<User> {
-        todo!()
+        let hashed_password = format!("{:x}", Sha512::digest(request.password.as_bytes()));
+        let user_id = uuid::Uuid::new_v4();
+
+        // Create user
+        sqlx::query!("
+            INSERT INTO users (id, email, password, lastname, firstname, created_at, updated_at, deleted_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, NULL)
+        ",
+            user_id.clone().to_string(),
+            request.email,
+            hashed_password,
+            request.lastname,
+            request.firstname,
+            Utc::now(),
+            Utc::now()
+        ).execute(self.pool)
+            .await
+            .map_err(|err| api_error!(ApiErrorCode::InternalError, err))?;
+
+        // Get user
+        self.get_user(GetUserRequest { id: user_id }).await
     }
 }
