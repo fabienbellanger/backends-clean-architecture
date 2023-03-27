@@ -70,12 +70,14 @@ use sha2::{Digest, Sha512};
 use sqlx::mysql::MySqlPool;
 use tracing::instrument;
 
+/// User MySQL repository
 #[derive(Debug)]
 pub struct UserMysqlRepository<'a> {
     pool: &'a MySqlPool,
 }
 
 impl<'a> UserMysqlRepository<'a> {
+    /// Create a new repository
     pub fn new(pool: &'a MySqlPool) -> Self {
         Self { pool }
     }
