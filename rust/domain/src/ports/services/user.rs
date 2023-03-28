@@ -24,7 +24,7 @@ impl<R: UserRepository> UserService<R> {
     /// Login
     // TODO: Add unit test
     #[instrument(skip(self))]
-    pub async fn login(&self, request: LoginRequest, jwt: Jwt) -> ApiResult<LoginResponse> {
+    pub async fn login(&self, request: LoginRequest, jwt: &Jwt) -> ApiResult<LoginResponse> {
         let user = self.user_repository.login(request).await?;
 
         match user {

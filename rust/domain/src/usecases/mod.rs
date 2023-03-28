@@ -1,3 +1,3 @@
 //! Domain user cases
 
-mod user;
+pub mod user;

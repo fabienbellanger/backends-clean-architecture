@@ -21,6 +21,11 @@ impl<R> UserUseCase<R>
 where
     R: UserRepository,
 {
+    /// Create a new use case
+    pub fn new(user_service: UserService<R>) -> Self {
+        Self { user_service }
+    }
+
     /// Get all users use case
     // TODO: Add unit test
     #[instrument(skip(self))]
@@ -40,7 +45,7 @@ where
     /// Login use case
     // TODO: Add unit test
     #[instrument(skip(self))]
-    pub async fn login(&self, request: LoginRequest, jwt: Jwt) -> ApiResult<LoginResponse> {
+    pub async fn login(&self, request: LoginRequest, jwt: &Jwt) -> ApiResult<LoginResponse> {
         validate_request_data(&request)?;
 
         self.user_service.login(request, jwt).await

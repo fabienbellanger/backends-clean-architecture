@@ -2,6 +2,7 @@
 
 use crate::api_error;
 use crate::error::{ApiError, ApiErrorCode, ApiResult};
+use axum::http::{header, HeaderMap};
 use chrono::Utc;
 use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Validation};
 use serde::{Deserialize, Serialize};
@@ -18,7 +19,20 @@ pub struct Claims {
 
 pub trait ClaimsExtractor<H> {
     /// Extract claims from request headers
-    fn from_request(headers: &H, decoding_key: &DecodingKey) -> Option<ApiResult<Claims>>;
+    fn from_request(headers: &H, jwt: &Jwt) -> Option<ApiResult<Claims>>;
+}
+
+impl ClaimsExtractor<HeaderMap> for Claims {
+    fn from_request(headers: &HeaderMap, jwt: &Jwt) -> Option<ApiResult<Claims>> {
+        headers
+            .get(header::AUTHORIZATION)
+            .and_then(|h| h.to_str().ok())
+            .and_then(|h| {
+                let words = h.split("Bearer").collect::<Vec<&str>>();
+                words.get(1).map(|w| w.trim())
+            })
+            .map(|token| jwt.parse(token))
+    }
 }
 
 pub struct Jwt {
