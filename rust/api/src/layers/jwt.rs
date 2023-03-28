@@ -49,7 +49,7 @@ where
     }
 
     fn call(&mut self, request: Request<Body>) -> Self::Future {
-        let is_authorized = match Claims::from_request(&request.headers(), &self.state.jwt) {
+        let is_authorized = match Claims::from_request(request.headers(), &self.state.jwt) {
             Some(claims) => claims.is_ok(),
             _ => false,
         };

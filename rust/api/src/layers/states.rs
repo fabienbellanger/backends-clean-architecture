@@ -39,7 +39,7 @@ pub struct ConfigState {
 impl From<Config> for ConfigState {
     fn from(config: Config) -> Self {
         Self {
-            jwt_encoding_key: EncodingKey::from_secret(config.jwt_secret_key.clone().as_bytes()),
+            jwt_encoding_key: EncodingKey::from_secret(config.jwt_secret_key.as_bytes()),
             jwt_decoding_key: DecodingKey::from_secret(config.jwt_secret_key.as_bytes()),
             jwt_lifetime: config.jwt_lifetime,
         }

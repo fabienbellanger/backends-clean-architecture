@@ -88,7 +88,6 @@ pub fn cors(config: &Config) -> CorsLayer {
     } else {
         let origins = allow_origin
             .split(',')
-            .into_iter()
             .filter(|url| *url != "*" && !url.is_empty())
             .filter_map(|url| url.parse().ok())
             .collect::<Vec<HeaderValue>>();

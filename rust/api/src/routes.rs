@@ -22,7 +22,7 @@ fn api_protected() -> Router<SharedState> {
 /// Users API routes
 fn api_users() -> Router<SharedState> {
     Router::new()
-        // .route("/", post(handlers::users::create))
+        .route("/", post(handlers::users::create_user))
         .route("/", get(handlers::users::get_users))
         .route("/:id", get(handlers::users::get_user))
 }
