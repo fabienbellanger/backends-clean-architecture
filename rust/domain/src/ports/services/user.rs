@@ -59,7 +59,6 @@ impl<R: UserRepository> UserService<R> {
     }
 
     /// Get all users
-    // TODO: Add unit test
     #[instrument(skip(self))]
     pub async fn get_users(&self) -> ApiResult<GetUsersResponse> {
         self.user_repository
@@ -69,7 +68,6 @@ impl<R: UserRepository> UserService<R> {
     }
 
     /// Get a user
-    // TODO: Add unit test
     #[instrument(skip(self))]
     pub async fn get_user(&self, request: GetUserRequest) -> ApiResult<GetUserResponse> {
         self.user_repository
@@ -86,5 +84,151 @@ impl<R: UserRepository> UserService<R> {
             .create_user(request)
             .await
             .map(|user| user.into())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::entities::user::User;
+    use async_trait::async_trait;
+    use uuid::Uuid;
+
+    const DATE: &str = "2023-04-01T12:10:00+00:00";
+    const USER_ID: &str = "3288fb86-db99-471d-95bc-1451c7ec6f7b";
+
+    struct TestUserRepository {}
+
+    #[async_trait]
+    impl UserRepository for TestUserRepository {
+        async fn get_users(&self) -> ApiResult<Vec<User>> {
+            let date = DateTime::parse_from_rfc3339(DATE)
+                .unwrap()
+                .with_timezone(&Utc);
+
+            Ok(vec![User {
+                id: Uuid::parse_str(USER_ID).unwrap(),
+                lastname: "Doe".to_string(),
+                firstname: "John".to_string(),
+                email: "john.doe@test.com".to_string(),
+                password: "00000000".to_string(),
+                created_at: date,
+                updated_at: date,
+                deleted_at: None,
+            }])
+        }
+
+        async fn get_user(&self, request: GetUserRequest) -> ApiResult<User> {
+            let id = Uuid::parse_str(USER_ID).unwrap();
+            if id == request.id {
+                let date = DateTime::parse_from_rfc3339(DATE)
+                    .unwrap()
+                    .with_timezone(&Utc);
+                let user = User {
+                    id: Uuid::parse_str(USER_ID).unwrap(),
+                    lastname: "Doe".to_string(),
+                    firstname: "John".to_string(),
+                    email: "john.doe@test.com".to_string(),
+                    password: "00000000".to_string(),
+                    created_at: date,
+                    updated_at: date,
+                    deleted_at: None,
+                };
+                Ok(user)
+            } else {
+                Err(ApiError::InternalError {
+                    message: "Not found".to_owned(),
+                })
+            }
+        }
+
+        async fn login(&self, _request: LoginRequest) -> ApiResult<Option<User>> {
+            todo!()
+        }
+
+        async fn create_user(&self, request: CreateUserRequest) -> ApiResult<User> {
+            let date = DateTime::parse_from_rfc3339(DATE)
+                .unwrap()
+                .with_timezone(&Utc);
+            Ok(User {
+                id: Uuid::parse_str(USER_ID).unwrap(),
+                lastname: request.lastname,
+                firstname: request.firstname,
+                email: request.email,
+                password: request.password,
+                created_at: date,
+                updated_at: date,
+                deleted_at: None,
+            })
+        }
+    }
+
+    fn init_service() -> UserService<TestUserRepository> {
+        let user_repository = TestUserRepository {};
+        UserService::new(user_repository)
+    }
+
+    #[tokio::test]
+    async fn test_get_user_service() {
+        let service = init_service();
+        let request = GetUserRequest {
+            id: Uuid::parse_str(USER_ID).unwrap(),
+        };
+        let user = GetUserResponse {
+            id: request.id.to_string(),
+            lastname: "Doe".to_string(),
+            firstname: "John".to_string(),
+            email: "john.doe@test.com".to_string(),
+            created_at: DATE.to_string(),
+            updated_at: DATE.to_string(),
+        };
+
+        assert_eq!(service.get_user(request).await, Ok(user));
+    }
+
+    #[tokio::test]
+    async fn test_get_user_service_no_existing_id() {
+        let service = init_service();
+        let request = GetUserRequest { id: Uuid::new_v4() };
+
+        assert!(service.get_user(request).await.is_err());
+    }
+
+    #[tokio::test]
+    async fn test_get_users_service() {
+        let service = init_service();
+        let users: GetUsersResponse = GetUsersResponse {
+            users: vec![GetUserResponse {
+                id: Uuid::parse_str(USER_ID).unwrap().to_string(),
+                lastname: "Doe".to_string(),
+                firstname: "John".to_string(),
+                email: "john.doe@test.com".to_string(),
+                created_at: DATE.to_string(),
+                updated_at: DATE.to_string(),
+            }],
+        };
+
+        assert_eq!(service.get_users().await, Ok(users));
+    }
+
+    #[tokio::test]
+    async fn test_create_user_service() {
+        let service = init_service();
+        let request = CreateUserRequest {
+            lastname: "Doe".to_string(),
+            firstname: "John".to_string(),
+            email: "john.doe@test.com".to_string(),
+            password: "00000000".to_string(),
+        };
+        let user = GetUserResponse {
+            id: USER_ID.to_string(),
+            lastname: "Doe".to_string(),
+            firstname: "John".to_string(),
+            email: "john.doe@test.com".to_string(),
+            created_at: DATE.to_string(),
+            updated_at: DATE.to_string(),
+        };
+
+        assert_eq!(service.create_user(request).await, Ok(user));
     }
 }

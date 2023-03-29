@@ -69,7 +69,7 @@ use sqlx::mysql::MySqlPool;
 use tracing::instrument;
 
 /// User MySQL repository
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct UserMysqlRepository<'a> {
     pool: &'a MySqlPool,
 }
