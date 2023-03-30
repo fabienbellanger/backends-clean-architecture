@@ -1,33 +1,34 @@
 package entities
 
 import (
+	"github.com/google/uuid"
 	"strings"
 	"time"
 )
 
 // User entity
 type User struct {
-	ID        string
+	ID        uuid.UUID
 	Lastname  string
 	Firstname string
-	Username  string
+	Email     string
 	Password  string
 	CreatedAt time.Time
 }
 
 // NewUser creates a new user entity.
-func NewUser(id, lastname, firstname, username, password string, createdAt time.Time) User {
+func NewUser(id uuid.UUID, lastname, firstname, email, password string, createdAt time.Time) User {
 	return User{
 		ID:        id,
 		Lastname:  lastname,
 		Firstname: firstname,
-		Username:  username,
+		Email:     email,
 		Password:  password,
 		CreatedAt: createdAt,
 	}
 }
 
-// Fullname returns user fullname.
+// Fullname returns user full name.
 // TODO: Add test
 func (u *User) Fullname() string {
 	return strings.TrimSpace(u.Firstname + " " + u.Lastname)

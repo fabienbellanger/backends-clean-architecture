@@ -15,12 +15,12 @@ type User interface {
 	GetUser(r *requests.GetUserRequest) (*entities.User, error)
 }
 
-// NewCreateUser returns a new CreateUser use case.
+// NewUserUseCase returns a new CreateUser use case.
 func NewUserUseCase(repo repositories.UserRepository) User {
 	return &userUseCase{repo}
 }
 
-// Execute create user use case.
+// Create user use case.
 func (uc *userUseCase) Create(req *requests.UserCreateRequest) (*entities.User, error) {
 	// Validation
 	if err := req.Validate(); err != nil {
