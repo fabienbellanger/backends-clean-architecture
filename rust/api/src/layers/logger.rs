@@ -70,14 +70,14 @@ where
 
     fn call(&mut self, request: Request<Body>) -> Self::Future {
         let now = Instant::now();
-        let resquest_headers = request.headers();
+        let request_headers = request.headers();
 
         let mut message = LoggerMessage {
             method: request.method().to_string(),
             uri: request.uri().to_string(),
-            host: header_value_to_str(resquest_headers.get("host")).to_string(),
-            request_id: header_value_to_str(resquest_headers.get("x-request-id")).to_string(),
-            user_agent: header_value_to_str(resquest_headers.get("user-agent")).to_string(),
+            host: header_value_to_str(request_headers.get("host")).to_string(),
+            request_id: header_value_to_str(request_headers.get("x-request-id")).to_string(),
+            user_agent: header_value_to_str(request_headers.get("user-agent")).to_string(),
             ..Default::default()
         };
 
