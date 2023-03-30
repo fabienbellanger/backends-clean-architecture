@@ -1,6 +1,7 @@
 //! Handlers module
 
-pub mod users;
+pub(crate) mod users;
+pub(crate) mod web;
 
 use axum::BoxError;
 use clean_architecture_shared::api_error;

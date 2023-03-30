@@ -1,7 +1,7 @@
 //! User use cases
 #![allow(dead_code)]
 
-use crate::ports::requests::user::CreateUserRequest;
+use crate::ports::requests::user::{CreateUserRequest, DeleteUserRequest};
 use crate::ports::{
     repositories::user::UserRepository,
     requests::user::{GetUserRequest, LoginRequest},
@@ -10,6 +10,7 @@ use crate::ports::{
 };
 use clean_architecture_shared::auth::Jwt;
 use clean_architecture_shared::error::ApiResult;
+use clean_architecture_shared::query_parameter::PaginateSort;
 use clean_architecture_shared::validation::validate_request_data;
 
 /// Create new user use case
@@ -28,8 +29,8 @@ where
 
     /// Get all users use case
     #[instrument(skip(self))]
-    pub async fn get_users(&self) -> ApiResult<GetUsersResponse> {
-        self.user_service.get_users().await
+    pub async fn get_users(&self, paginate_sort: &PaginateSort) -> ApiResult<GetUsersResponse> {
+        self.user_service.get_users(paginate_sort).await
     }
 
     /// Get a user use case
@@ -57,6 +58,14 @@ where
 
         self.user_service.create_user(request).await
     }
+
+    /// Delete user use case
+    #[instrument(skip(self))]
+    pub async fn delete_user(&self, request: DeleteUserRequest) -> ApiResult<u64> {
+        validate_request_data(&request)?;
+
+        self.user_service.delete_user(request).await
+    }
 }
 
 #[cfg(test)]
@@ -71,12 +80,13 @@ mod tests {
     // TODO: Deduplicate UserRepository implementation (idem UserService)
     const DATE: &str = "2023-04-01T12:10:00+00:00";
     const USER_ID: &str = "3288fb86-db99-471d-95bc-1451c7ec6f7b";
+    const TOTAL_USERS: i64 = 10;
 
     struct TestUserRepository {}
 
     #[async_trait]
     impl UserRepository for TestUserRepository {
-        async fn get_users(&self) -> ApiResult<Vec<User>> {
+        async fn get_users(&self, _paginate_sort: &PaginateSort) -> ApiResult<Vec<User>> {
             let date = DateTime::parse_from_rfc3339(DATE)
                 .unwrap()
                 .with_timezone(&Utc);
@@ -136,6 +146,14 @@ mod tests {
                 deleted_at: None,
             })
         }
+
+        async fn delete_user(&self, _request: DeleteUserRequest) -> ApiResult<u64> {
+            unimplemented!()
+        }
+
+        async fn get_total_users(&self) -> ApiResult<i64> {
+            Ok(TOTAL_USERS)
+        }
     }
 
     fn init_use_case() -> UserUseCase<TestUserRepository> {
@@ -166,7 +184,7 @@ mod tests {
     async fn test_get_users_use_case() {
         let use_case = init_use_case();
         let users: GetUsersResponse = GetUsersResponse {
-            users: vec![GetUserResponse {
+            data: vec![GetUserResponse {
                 id: Uuid::parse_str(USER_ID).unwrap().to_string(),
                 lastname: "Doe".to_string(),
                 firstname: "John".to_string(),
@@ -174,9 +192,16 @@ mod tests {
                 created_at: DATE.to_string(),
                 updated_at: DATE.to_string(),
             }],
+            total: TOTAL_USERS,
+        };
+        let pagination_sort = PaginateSort {
+            page: 1,
+            limit: 10,
+            offset: 0,
+            sorts: vec![],
         };
 
-        assert_eq!(use_case.get_users().await, Ok(users));
+        assert_eq!(use_case.get_users(&pagination_sort).await, Ok(users));
     }
 
     #[tokio::test]

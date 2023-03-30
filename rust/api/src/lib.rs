@@ -7,7 +7,20 @@ pub(crate) mod routes;
 pub mod server;
 
 #[macro_use]
+extern crate lazy_static;
+
+#[macro_use]
 extern crate tracing;
 
 extern crate chrono;
 extern crate serde;
+
+use tera::Tera;
+
+lazy_static! {
+    pub static ref TEMPLATES: Result<Tera, tera::Error> = {
+        let mut tera = Tera::new("templates/**/*")?;
+        tera.autoescape_on(vec![".html", ".txt"]);
+        Ok(tera)
+    };
+}

@@ -1,17 +1,18 @@
 //! User repository module
 
-use crate::ports::requests::user::CreateUserRequest;
+use crate::ports::requests::user::{CreateUserRequest, DeleteUserRequest};
 use crate::{
     entities::user::User,
     ports::requests::user::{GetUserRequest, LoginRequest},
 };
 use async_trait::async_trait;
 use clean_architecture_shared::error::ApiResult;
+use clean_architecture_shared::query_parameter::PaginateSort;
 
 #[async_trait]
 pub trait UserRepository {
     /// Get a list of users
-    async fn get_users(&self) -> ApiResult<Vec<User>>;
+    async fn get_users(&self, paginate_sort: &PaginateSort) -> ApiResult<Vec<User>>;
 
     /// Get a user
     async fn get_user(&self, request: GetUserRequest) -> ApiResult<User>;
@@ -21,4 +22,10 @@ pub trait UserRepository {
 
     /// Create user
     async fn create_user(&self, request: CreateUserRequest) -> ApiResult<User>;
+
+    /// Delete user
+    async fn delete_user(&self, request: DeleteUserRequest) -> ApiResult<u64>;
+
+    /// Returns total number of users
+    async fn get_total_users(&self) -> ApiResult<i64>;
 }

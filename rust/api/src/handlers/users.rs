@@ -1,19 +1,22 @@
 //! Users handler module
 
-use crate::extractors::ExtractRequestId;
+use crate::extractors::{ExtractRequestId, Path};
 use crate::layers::states::SharedState;
-use axum::extract::{Path, State};
+use axum::extract::{Query, State};
+use axum::http::StatusCode;
 use axum::{Extension, Json};
 use clean_architecture_database::mysql::repositories::user::UserMysqlRepository;
 use clean_architecture_domain::ports::requests::user::{
-    CreateUserRequest, GetUserRequest, LoginRequest,
+    CreateUserRequest, DeleteUserRequest, GetUserRequest, LoginRequest,
 };
 use clean_architecture_domain::ports::responses::user::{
     GetUserResponse, GetUsersResponse, LoginResponse,
 };
 use clean_architecture_domain::ports::services::user::UserService;
 use clean_architecture_domain::usecases::user::UserUseCase;
-use clean_architecture_shared::error::ApiResult;
+use clean_architecture_shared::api_error;
+use clean_architecture_shared::error::{ApiError, ApiErrorCode, ApiResult};
+use clean_architecture_shared::query_parameter::{PaginateSort, PaginateSortQuery};
 use sqlx::{MySql, Pool};
 use uuid::Uuid;
 
@@ -49,11 +52,13 @@ pub async fn login(
 /// Users list route: GET /api/v1/users
 #[instrument(skip(pool), level = "warn")]
 pub async fn get_users(
+    Query(pagination): Query<PaginateSortQuery>,
     Extension(pool): Extension<Pool<MySql>>,
     ExtractRequestId(request_id): ExtractRequestId,
 ) -> ApiResult<Json<GetUsersResponse>> {
+    let paginate_sort = PaginateSort::from(pagination);
     let handler = UsersHandler::new(&pool);
-    let response = handler.user_use_case.get_users().await?;
+    let response = handler.user_use_case.get_users(&paginate_sort).await?;
 
     Ok(Json(response))
 }
@@ -85,4 +90,26 @@ pub async fn create_user(
     let response = handler.user_use_case.create_user(request).await?;
 
     Ok(Json(response))
+}
+
+/// Delete user route: DELETE /api/v1/users/:id
+#[instrument(skip(pool), level = "warn")]
+pub async fn delete_user(
+    Path(id): Path<Uuid>,
+    Extension(pool): Extension<Pool<MySql>>,
+    ExtractRequestId(request_id): ExtractRequestId,
+) -> ApiResult<StatusCode> {
+    let handler = UsersHandler::new(&pool);
+    let result = handler
+        .user_use_case
+        .delete_user(DeleteUserRequest { id })
+        .await?;
+
+    match result {
+        1 => Ok(StatusCode::NO_CONTENT),
+        _ => Err(api_error!(
+            ApiErrorCode::NotFound,
+            "no user or user already deleted"
+        )),
+    }
 }

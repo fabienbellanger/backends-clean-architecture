@@ -1,6 +1,6 @@
 //! User services module
 
-use crate::ports::requests::user::CreateUserRequest;
+use crate::ports::requests::user::{CreateUserRequest, DeleteUserRequest};
 use crate::ports::{
     repositories::user::UserRepository,
     requests::user::{GetUserRequest, LoginRequest},
@@ -10,6 +10,7 @@ use chrono::{DateTime, NaiveDateTime, SecondsFormat, Utc};
 use clean_architecture_shared::api_error;
 use clean_architecture_shared::auth::Jwt;
 use clean_architecture_shared::error::{ApiError, ApiErrorCode, ApiResult};
+use clean_architecture_shared::query_parameter::PaginateSort;
 
 pub struct UserService<R: UserRepository> {
     user_repository: R,
@@ -60,11 +61,11 @@ impl<R: UserRepository> UserService<R> {
 
     /// Get all users
     #[instrument(skip(self))]
-    pub async fn get_users(&self) -> ApiResult<GetUsersResponse> {
-        self.user_repository
-            .get_users()
-            .await
-            .map(|users| users.into())
+    pub async fn get_users(&self, paginate_sort: &PaginateSort) -> ApiResult<GetUsersResponse> {
+        let total = self.user_repository.get_total_users().await?;
+        let users = self.user_repository.get_users(paginate_sort).await?;
+
+        Ok((users, total).into())
     }
 
     /// Get a user
@@ -85,6 +86,12 @@ impl<R: UserRepository> UserService<R> {
             .await
             .map(|user| user.into())
     }
+
+    /// Delete a user
+    #[instrument(skip(self))]
+    pub async fn delete_user(&self, request: DeleteUserRequest) -> ApiResult<u64> {
+        self.user_repository.delete_user(request).await
+    }
 }
 
 #[cfg(test)]
@@ -96,12 +103,13 @@ mod tests {
 
     const DATE: &str = "2023-04-01T12:10:00+00:00";
     const USER_ID: &str = "3288fb86-db99-471d-95bc-1451c7ec6f7b";
+    const TOTAL_USERS: i64 = 10;
 
     struct TestUserRepository {}
 
     #[async_trait]
     impl UserRepository for TestUserRepository {
-        async fn get_users(&self) -> ApiResult<Vec<User>> {
+        async fn get_users(&self, _paginate_sort: &PaginateSort) -> ApiResult<Vec<User>> {
             let date = DateTime::parse_from_rfc3339(DATE)
                 .unwrap()
                 .with_timezone(&Utc);
@@ -161,6 +169,14 @@ mod tests {
                 deleted_at: None,
             })
         }
+
+        async fn delete_user(&self, _request: DeleteUserRequest) -> ApiResult<u64> {
+            unimplemented!()
+        }
+
+        async fn get_total_users(&self) -> ApiResult<i64> {
+            Ok(TOTAL_USERS)
+        }
     }
 
     fn init_service() -> UserService<TestUserRepository> {
@@ -198,7 +214,7 @@ mod tests {
     async fn test_get_users_service() {
         let service = init_service();
         let users: GetUsersResponse = GetUsersResponse {
-            users: vec![GetUserResponse {
+            data: vec![GetUserResponse {
                 id: Uuid::parse_str(USER_ID).unwrap().to_string(),
                 lastname: "Doe".to_string(),
                 firstname: "John".to_string(),
@@ -206,9 +222,15 @@ mod tests {
                 created_at: DATE.to_string(),
                 updated_at: DATE.to_string(),
             }],
+            total: TOTAL_USERS,
         };
-
-        assert_eq!(service.get_users().await, Ok(users));
+        let pagination_sort = PaginateSort {
+            page: 1,
+            limit: 10,
+            offset: 0,
+            sorts: vec![],
+        };
+        assert_eq!(service.get_users(&pagination_sort).await, Ok(users));
     }
 
     #[tokio::test]

@@ -1,8 +1,8 @@
 //! User responses module
 
-use serde::Serialize;
-
 use crate::entities::user::User;
+use crate::ports::responses::pagination::PaginateResponse;
+use serde::Serialize;
 
 #[derive(Debug, PartialEq, Eq, Serialize)]
 pub struct LoginResponse {
@@ -68,23 +68,21 @@ impl From<User> for GetUserResponse {
     }
 }
 
-#[derive(Debug, PartialEq, Eq, Serialize)]
-pub struct GetUsersResponse {
-    pub users: Vec<GetUserResponse>,
-}
+pub type GetUsersResponse = PaginateResponse<Vec<GetUserResponse>>;
 
-impl From<Vec<User>> for GetUsersResponse {
-    /// Convert a `Vec<User>` into `GetUsersResponse`
+impl From<(Vec<User>, i64)> for GetUsersResponse {
+    /// Convert a `(Vec<User>, i64)` into `GetUsersResponse`
     /// ```
     /// use clean_architecture_domain::entities::user::User;
     /// use clean_architecture_domain::ports::responses::user::{GetUserResponse, GetUsersResponse};
     /// use chrono::{DateTime, Utc};
     /// use uuid::Uuid;
+    /// use clean_architecture_domain::ports::responses::pagination::PaginateResponse;
     ///
     /// let user_id_1 = Uuid::new_v4();
     /// let user_id_2 = Uuid::new_v4();
     /// let now = Utc::now();
-    /// let users: Vec<User> = vec![
+    /// let users: (Vec<User>, i64) =(vec![
     ///     User {
     ///         id: user_id_1,
     ///         lastname: "Doe".to_owned(),
@@ -105,7 +103,7 @@ impl From<Vec<User>> for GetUsersResponse {
     ///         updated_at: now,
     ///         deleted_at: None,
     ///     }
-    /// ];
+    /// ], 5);
     ///
     /// let users_response: Vec<GetUserResponse> = vec![
     ///     GetUserResponse {
@@ -125,12 +123,15 @@ impl From<Vec<User>> for GetUsersResponse {
     ///         updated_at: now.to_rfc3339(),
     ///     },
     /// ];
-    /// let response = GetUsersResponse { users: users_response };
+    /// let response = GetUsersResponse { data: users_response, total: 5 };
     ///
     /// assert_eq!(response, users.into());
     /// ```
-    fn from(users: Vec<User>) -> Self {
-        let users_res = users.into_iter().map(|user| user.into()).collect();
-        Self { users: users_res }
+    fn from(data: (Vec<User>, i64)) -> Self {
+        let users = data.0.into_iter().map(|user| user.into()).collect();
+        Self {
+            data: users,
+            total: data.1,
+        }
     }
 }

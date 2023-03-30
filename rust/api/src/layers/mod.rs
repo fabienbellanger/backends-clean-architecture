@@ -1,23 +1,28 @@
 //! Layers module
 
-pub mod jwt;
-pub mod logger;
-pub mod states;
+pub(crate) mod basic_auth;
+pub(crate) mod jwt;
+pub(crate) mod logger;
+pub(crate) mod states;
 
 use crate::config::Config;
+use axum::body::Full;
 use axum::headers::HeaderName;
 use axum::http::header::{ACCEPT, AUTHORIZATION, CONTENT_TYPE, ORIGIN};
 use axum::http::response::Parts;
 use axum::http::{HeaderValue, Method, Request, StatusCode};
+use axum::middleware::Next;
+use axum::response::{IntoResponse, Response};
 use bytes::Bytes;
-use clean_architecture_shared::error::ApiErrorMessage;
-use hyper::header;
+use clean_architecture_shared::api_error;
+use clean_architecture_shared::error::{ApiError, ApiErrorCode, ApiErrorMessage};
+use hyper::body::to_bytes;
 use std::str::from_utf8;
 use tower_http::cors::{AllowOrigin, Any, CorsLayer};
 use tower_http::request_id::{MakeRequestId, RequestId};
 use uuid::Uuid;
 
-/// Contruct response body from `Parts`, status code, message and headers
+/// Construct response body from `Parts`, status code, message and headers
 pub fn body_from_parts(
     parts: &mut Parts,
     status_code: StatusCode,
@@ -29,7 +34,7 @@ pub fn body_from_parts(
 
     // Headers
     parts.headers.insert(
-        header::CONTENT_TYPE,
+        CONTENT_TYPE,
         HeaderValue::from_static(mime::APPLICATION_JSON.as_ref()),
     );
     if let Some(headers) = headers {
@@ -101,5 +106,39 @@ pub fn cors(config: &Config) -> CorsLayer {
                 }))
                 .allow_credentials(true)
         }
+    }
+}
+
+/// Layer which override some HTTP errors by using `AppError`
+pub async fn override_http_errors<B>(req: Request<B>, next: Next<B>) -> impl IntoResponse {
+    let response = next.run(req).await;
+
+    // If it is an image, audio or video, we return response
+    let headers = response.headers();
+    if let Some(content_type) = headers.get("content-type") {
+        let content_type = content_type.to_str().unwrap_or_default();
+        if content_type.starts_with("image/")
+            || content_type.starts_with("audio/")
+            || content_type.starts_with("video/")
+        {
+            return response;
+        }
+    }
+
+    let (parts, body) = response.into_parts();
+    match to_bytes(body).await {
+        Ok(body_bytes) => match String::from_utf8(body_bytes.to_vec()) {
+            Ok(body) => match parts.status {
+                StatusCode::METHOD_NOT_ALLOWED => {
+                    api_error!(ApiErrorCode::MethodNotAllowed).into_response()
+                }
+                StatusCode::UNPROCESSABLE_ENTITY => {
+                    api_error!(ApiErrorCode::UnprocessableEntity, body).into_response()
+                }
+                _ => Response::from_parts(parts, axum::body::boxed(Full::from(body))),
+            },
+            Err(err) => api_error!(ApiErrorCode::InternalError, err.to_string()).into_response(),
+        },
+        Err(err) => api_error!(ApiErrorCode::InternalError, err.to_string()).into_response(),
     }
 }

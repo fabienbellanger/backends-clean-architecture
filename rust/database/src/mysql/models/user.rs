@@ -6,10 +6,11 @@ use clean_architecture_shared::{
     api_error,
     error::{ApiError, ApiErrorCode},
 };
+use sqlx::FromRow;
 use std::str::FromStr;
 use uuid::Uuid;
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, FromRow)]
 pub struct UserModel {
     pub id: String,
     pub lastname: String,
@@ -61,7 +62,7 @@ mod tests {
 
     #[test]
     fn test_from_user_entity() {
-        let user_id = uuid::Uuid::new_v4();
+        let user_id = Uuid::new_v4();
         let now = Utc::now();
         let now_naive = now.naive_utc();
         let user = User {
@@ -90,7 +91,7 @@ mod tests {
 
     #[test]
     fn test_try_into_user_entity_with_valid_model() {
-        let user_id = uuid::Uuid::new_v4();
+        let user_id = Uuid::new_v4();
         let now = Utc::now();
         let now_naive = now.naive_utc();
 

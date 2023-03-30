@@ -3,5 +3,5 @@ members = [
   "domain",
   "database",
   "shared",
-  "api"
+  "api",
 ]

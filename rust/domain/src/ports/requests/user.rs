@@ -26,3 +26,8 @@ pub struct CreateUserRequest {
     #[validate(length(min = 8))]
     pub password: String,
 }
+
+#[derive(Debug, Validate, Deserialize)]
+pub struct DeleteUserRequest {
+    pub id: Uuid,
+}

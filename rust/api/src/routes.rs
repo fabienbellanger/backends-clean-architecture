@@ -1,9 +1,27 @@
 //! Routes list
 
+use crate::config::Config;
+use crate::layers::basic_auth::BasicAuthLayer;
 use crate::layers::states::SharedState;
 use crate::{handlers, layers};
-use axum::routing::{get, post};
+use axum::routing::{delete, get, post};
 use axum::Router;
+
+/// Return web routes list
+pub fn web(settings: &Config) -> Router<SharedState> {
+    Router::new()
+        .route("/health-check", get(handlers::web::health_check))
+        // API documentation
+        .nest(
+            "/doc",
+            Router::new()
+                .route("/api-v1", get(handlers::web::doc_api_v1))
+                .layer(BasicAuthLayer::new(
+                    &settings.basic_auth_username,
+                    &settings.basic_auth_password,
+                )),
+        )
+}
 
 /// Return API routes list
 pub fn api(state: SharedState) -> Router<SharedState> {
@@ -25,4 +43,5 @@ fn api_users() -> Router<SharedState> {
         .route("/", post(handlers::users::create_user))
         .route("/", get(handlers::users::get_users))
         .route("/:id", get(handlers::users::get_user))
+        .route("/:id", delete(handlers::users::delete_user))
 }

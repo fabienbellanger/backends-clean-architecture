@@ -32,6 +32,11 @@ pub struct Config {
 
     /// CORS Allow Origin Headers (URLs delimited by a comma)
     pub cors_allow_origin: String,
+
+    /// Basic Auth username
+    pub basic_auth_username: String,
+    /// Basic Auth password
+    pub basic_auth_password: String,
 }
 
 impl Config {

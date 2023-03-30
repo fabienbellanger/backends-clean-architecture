@@ -7,14 +7,14 @@ use crate::layers::{
 };
 use crate::{handlers, layers, logger, routes};
 use axum::error_handling::HandleErrorLayer;
-use axum::{Extension, Router};
+use axum::{middleware, Extension, Router};
 use clean_architecture_database::init_mysql_pool;
 use clean_architecture_shared::api_error;
 use clean_architecture_shared::error::{ApiError, ApiErrorCode, ApiResult};
 use std::net::{AddrParseError, SocketAddr};
 use std::time::Duration;
 use tower::ServiceBuilder;
-use tower_http::ServiceBuilderExt;
+use tower_http::{services::ServeDir, ServiceBuilderExt};
 
 /// Starts API server
 pub async fn start_server() -> ApiResult<()> {
@@ -66,10 +66,19 @@ async fn get_app(settings: &Config) -> ApiResult<Router> {
     // Global state
     let global_state = SharedState::new(State::init(settings));
 
+    // Routing - API
     let mut app = Router::new()
         .nest("/api/v1", routes::api(global_state.clone()))
         .layer(cors);
-    app = app.layer(Extension(pool)).layer(layers);
+
+    // Routing - Web
+    app = app.nest("/", routes::web(settings));
+
+    app = app
+        .fallback_service(ServeDir::new("assets").append_index_html_on_directories(true)) // FIXME: static_file_error not work this Axum 0.6.9!
+        .layer(middleware::from_fn(layers::override_http_errors))
+        .layer(Extension(pool))
+        .layer(layers);
 
     let app = app.with_state(global_state);
 

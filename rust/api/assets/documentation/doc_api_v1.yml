@@ -1,0 +1,337 @@
+openapi: '3.0.2'
+info:
+  title: Rust Clean Architecture
+  version: '1.0'
+  description: REST API using Rust Clean Architecture
+  contact:
+    name: Fabien Bellanger
+    email: valentil@gmail.com
+  license:
+    name: MIT
+    url: https://github.com/fabienbellanger/backends-clean-architecture/blob/main/LICENSE
+servers:
+  - url: http://localhost:{port}/api/v1
+    description: Local server
+    variables:
+      port:
+        enum:
+          - "8087"
+        default: "8087"
+  - url: https://localhost/api/v1
+    description: Production server
+paths:
+  /login:
+    post:
+      description: Authenticate a user
+      tags:
+        - "Authentication"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            example:
+              email: test@testest.com
+              password: "11111111"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '400':
+            $ref: "#/components/responses/BadRequest"
+        '401':
+            $ref: "#/components/responses/Unauthorized"
+        '500':
+            $ref: "#/components/responses/InternalServerError"
+  /users:
+    get:
+      summary: ""
+      description: List all users
+      tags:
+        - "Users"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: p
+          schema:
+            type: integer
+            default: 0
+          required: false
+          description: Page number
+          example: 1
+        - in: query
+          name: l
+          schema:
+            type: integer
+            maximum: 500
+          required: false
+          description: Limit of links per page
+          example: 10
+        - in: query
+          name: s
+          schema:
+            type: string
+          required: false
+          description: "Sort with available fields: id | lastname | firstname | created_at | updated_at | deleted_at {+: ASC, -: DESC}."
+          example: +lastname,-firstname
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetUsersResponse"
+        '400':
+            $ref: "#/components/responses/BadRequest"
+        '401':
+            $ref: "#/components/responses/Unauthorized"
+        '422':
+            $ref: "#/components/responses/UnprocessableEntity"
+        '500':
+            $ref: "#/components/responses/InternalServerError"
+    post:
+      summary: ""
+      description: User creation
+      tags:
+        - "Users"
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUserResponse'
+        '400':
+            $ref: "#/components/responses/BadRequest"
+        '401':
+            $ref: "#/components/responses/Unauthorized"
+        '500':
+            $ref: "#/components/responses/InternalServerError"
+  /users/{id}:
+    get:
+      summary: ""
+      description: Get one user
+      tags:
+        - "Users"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: User ID
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUserResponse'
+        '400':
+            $ref: "#/components/responses/BadRequest"
+        '401':
+            $ref: "#/components/responses/Unauthorized"
+        '404':
+            $ref: "#/components/responses/NotFound"
+        '500':
+            $ref: "#/components/responses/InternalServerError"
+    delete:
+      summary: ""
+      description: Delete a user
+      tags:
+        - "Users"
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: User ID
+      responses:
+        '204':
+          description: No Content
+        '400':
+            $ref: "#/components/responses/BadRequest"
+        '401':
+            $ref: "#/components/responses/Unauthorized"
+        '404':
+            $ref: "#/components/responses/NotFound"
+        '500':
+            $ref: "#/components/responses/InternalServerError"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  responses:
+    Unauthorized:
+      description: Access token is missing or invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    BadRequest:
+      description: Invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+        text/plain:
+          schema:
+            type: string
+    NotFound:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    MethodNotAllowed:
+      description: Method Not Allowed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    UnprocessableEntity:
+      description: Unprocessable Entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    InternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+  schemas:
+    PaginateTotal:
+      type: object
+      properties:
+        total:
+          type: integer
+      required:
+        - total
+    ResponseError:
+      type: object
+      properties:
+        code:
+          type: integer
+          minimum: 100
+          maximum: 527
+        message:
+          type: string
+      required:
+        - code
+        - message
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+      required:
+        - email
+        - password
+    LoginResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        lastname:
+          type: string
+        firstname:
+          type: string
+        email:
+          type: string
+          format: email
+        token:
+          type: string
+        expired_at:
+          type: string
+          format: date-time
+      required:
+        - id
+        - lastname
+        - firstname
+        - email
+        - token
+        - expired_at
+    GetUserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        lastname:
+          type: string
+        firstname:
+          type: string
+        email:
+          type: string
+          format: email
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - id
+        - lastname
+        - firstname
+        - email
+        - created_at
+        - updated_at
+    GetUsersResponse:
+      allOf:
+        - $ref: "#/components/schemas/PaginateTotal"
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: "#/components/schemas/GetUserResponse"
+          required:
+            - data
+    CreateUserRequest:
+      type: object
+      properties:
+        lastname:
+          type: string
+        firstname:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+      required:
+        - lastname
+        - firstname
+        - email
+        - password
