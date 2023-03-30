@@ -104,6 +104,7 @@ mod tests {
     const DATE: &str = "2023-04-01T12:10:00+00:00";
     const USER_ID: &str = "3288fb86-db99-471d-95bc-1451c7ec6f7b";
     const TOTAL_USERS: i64 = 10;
+    const USER_EMAIL: &str = "test@test.com";
 
     struct TestUserRepository {}
 
@@ -150,8 +151,26 @@ mod tests {
             }
         }
 
-        async fn login(&self, _request: LoginRequest) -> ApiResult<Option<User>> {
-            todo!()
+        async fn login(&self, request: LoginRequest) -> ApiResult<Option<User>> {
+            let date = DateTime::parse_from_rfc3339(DATE)
+                .unwrap()
+                .with_timezone(&Utc);
+            if request.email == USER_EMAIL {
+                let user = User {
+                    id: Uuid::parse_str(USER_ID).unwrap(),
+                    lastname: "Doe".to_owned(),
+                    firstname: "John".to_owned(),
+                    email: request.email,
+                    password: request.password,
+                    created_at: date,
+                    updated_at: date,
+                    deleted_at: None,
+                };
+
+                return Ok(Some(user));
+            }
+
+            Ok(None)
         }
 
         async fn create_user(&self, request: CreateUserRequest) -> ApiResult<User> {
@@ -252,5 +271,26 @@ mod tests {
         };
 
         assert_eq!(service.create_user(request).await, Ok(user));
+    }
+
+    #[test]
+    fn test_login_service() {
+        let service = init_service();
+        let request = LoginRequest {
+            email: USER_EMAIL.to_string(),
+            password: "00000000".to_owned(),
+        };
+        let user = GetUserResponse {
+            id: USER_ID.to_string(),
+            lastname: "Doe".to_string(),
+            firstname: "John".to_string(),
+            email: USER_EMAIL.to_string(),
+            created_at: DATE.to_string(),
+            updated_at: DATE.to_string(),
+        };
+        // TODO: Add default to Jwt
+        // let jwt = Jwt::
+
+        // assert_eq!(service.login(request, jwt));
     }
 }

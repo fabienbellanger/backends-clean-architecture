@@ -3,6 +3,8 @@ package models
 import (
 	"clean-architecture/pkg/domain/entities"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 // User models.
@@ -10,7 +12,7 @@ type User struct {
 	ID        string    `json:"id" xml:"id" form:"id" gorm:"primaryKey" validate:"required,uuid"`
 	Lastname  string    `json:"lastname" xml:"lastname" form:"lastname" gorm:"size:63" validate:"required"`
 	Firstname string    `json:"firstname" xml:"firstname" form:"firstname" gorm:"size:63" validate:"required"`
-	Username  string    `json:"username" xml:"username" form:"username" gorm:"not null;unique;size:127" validate:"required,email"`
+	Email     string    `json:"email" xml:"email" form:"email" gorm:"not null;unique;size:127" validate:"required,email"`
 	Password  string    `json:"-" xml:"-" form:"password" gorm:"not null;index;size:128" validate:"required,min=8"`
 	CreatedAt time.Time `json:"created_at" xml:"created_at" form:"created_at" gorm:"not null;autoCreateTime"`
 }
@@ -19,10 +21,10 @@ type User struct {
 // TODO: Add test
 func (u *User) UserToEntity() entities.User {
 	return entities.NewUser(
-		u.ID,
+		uuid.MustParse(u.ID),
 		u.Lastname,
 		u.Firstname,
-		u.Username,
+		u.Email,
 		u.Password,
 		u.CreatedAt,
 	)
@@ -31,10 +33,10 @@ func (u *User) UserToEntity() entities.User {
 // UserFromEntity converts a user entity into a user model.
 func UserFromEntity(u *entities.User) User {
 	return User{
-		u.ID,
+		u.ID.String(),
 		u.Lastname,
 		u.Firstname,
-		u.Username,
+		u.Email,
 		u.Password,
 		u.CreatedAt,
 	}
