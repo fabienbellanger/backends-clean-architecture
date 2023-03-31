@@ -276,6 +276,7 @@ dependencies = [
  "dotenvy",
  "env_logger",
  "log",
+ "rand",
  "serde",
  "sha2",
  "sqlx",

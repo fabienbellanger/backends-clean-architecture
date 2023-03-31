@@ -59,7 +59,6 @@ pub enum ApiError {
 }
 
 // Axum errors
-// ------------
 impl IntoResponse for ApiError {
     fn into_response(self) -> Response {
         let status = match self {
@@ -83,7 +82,6 @@ impl IntoResponse for ApiError {
 }
 
 // SQLx errors
-// -----------
 impl From<sqlx::Error> for ApiError {
     fn from(error: sqlx::Error) -> Self {
         error!("Database error: {error:?}");

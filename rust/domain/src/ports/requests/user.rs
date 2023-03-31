@@ -4,7 +4,7 @@ use serde::Deserialize;
 use uuid::Uuid;
 use validator::Validate;
 
-#[derive(Debug, Validate, Deserialize)]
+#[derive(Debug, Validate, Deserialize, Clone)]
 pub struct LoginRequest {
     #[validate(email)]
     pub email: String,
@@ -12,12 +12,12 @@ pub struct LoginRequest {
     pub password: String,
 }
 
-#[derive(Debug, Validate, Deserialize)]
+#[derive(Debug, Validate, Deserialize, Clone)]
 pub struct GetUserRequest {
     pub id: Uuid,
 }
 
-#[derive(Debug, Validate, Deserialize)]
+#[derive(Debug, Validate, Deserialize, Clone)]
 pub struct CreateUserRequest {
     pub lastname: String,
     pub firstname: String,
@@ -27,7 +27,7 @@ pub struct CreateUserRequest {
     pub password: String,
 }
 
-#[derive(Debug, Validate, Deserialize)]
+#[derive(Debug, Validate, Deserialize, Clone)]
 pub struct DeleteUserRequest {
     pub id: Uuid,
 }
