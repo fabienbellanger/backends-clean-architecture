@@ -49,6 +49,17 @@ pub struct Jwt {
     decoding_key: Option<DecodingKey>,
 }
 
+impl Default for Jwt {
+    fn default() -> Self {
+        Self {
+            algorithm: Algorithm::HS512,
+            lifetime: 24, // 24h
+            encoding_key: None,
+            decoding_key: None,
+        }
+    }
+}
+
 impl Debug for Jwt {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(
@@ -73,6 +84,21 @@ impl Jwt {
             encoding_key,
             decoding_key,
         }
+    }
+
+    /// Update lifetime
+    pub fn set_lifetime(&mut self, hours: i64) {
+        self.lifetime = hours;
+    }
+
+    /// Update encoding key
+    pub fn set_encoding_key(&mut self, secret: &str) {
+        self.encoding_key = Some(EncodingKey::from_secret(secret.as_bytes()));
+    }
+
+    /// Update decoding key
+    pub fn set_decoding_key(&mut self, secret: &str) {
+        self.decoding_key = Some(DecodingKey::from_secret(secret.as_bytes()));
     }
 
     /// Generate JWT
