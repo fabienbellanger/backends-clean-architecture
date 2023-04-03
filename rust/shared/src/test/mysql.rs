@@ -1,4 +1,4 @@
-//! MySQL test helper
+//! MySQL test helper module
 
 use sqlx::{mysql::MySqlPoolOptions, Connection, MySql, MySqlConnection, MySqlPool};
 use std::time::Duration;

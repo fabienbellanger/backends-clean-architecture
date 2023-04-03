@@ -1,9 +1,9 @@
-pub(crate) mod config;
+pub mod config;
 pub(crate) mod extractors;
 pub(crate) mod handlers;
-pub(crate) mod layers;
+pub mod layers;
 pub(crate) mod logger;
-pub(crate) mod routes;
+pub mod routes;
 pub mod server;
 
 #[macro_use]

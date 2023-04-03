@@ -2,8 +2,8 @@
 
 pub(crate) mod basic_auth;
 pub(crate) mod jwt;
-pub(crate) mod logger;
-pub(crate) mod states;
+pub mod logger;
+pub mod states;
 
 use crate::config::Config;
 use axum::body::Full;
