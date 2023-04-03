@@ -1,13 +1,13 @@
-use crate::TestDatabase;
 use clean_architecture_database::mysql::repositories::user::UserMysqlRepository;
 use clean_architecture_domain::ports::{
     repositories::user::UserRepository,
     requests::user::{CreateUserRequest, GetUserRequest},
 };
+use clean_architecture_shared::test::mysql::TestMySQL;
 
 #[tokio::test]
 async fn test_create_user() {
-    let db = TestDatabase::new().await;
+    let db = TestMySQL::new().await;
     let repository = UserMysqlRepository::new(&db.pool);
 
     // Create a new user
@@ -29,7 +29,7 @@ async fn test_create_user() {
 
 #[tokio::test]
 async fn test_create_user_with_email_already_exists() {
-    let db = TestDatabase::new().await;
+    let db = TestMySQL::new().await;
     let repository = UserMysqlRepository::new(&db.pool);
 
     // Create a new user
@@ -55,7 +55,7 @@ async fn test_create_user_with_email_already_exists() {
 
 #[tokio::test]
 async fn test_get_user() {
-    let db = TestDatabase::new().await;
+    let db = TestMySQL::new().await;
     let repository = UserMysqlRepository::new(&db.pool);
 
     // Create a new user

@@ -308,12 +308,15 @@ version = "0.1.0"
 dependencies = [
  "axum",
  "chrono",
+ "dotenvy",
  "jsonwebtoken",
  "log",
+ "rand",
  "serde",
  "serde_json",
  "sqlx",
  "thiserror",
+ "tokio",
  "tracing",
  "validator",
 ]
