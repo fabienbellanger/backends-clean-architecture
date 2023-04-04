@@ -1,6 +1,10 @@
 //! MySQL module
 
-use crate::init_config;
+pub mod models;
+pub mod repositories;
+
+use crate::{config::Config, database::GenericDb, init_config};
+use async_trait::async_trait;
 use clean_architecture_shared::{
     api_error,
     error::{ApiError, ApiErrorCode, ApiResult},
@@ -8,17 +12,21 @@ use clean_architecture_shared::{
 use sqlx::{mysql::MySqlPoolOptions, MySql, Pool};
 use std::{sync::Arc, time::Duration};
 
-pub mod models;
-pub mod repositories;
-
 #[derive(Debug, Clone)]
 pub struct Db {
-    pub(crate) pool: Arc<Pool<MySql>>,
+    pub pool: Arc<Pool<MySql>>,
 }
 
-impl Db {
-    pub async fn new() -> ApiResult<Self> {
+#[async_trait]
+impl GenericDb for Db {
+    type Db = Db;
+
+    async fn new() -> ApiResult<Self::Db> {
         let settings = &init_config()?;
+        Self::from_config(settings).await
+    }
+
+    async fn from_config(settings: &Config) -> ApiResult<Self::Db> {
         let url = &settings.database_url;
         let max_connections = settings.database_max_connections;
         let min_connections = settings.database_min_connections;

@@ -1,6 +1,9 @@
 //! Use cases module
 
-use clean_architecture_database::mysql::{repositories::user::UserMysqlRepository, Db};
+use clean_architecture_database::{
+    database::GenericDb,
+    mysql::{repositories::user::UserMysqlRepository, Db},
+};
 use clean_architecture_domain::{ports::services::user::UserService, usecases::user::UserUseCase};
 use clean_architecture_shared::error::ApiResult;
 
