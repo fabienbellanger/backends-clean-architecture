@@ -4,7 +4,10 @@ Backend clean architecture examples in Rust and Go
 
 ## Rust
 
+See [this example](https://github.com/codemountains/axum-ddd-explicit-architecture)
+
 ### TODO
+
 - [ ] API: Add unit tests
 - [x] API: Add OpenAPI
 - [ ] API: Add Docker support

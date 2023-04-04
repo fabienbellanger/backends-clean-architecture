@@ -12,6 +12,7 @@ use clean_architecture_shared::auth::Jwt;
 use clean_architecture_shared::error::{ApiError, ApiErrorCode, ApiResult};
 use clean_architecture_shared::query_parameter::PaginateSort;
 
+#[derive(Clone)]
 pub struct UserService<R: UserRepository> {
     user_repository: R,
 }

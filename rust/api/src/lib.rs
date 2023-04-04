@@ -5,6 +5,7 @@ pub mod layers;
 pub(crate) mod logger;
 pub mod routes;
 pub mod server;
+pub(crate) mod usecases;
 
 #[macro_use]
 extern crate lazy_static;

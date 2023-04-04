@@ -57,6 +57,7 @@
 //! }
 //! ```
 use crate::mysql::models::user::UserModel;
+use crate::mysql::Db;
 use async_trait::async_trait;
 use chrono::Utc;
 use clean_architecture_domain::ports::requests::user::{CreateUserRequest, DeleteUserRequest};
@@ -70,24 +71,24 @@ use clean_architecture_domain::{
 use clean_architecture_shared::error::ApiResult;
 use clean_architecture_shared::query_parameter::PaginateSort;
 use sha2::{Digest, Sha512};
-use sqlx::mysql::MySqlPool;
+use std::sync::Arc;
 use tracing::instrument;
 
 /// User MySQL repository
 #[derive(Debug, Clone)]
-pub struct UserMysqlRepository<'a> {
-    pool: &'a MySqlPool,
+pub struct UserMysqlRepository {
+    db: Arc<Db>,
 }
 
-impl<'a> UserMysqlRepository<'a> {
+impl UserMysqlRepository {
     /// Create a new repository
-    pub fn new(pool: &'a MySqlPool) -> Self {
-        Self { pool }
+    pub fn new(db: Db) -> Self {
+        Self { db: Arc::new(db) }
     }
 }
 
 #[async_trait]
-impl<'a> UserRepository for UserMysqlRepository<'a> {
+impl UserRepository for UserMysqlRepository {
     #[instrument(skip(self))]
     async fn get_users(&self, paginate_sort: &PaginateSort) -> ApiResult<Vec<User>> {
         let mut query = String::from(
@@ -110,7 +111,7 @@ impl<'a> UserRepository for UserMysqlRepository<'a> {
         query.push_str(&paginate_sort.get_pagination_sql());
 
         let users = sqlx::query_as::<_, UserModel>(&query)
-            .fetch_all(self.pool)
+            .fetch_all(self.db.pool.clone().as_ref())
             .await?;
 
         Ok(users
@@ -126,7 +127,7 @@ impl<'a> UserRepository for UserMysqlRepository<'a> {
             "SELECT * FROM users WHERE id = ?",
             request.id.to_string()
         )
-        .fetch_one(self.pool)
+        .fetch_one(self.db.pool.clone().as_ref())
         .await?;
 
         user.try_into()
@@ -141,7 +142,7 @@ impl<'a> UserRepository for UserMysqlRepository<'a> {
             request.email,
             hashed_password
         )
-        .fetch_optional(self.pool)
+        .fetch_optional(self.db.pool.clone().as_ref())
         .await?;
 
         match user {
@@ -167,7 +168,7 @@ impl<'a> UserRepository for UserMysqlRepository<'a> {
             request.firstname,
             Utc::now(),
             Utc::now()
-        ).execute(self.pool)
+        ).execute(self.db.pool.clone().as_ref())
             .await?;
 
         // Get user
@@ -181,7 +182,7 @@ impl<'a> UserRepository for UserMysqlRepository<'a> {
             Some(Utc::now()),
             request.id.to_string()
         )
-        .execute(self.pool)
+        .execute(self.db.pool.clone().as_ref())
         .await?;
 
         Ok(result.rows_affected())
@@ -190,7 +191,7 @@ impl<'a> UserRepository for UserMysqlRepository<'a> {
     #[instrument(skip(self))]
     async fn get_total_users(&self) -> ApiResult<i64> {
         let result = sqlx::query!("SELECT COUNT(*) AS total FROM users WHERE deleted_at IS NULL")
-            .fetch_one(self.pool)
+            .fetch_one(self.db.pool.clone().as_ref())
             .await?;
 
         Ok(result.total)

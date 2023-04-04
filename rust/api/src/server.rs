@@ -5,10 +5,10 @@ use crate::layers::{
     states::{SharedState, State},
     MakeRequestUuid,
 };
+use crate::usecases::AppUseCases;
 use crate::{handlers, layers, logger, routes};
 use axum::error_handling::HandleErrorLayer;
 use axum::{middleware, Extension, Router};
-use clean_architecture_database::init_mysql_pool;
 use clean_architecture_shared::api_error;
 use clean_architecture_shared::error::{ApiError, ApiErrorCode, ApiResult};
 use std::net::{AddrParseError, SocketAddr};
@@ -49,9 +49,6 @@ async fn get_app(settings: &Config) -> ApiResult<Router> {
         &settings.logs_file,
     )?;
 
-    // MySQL database
-    let pool = init_mysql_pool().await?;
-
     // CORS
     let cors = layers::cors(settings);
 
@@ -77,9 +74,10 @@ async fn get_app(settings: &Config) -> ApiResult<Router> {
     app = app
         .fallback_service(ServeDir::new("assets").append_index_html_on_directories(true)) // FIXME: static_file_error not work this Axum 0.6.9!
         .layer(middleware::from_fn(layers::override_http_errors))
-        .layer(Extension(pool))
-        .layer(layers);
+        .layer(layers)
+        .layer(Extension(AppUseCases::new().await?));
 
+    // State
     let app = app.with_state(global_state);
 
     Ok(app)
