@@ -1,4 +1,3 @@
-pub mod config;
 pub(crate) mod extractors;
 pub(crate) mod handlers;
 pub mod layers;

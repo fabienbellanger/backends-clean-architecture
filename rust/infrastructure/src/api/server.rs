@@ -3,13 +3,13 @@
 use crate::database::mysql::Db;
 use crate::database::GenericDb;
 
-use super::config::Config;
 use super::layers::{
     states::{SharedState, State},
     MakeRequestUuid,
 };
 use super::usecases::AppUseCases;
 use super::{handlers, layers, logger, routes};
+use crate::config::Config;
 use axum::error_handling::HandleErrorLayer;
 use axum::{middleware, Extension, Router};
 use clean_architecture_shared::api_error;

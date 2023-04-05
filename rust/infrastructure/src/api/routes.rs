@@ -1,9 +1,9 @@
 //! Routes list
 
-use super::config::Config;
 use super::layers::basic_auth::BasicAuthLayer;
 use super::layers::states::SharedState;
 use super::{handlers, layers};
+use crate::config::Config;
 use axum::routing::{delete, get, post};
 use axum::Router;
 

@@ -3,7 +3,8 @@
 pub mod models;
 pub mod repositories;
 
-use super::{config::Config, init_config, GenericDb};
+use super::{init_config, GenericDb};
+use crate::config::Config;
 use async_trait::async_trait;
 use clean_architecture_shared::{
     api_error,

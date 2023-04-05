@@ -1,7 +1,6 @@
-pub mod config;
 pub mod mysql;
 
-use self::config::Config;
+use crate::config::Config;
 use async_trait::async_trait;
 use clean_architecture_shared::error::ApiResult;
 

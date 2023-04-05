@@ -5,7 +5,7 @@ pub(crate) mod jwt;
 pub mod logger;
 pub mod states;
 
-use super::config::Config;
+use crate::config::Config;
 use axum::body::Full;
 use axum::headers::HeaderName;
 use axum::http::header::{ACCEPT, AUTHORIZATION, CONTENT_TYPE, ORIGIN};

@@ -4,7 +4,6 @@ pub mod user;
 use axum::Router;
 use axum::{http::StatusCode, Extension};
 use clean_architecture_infrastructure::api::{
-    config::Config,
     layers::{
         self,
         states::{ConfigState, SharedState, State},
@@ -13,6 +12,7 @@ use clean_architecture_infrastructure::api::{
     logger, routes,
     usecases::AppUseCases,
 };
+use clean_architecture_infrastructure::config::Config;
 use clean_architecture_shared::{auth::Jwt, error::ApiErrorMessage};
 use hyper::{Body, Request};
 use jsonwebtoken::{Algorithm, DecodingKey, EncodingKey};

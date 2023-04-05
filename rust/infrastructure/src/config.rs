@@ -18,6 +18,21 @@ pub struct Config {
     /// Log file name
     pub logs_file: String,
 
+    /// Database URL (Ex.: mysql://root:root@127.0.0.1:3306/rust_clean_architecture)
+    pub database_url: String,
+    /// Database auto migration enabled
+    pub database_auto_migration: bool,
+    /// Database maximum connections (in second)
+    pub database_max_connections: u32,
+    /// Database minimum connections (in second)
+    pub database_min_connections: u32,
+    /// Database maximum lifetime (in second)
+    pub database_max_lifetime: u64,
+    /// Database connection timeout (in second)
+    pub database_connect_timeout: u64,
+    /// Database connection timeout (in second)
+    pub database_idle_timeout: u64,
+
     /// Server URL
     pub server_url: String,
     /// Server port

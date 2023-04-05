@@ -1,6 +1,6 @@
 //! States module
 
-use crate::api::config::Config;
+use crate::config::Config;
 use clean_architecture_shared::auth::Jwt;
 use jsonwebtoken::{Algorithm, DecodingKey, EncodingKey};
 use std::sync::Arc;
