@@ -1,8 +1,5 @@
 //! Server module
 
-use crate::database::mysql::Db;
-use crate::database::GenericDb;
-
 use super::layers::{
     states::{SharedState, State},
     MakeRequestUuid,
@@ -10,6 +7,8 @@ use super::layers::{
 use super::usecases::AppUseCases;
 use super::{handlers, layers, logger, routes};
 use crate::config::Config;
+use crate::database::mysql::Db;
+use crate::database::GenericDb;
 use axum::error_handling::HandleErrorLayer;
 use axum::{middleware, Extension, Router};
 use clean_architecture_shared::api_error;
