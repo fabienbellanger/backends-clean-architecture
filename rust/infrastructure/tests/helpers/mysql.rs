@@ -80,7 +80,7 @@ impl TestMySQL {
             .unwrap();
 
         // Run the migrations
-        sqlx::migrate!("../database/migrations")
+        sqlx::migrate!("../infrastructure/migrations")
             .run(&mut pool)
             .await
             .expect("Failed to migrate the database");
