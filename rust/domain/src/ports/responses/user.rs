@@ -2,9 +2,9 @@
 
 use crate::entities::user::User;
 use crate::ports::responses::pagination::PaginateResponse;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug, PartialEq, Eq, Serialize)]
+#[derive(Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct LoginResponse {
     pub id: String,
     pub lastname: String,
@@ -14,7 +14,7 @@ pub struct LoginResponse {
     pub expired_at: String,
 }
 
-#[derive(Debug, PartialEq, Eq, Serialize)]
+#[derive(Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct GetUserResponse {
     pub id: String,
     pub lastname: String,

@@ -227,64 +227,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "clean-architecture-api"
-version = "0.1.0"
-dependencies = [
- "axum",
- "bytes",
- "chrono",
- "clean-architecture-database",
- "clean-architecture-domain",
- "clean-architecture-shared",
- "config",
- "dotenvy",
- "env_logger",
- "futures",
- "http-auth-basic",
- "hyper",
- "jsonwebtoken",
- "lazy_static",
- "log",
- "mime",
- "serde",
- "serde_json",
- "serde_urlencoded",
- "sqlx",
- "tera",
- "thiserror",
- "tokio",
- "tower",
- "tower-http",
- "tracing",
- "tracing-appender",
- "tracing-subscriber",
- "uuid",
-]
-
-[[package]]
-name = "clean-architecture-database"
-version = "0.1.0"
-dependencies = [
- "async-trait",
- "chrono",
- "clean-architecture-domain",
- "clean-architecture-shared",
- "config",
- "dotenvy",
- "env_logger",
- "log",
- "rand",
- "serde",
- "sha2",
- "sqlx",
- "thiserror",
- "tokio",
- "tracing",
- "tracing-subscriber",
- "uuid",
-]
-
-[[package]]
 name = "clean-architecture-domain"
 version = "0.1.0"
 dependencies = [
@@ -297,6 +239,43 @@ dependencies = [
  "tracing",
  "uuid",
  "validator",
+]
+
+[[package]]
+name = "clean-architecture-infrastructure"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "axum",
+ "bytes",
+ "chrono",
+ "clean-architecture-domain",
+ "clean-architecture-shared",
+ "config",
+ "dotenvy",
+ "env_logger",
+ "futures",
+ "http-auth-basic",
+ "hyper",
+ "jsonwebtoken",
+ "lazy_static",
+ "log",
+ "mime",
+ "rand",
+ "serde",
+ "serde_json",
+ "serde_urlencoded",
+ "sha2",
+ "sqlx",
+ "tera",
+ "thiserror",
+ "tokio",
+ "tower",
+ "tower-http",
+ "tracing",
+ "tracing-appender",
+ "tracing-subscriber",
+ "uuid",
 ]
 
 [[package]]

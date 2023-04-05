@@ -1,8 +1,4 @@
-//! MySQL test helper module
-
-mod user;
-
-use clean_architecture_database::mysql::Db;
+use clean_architecture_infrastructure::database::mysql::Db;
 use rand::distributions::{Alphanumeric, DistString};
 use sqlx::{mysql::MySqlPoolOptions, Connection, MySql, MySqlConnection, MySqlPool};
 use std::{sync::Arc, time::Duration};
