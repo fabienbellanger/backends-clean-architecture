@@ -35,6 +35,11 @@ func (uc *userUseCase) Create(req *requests.UserCreateRequest) (*entities.User, 
 }
 
 func (uc *userUseCase) GetUser(req *requests.GetUserRequest) (*entities.User, error) {
+	// Validation
+	if err := req.Validate(); err != nil {
+		return nil, err
+	}
+
 	// Get user from ID
 	user, err := uc.userRepository.GetUser(req.ID)
 
