@@ -10,7 +10,7 @@ use clean_architecture_shared::query_parameter::PaginateSort;
 use uuid::Uuid;
 
 pub(crate) const DATE: &str = "2023-04-01T12:10:00+00:00";
-pub(crate) const JWT_SECRET: &str = "mysecretkey";
+pub(crate) const JWT_SECRET: &str = "mySecretKey";
 pub(crate) const USER_ID: &str = "3288fb86-db99-471d-95bc-1451c7ec6f7b";
 pub(crate) const USER_EMAIL: &str = "test@test.com";
 pub(crate) const TOTAL_USERS: i64 = 10;
