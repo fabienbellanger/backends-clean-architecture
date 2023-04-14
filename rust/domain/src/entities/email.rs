@@ -1,11 +1,6 @@
 //! Email entity
 
-/// Represents SMTP configuration
-pub struct SmtpConfig {
-    pub host: String,
-    pub port: u16,
-    pub timeout: u64,
-}
+use clean_architecture_shared::error::ApiResult;
 
 /// Message to send
 #[derive(Default)]
@@ -17,18 +12,15 @@ pub struct Message {
     pub html_body: Option<String>,
 }
 
-/// Represents an email sent
-pub struct Email {
-    pub smtp_config: SmtpConfig,
-    pub message: Message,
+#[derive(Debug, Default, Clone)]
+pub struct SmtpConfig {
+    pub host: String,
+    pub port: u16,
+    pub timeout: u64,
+    pub username: Option<String>,
+    pub password: Option<String>,
 }
 
-impl Email {
-    // /// Creates a new `Email` from SMTP configuration
-    // pub fn init(config: &SmtpConfig) -> Self {
-    //     Self {
-    //         smtp_config: config,
-    //         ..default::Default,
-    //     }
-    // }
+pub trait Email {
+    fn send(&self, config: &SmtpConfig, message: &Message) -> ApiResult<()>;
 }

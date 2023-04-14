@@ -69,7 +69,7 @@ async fn test_get_user() {
 
     // Retrieve this new user by id
     let request = GetUserRequest { id: user.id };
-    let result = repository.get_user(request.clone()).await;
+    let result = repository.get_user_by_id(request.clone()).await;
 
     assert!(result.is_ok());
 }

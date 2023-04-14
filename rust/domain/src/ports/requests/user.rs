@@ -31,3 +31,9 @@ pub struct CreateUserRequest {
 pub struct DeleteUserRequest {
     pub id: Uuid,
 }
+
+#[derive(Debug, Validate, Deserialize, Clone)]
+pub struct ForgottenPasswordRequest {
+    #[validate(email)]
+    pub email: String,
+}

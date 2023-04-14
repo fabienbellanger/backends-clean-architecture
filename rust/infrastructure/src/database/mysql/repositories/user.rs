@@ -65,7 +65,7 @@ impl UserRepository for UserMysqlRepository {
     }
 
     #[instrument(skip(self))]
-    async fn get_user(&self, request: GetUserRequest) -> ApiResult<User> {
+    async fn get_user_by_id(&self, request: GetUserRequest) -> ApiResult<User> {
         let user = sqlx::query_as!(
             UserModel,
             "SELECT * FROM users WHERE id = ?",
@@ -116,7 +116,7 @@ impl UserRepository for UserMysqlRepository {
             .await?;
 
         // Get user
-        self.get_user(GetUserRequest { id: user_id }).await
+        self.get_user_by_id(GetUserRequest { id: user_id }).await
     }
 
     #[instrument(skip(self))]

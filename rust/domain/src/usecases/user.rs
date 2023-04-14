@@ -1,6 +1,8 @@
 //! User use cases
 
-use crate::ports::requests::user::{CreateUserRequest, DeleteUserRequest};
+use crate::ports::requests::user::{
+    CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest,
+};
 use crate::ports::{
     repositories::user::UserRepository,
     requests::user::{GetUserRequest, LoginRequest},
@@ -16,6 +18,7 @@ use clean_architecture_shared::validation::validate_request_data;
 /// Create new user use case
 pub struct UserUseCase<R: UserRepository> {
     user_service: UserService<R>,
+    // email_service: EmailService<E>,
 }
 
 impl<R> UserUseCase<R>
@@ -63,5 +66,16 @@ where
         validate_request_data(&request)?;
 
         self.user_service.delete_user(request).await
+    }
+
+    /// Send forgotten password request
+    #[instrument(skip(self))]
+    pub async fn send_forgotten_password(
+        &self,
+        _request: ForgottenPasswordRequest,
+    ) -> ApiResult<()> {
+        // Get user from email
+        // Use EmailService
+        todo!()
     }
 }

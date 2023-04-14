@@ -72,7 +72,7 @@ impl<R: UserRepository> UserService<R> {
     #[instrument(skip(self))]
     pub async fn get_user(&self, request: GetUserRequest) -> ApiResult<GetUserResponse> {
         self.user_repository
-            .get_user(request)
+            .get_user_by_id(request)
             .await
             .map(|user| user.into())
     }

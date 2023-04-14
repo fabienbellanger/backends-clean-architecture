@@ -14,8 +14,8 @@ pub trait UserRepository {
     /// Get a list of users
     async fn get_users(&self, paginate_sort: &PaginateSort) -> ApiResult<Vec<User>>;
 
-    /// Get a user
-    async fn get_user(&self, request: GetUserRequest) -> ApiResult<User>;
+    /// Get a user by ID
+    async fn get_user_by_id(&self, request: GetUserRequest) -> ApiResult<User>;
 
     /// Login
     async fn login(&self, request: LoginRequest) -> ApiResult<Option<User>>;

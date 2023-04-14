@@ -36,7 +36,7 @@ impl UserRepository for TestUserRepository {
         }])
     }
 
-    async fn get_user(&self, request: GetUserRequest) -> ApiResult<User> {
+    async fn get_user_by_id(&self, request: GetUserRequest) -> ApiResult<User> {
         let id = Uuid::parse_str(USER_ID).unwrap();
         if id == request.id {
             let date = DateTime::parse_from_rfc3339(DATE)
