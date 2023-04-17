@@ -94,7 +94,7 @@ impl<R: UserRepository> UserService<R> {
 
     /// Get user by email
     #[instrument(skip(self))]
-    pub async fn get_user_by_email(&self, email: String) -> ApiResult<GetUserResponse> {
+    pub async fn forgotten_password(&self, email: String) -> ApiResult<GetUserResponse> {
         self.user_repository
             .get_user_by_email(email)
             .await

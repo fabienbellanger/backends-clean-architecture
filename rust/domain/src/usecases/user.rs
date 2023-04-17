@@ -83,7 +83,7 @@ where
         // Get user from email
         let user = self
             .user_service
-            .get_user_by_email(request.email.clone())
+            .forgotten_password(request.email.clone())
             .await?;
 
         // Password reset

@@ -90,3 +90,21 @@ pub async fn delete_user(
         )),
     }
 }
+
+/// Send forgotten password request: POST /api/v1/forgotten-password/:email
+#[instrument(skip(uc, state))]
+pub async fn forgotten_password(
+    Path(email): Path<String>,
+    Extension(uc): Extension<AppUseCases>,
+    State(state): State<SharedState>,
+    ExtractRequestId(request_id): ExtractRequestId,
+) -> ApiResult<StatusCode> {
+    let result = uc
+        .user
+        .send_forgotten_password(ForgottenPasswordRequest {
+            email,
+            expiration_duration: state.config.forgotten_password_expiration_duration,
+        })
+        .await?;
+    Ok(StatusCode::NO_CONTENT)
+}

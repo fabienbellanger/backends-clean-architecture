@@ -5,7 +5,6 @@ use clean_architecture_domain::ports::repositories::user::UserRepository;
 use clean_architecture_domain::ports::requests::user::{
     CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest, GetUserRequest, LoginRequest,
 };
-use clean_architecture_domain::ports::services::email::EmailService;
 use clean_architecture_shared::error::{ApiError, ApiResult};
 use clean_architecture_shared::query_parameter::PaginateSort;
 use uuid::Uuid;
@@ -128,17 +127,5 @@ impl UserRepository for TestUserRepository {
 
     async fn get_total_users(&self) -> ApiResult<i64> {
         Ok(TOTAL_USERS)
-    }
-}
-
-pub(crate) struct TestEmailService {}
-
-impl EmailService for TestEmailService {
-    fn forgotten_password(
-        &self,
-        _request: ForgottenPasswordRequest,
-        _token: &str,
-    ) -> ApiResult<()> {
-        Ok(())
     }
 }

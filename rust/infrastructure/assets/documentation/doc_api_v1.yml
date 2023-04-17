@@ -47,6 +47,33 @@ paths:
             $ref: "#/components/responses/Unauthorized"
         '500':
             $ref: "#/components/responses/InternalServerError"
+  /forgotten-password/{email}:
+    post:
+      summary: ""
+      description: Forgotten password request
+      tags:
+        - "User password"
+      parameters:
+        - in: path
+          name: email
+          schema:
+            type: string
+            format: email
+          required: true
+          description: User email
+      responses:
+        '204':
+          description: No Content
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '405':
+          $ref: "#/components/responses/MethodNotAllowed"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
   /users:
     get:
       summary: ""
