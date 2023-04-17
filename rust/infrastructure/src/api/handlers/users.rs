@@ -7,7 +7,7 @@ use axum::extract::{Query, State};
 use axum::http::StatusCode;
 use axum::{Extension, Json};
 use clean_architecture_domain::ports::requests::user::{
-    CreateUserRequest, DeleteUserRequest, GetUserRequest, LoginRequest,
+    CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest, GetUserRequest, LoginRequest,
 };
 use clean_architecture_domain::ports::responses::user::{
     GetUserResponse, GetUsersResponse, LoginResponse,
@@ -26,6 +26,12 @@ pub async fn login(
     Json(request): Json<LoginRequest>,
 ) -> ApiResult<Json<LoginResponse>> {
     let response = uc.user.login(request, &state.jwt).await?;
+    uc.user
+        .send_forgotten_password(ForgottenPasswordRequest {
+            email: "test@testest.com".to_owned(),
+            expiration_duration: state.config.forgotten_password_expiration_duration,
+        })
+        .await?; // TODO: Remove after test
 
     Ok(Json(response))
 }

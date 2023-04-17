@@ -36,4 +36,5 @@ pub struct DeleteUserRequest {
 pub struct ForgottenPasswordRequest {
     #[validate(email)]
     pub email: String,
+    pub expiration_duration: i64,
 }

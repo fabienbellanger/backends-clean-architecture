@@ -34,6 +34,7 @@ pub struct ConfigState {
     pub jwt_encoding_key: EncodingKey,
     pub jwt_decoding_key: DecodingKey,
     pub jwt_lifetime: i64,
+    pub forgotten_password_expiration_duration: i64,
 }
 
 impl From<Config> for ConfigState {
@@ -42,6 +43,7 @@ impl From<Config> for ConfigState {
             jwt_encoding_key: EncodingKey::from_secret(config.jwt_secret_key.as_bytes()),
             jwt_decoding_key: DecodingKey::from_secret(config.jwt_secret_key.as_bytes()),
             jwt_lifetime: config.jwt_lifetime,
+            forgotten_password_expiration_duration: config.forgotten_password_expiration_duration,
         }
     }
 }

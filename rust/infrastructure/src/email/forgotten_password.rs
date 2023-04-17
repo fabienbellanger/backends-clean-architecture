@@ -1,11 +1,11 @@
-//! Email request
+//! Forgotten password email
 
-use crate::entities::email::Message;
+use super::Message;
 use clean_architecture_shared::api_error;
 use clean_architecture_shared::error::{ApiError, ApiErrorCode, ApiResult};
 
 #[derive(Debug, Clone)]
-pub struct ForgottenPasswordRequest {
+pub struct ForgottenPassword {
     pub app_name: String,
     pub base_url: String,
     pub token: String,
@@ -13,7 +13,7 @@ pub struct ForgottenPasswordRequest {
     pub email_to: String,
 }
 
-impl ForgottenPasswordRequest {
+impl ForgottenPassword {
     /// Return link and subject
     fn get_link_subject(&self) -> ApiResult<(String, String)> {
         let link = format!("{}/{}", self.base_url, self.token);
@@ -76,7 +76,7 @@ If you didn't mean to reset your password, then you can just ignore this email; 
     }
 }
 
-impl TryInto<Message> for ForgottenPasswordRequest {
+impl TryInto<Message> for ForgottenPassword {
     type Error = ApiError;
 
     fn try_into(self) -> Result<Message, Self::Error> {
@@ -99,7 +99,7 @@ mod test {
 
     #[test]
     fn test_forgotten_password_request_get_link_and_subject() {
-        let request = ForgottenPasswordRequest {
+        let request = ForgottenPassword {
             app_name: "My App".to_owned(),
             base_url: "https://test.com".to_owned(),
             token: "myToken5846".to_owned(),
@@ -116,7 +116,7 @@ mod test {
 
     #[test]
     fn test_forgotten_password_request_get_link_and_subject_with_invalid_url() {
-        let request = ForgottenPasswordRequest {
+        let request = ForgottenPassword {
             app_name: "My App".to_owned(),
             base_url: "-test.com".to_owned(),
             token: "myToken5846".to_owned(),
@@ -128,7 +128,7 @@ mod test {
 
     #[test]
     fn test_forgotten_password_request_try_into_message() {
-        let request = ForgottenPasswordRequest {
+        let request = ForgottenPassword {
             app_name: "My App".to_owned(),
             base_url: "https://test.com".to_owned(),
             token: "myToken5846".to_owned(),

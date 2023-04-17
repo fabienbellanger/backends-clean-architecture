@@ -68,10 +68,23 @@ impl UserRepository for UserMysqlRepository {
     async fn get_user_by_id(&self, request: GetUserRequest) -> ApiResult<User> {
         let user = sqlx::query_as!(
             UserModel,
-            "SELECT * FROM users WHERE id = ?",
+            "SELECT * FROM users WHERE id = ? AND deleted_at IS NULL",
             request.id.to_string()
         )
-        .fetch_one(self.db.pool.clone().as_ref())
+        .fetch_one(self.db.pool.clone().as_ref()) // TODO: Change because generate a 500 instead of 404
+        .await?;
+
+        user.try_into()
+    }
+
+    #[instrument(skip(self))]
+    async fn get_user_by_email(&self, email: String) -> ApiResult<User> {
+        let user = sqlx::query_as!(
+            UserModel,
+            "SELECT * FROM users WHERE email = ? AND deleted_at IS NULL",
+            email
+        )
+        .fetch_one(self.db.pool.clone().as_ref()) // TODO: Change because generate a 500 instead of 404
         .await?;
 
         user.try_into()

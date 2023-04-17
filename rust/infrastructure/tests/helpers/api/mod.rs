@@ -1,6 +1,6 @@
-use super::mysql::TestMySQL;
 pub mod user;
 
+use super::mysql::TestMySQL;
 use axum::Router;
 use axum::{http::StatusCode, Extension};
 use clean_architecture_infrastructure::api::{
@@ -13,6 +13,7 @@ use clean_architecture_infrastructure::api::{
     usecases::AppUseCases,
 };
 use clean_architecture_infrastructure::config::Config;
+use clean_architecture_infrastructure::email::{Email, EmailConfig};
 use clean_architecture_shared::{auth::Jwt, error::ApiErrorMessage};
 use hyper::{Body, Request};
 use jsonwebtoken::{Algorithm, DecodingKey, EncodingKey};
@@ -91,11 +92,12 @@ impl TestAppBuilder {
         let state = Self::get_state();
         let settings = Config::default();
         let database = TestMySQL::new().await;
+        let email = Email::init(EmailConfig::default());
 
         let mut router = Router::new().nest("/api/v1", routes::api(state.clone()));
         router = router.nest("/", routes::web(&settings));
         router = router.layer(Extension(
-            AppUseCases::new(database.database()).await.unwrap(),
+            AppUseCases::new(database.database(), email).await.unwrap(),
         ));
 
         let router = router.with_state(state);
@@ -104,7 +106,7 @@ impl TestAppBuilder {
     }
 
     fn get_state() -> SharedState {
-        let jwt_secret_key = "mysecretjwtkey";
+        let jwt_secret_key = "mySecretJwtKey";
         let jwt_lifetime = 24;
         let encoding_key = EncodingKey::from_secret(jwt_secret_key.as_bytes());
         let decoding_key = DecodingKey::from_secret(jwt_secret_key.as_bytes());
@@ -114,6 +116,7 @@ impl TestAppBuilder {
                 jwt_encoding_key: encoding_key.clone(),
                 jwt_decoding_key: decoding_key.clone(),
                 jwt_lifetime,
+                forgotten_password_expiration_duration: 24,
             },
             jwt: Jwt::new(
                 Algorithm::HS512,

@@ -91,4 +91,13 @@ impl<R: UserRepository> UserService<R> {
     pub async fn delete_user(&self, request: DeleteUserRequest) -> ApiResult<u64> {
         self.user_repository.delete_user(request).await
     }
+
+    /// Get user by email
+    #[instrument(skip(self))]
+    pub async fn get_user_by_email(&self, email: String) -> ApiResult<GetUserResponse> {
+        self.user_repository
+            .get_user_by_email(email)
+            .await
+            .map(|user| user.into())
+    }
 }

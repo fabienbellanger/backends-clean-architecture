@@ -3,8 +3,9 @@ use chrono::{DateTime, Utc};
 use clean_architecture_domain::entities::user::User;
 use clean_architecture_domain::ports::repositories::user::UserRepository;
 use clean_architecture_domain::ports::requests::user::{
-    CreateUserRequest, DeleteUserRequest, GetUserRequest, LoginRequest,
+    CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest, GetUserRequest, LoginRequest,
 };
+use clean_architecture_domain::ports::services::email::EmailService;
 use clean_architecture_shared::error::{ApiError, ApiResult};
 use clean_architecture_shared::query_parameter::PaginateSort;
 use uuid::Uuid;
@@ -47,6 +48,29 @@ impl UserRepository for TestUserRepository {
                 lastname: "Doe".to_string(),
                 firstname: "John".to_string(),
                 email: "john.doe@test.com".to_string(),
+                password: "00000000".to_string(),
+                created_at: date,
+                updated_at: date,
+                deleted_at: None,
+            };
+            Ok(user)
+        } else {
+            Err(ApiError::InternalError {
+                message: "Not found".to_owned(),
+            })
+        }
+    }
+
+    async fn get_user_by_email(&self, email: String) -> ApiResult<User> {
+        if USER_EMAIL == &email {
+            let date = DateTime::parse_from_rfc3339(DATE)
+                .unwrap()
+                .with_timezone(&Utc);
+            let user = User {
+                id: Uuid::parse_str(USER_ID).unwrap(),
+                lastname: "Doe".to_string(),
+                firstname: "John".to_string(),
+                email: USER_EMAIL.to_string(),
                 password: "00000000".to_string(),
                 created_at: date,
                 updated_at: date,
@@ -104,5 +128,17 @@ impl UserRepository for TestUserRepository {
 
     async fn get_total_users(&self) -> ApiResult<i64> {
         Ok(TOTAL_USERS)
+    }
+}
+
+pub(crate) struct TestEmailService {}
+
+impl EmailService for TestEmailService {
+    fn forgotten_password(
+        &self,
+        _request: ForgottenPasswordRequest,
+        _token: &str,
+    ) -> ApiResult<()> {
+        Ok(())
     }
 }

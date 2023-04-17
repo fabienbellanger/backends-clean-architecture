@@ -1,8 +1,10 @@
 //! User use cases
 
+use crate::entities::password_reset::PasswordReset;
 use crate::ports::requests::user::{
     CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest,
 };
+use crate::ports::services::email::EmailService;
 use crate::ports::{
     repositories::user::UserRepository,
     requests::user::{GetUserRequest, LoginRequest},
@@ -16,18 +18,22 @@ use clean_architecture_shared::validation::validate_request_data;
 
 #[derive(Clone)]
 /// Create new user use case
-pub struct UserUseCase<R: UserRepository> {
+pub struct UserUseCase<R: UserRepository, E: EmailService> {
     user_service: UserService<R>,
-    // email_service: EmailService<E>,
+    email_service: E,
 }
 
-impl<R> UserUseCase<R>
+impl<R, E> UserUseCase<R, E>
 where
     R: UserRepository,
+    E: EmailService,
 {
     /// Create a new use case
-    pub fn new(user_service: UserService<R>) -> Self {
-        Self { user_service }
+    pub fn new(user_service: UserService<R>, email_service: E) -> Self {
+        Self {
+            user_service,
+            email_service,
+        }
     }
 
     /// Login
@@ -72,10 +78,22 @@ where
     #[instrument(skip(self))]
     pub async fn send_forgotten_password(
         &self,
-        _request: ForgottenPasswordRequest,
+        request: ForgottenPasswordRequest,
     ) -> ApiResult<()> {
         // Get user from email
+        let user = self
+            .user_service
+            .get_user_by_email(request.email.clone())
+            .await?;
+
+        // Password reset
+        let password_reset = PasswordReset::new(user.id, request.expiration_duration);
+
+        // TODO: Insert in `password_resets` table
+
         // Use EmailService
-        todo!()
+        self.email_service
+            .forgotten_password(request, &password_reset.token)?;
+        Ok(())
     }
 }

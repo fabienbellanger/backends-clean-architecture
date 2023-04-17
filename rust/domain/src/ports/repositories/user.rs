@@ -17,6 +17,9 @@ pub trait UserRepository {
     /// Get a user by ID
     async fn get_user_by_id(&self, request: GetUserRequest) -> ApiResult<User>;
 
+    /// Get a user by email
+    async fn get_user_by_email(&self, email: String) -> ApiResult<User>;
+
     /// Login
     async fn login(&self, request: LoginRequest) -> ApiResult<Option<User>>;
 

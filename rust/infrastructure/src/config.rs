@@ -52,6 +52,24 @@ pub struct Config {
     pub basic_auth_username: String,
     /// Basic Auth password
     pub basic_auth_password: String,
+
+    /// SMTP host
+    pub smtp_host: String,
+    /// SMTP port
+    pub smtp_port: u16,
+    /// SMTP timeout (in second)
+    pub smtp_timeout: u64,
+    /// SMTP username
+    pub smtp_username: String,
+    /// SMTP password
+    pub smtp_password: String,
+
+    /// Forgotten password expiration duration (in hour)
+    pub forgotten_password_expiration_duration: i64,
+    /// Forgotten password base URL for link (Ex.: http://localhost)
+    pub forgotten_password_base_url: String,
+    /// Forgotten password email from
+    pub forgotten_password_email_from: String,
 }
 
 impl Config {
