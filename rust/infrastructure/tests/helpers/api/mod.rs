@@ -92,7 +92,7 @@ impl TestAppBuilder {
         let state = Self::get_state();
         let settings = Config::default();
         let database = TestMySQL::new().await;
-        let email = Email::init(EmailConfig::default());
+        let email = Email::new(EmailConfig::default());
 
         let mut router = Router::new().nest("/api/v1", routes::api(state.clone()));
         router = router.nest("/", routes::web(&settings));

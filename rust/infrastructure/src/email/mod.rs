@@ -6,18 +6,19 @@ use crate::config::Config;
 use crate::email::forgotten_password::ForgottenPassword;
 use clean_architecture_domain::ports::requests::user::ForgottenPasswordRequest;
 use clean_architecture_domain::ports::services::email::EmailService;
-use clean_architecture_shared::error::ApiResult;
+use clean_architecture_shared::api_error;
+use clean_architecture_shared::error::{ApiError, ApiErrorCode, ApiResult};
+use lettre::message::{header, MultiPart, SinglePart};
+use lettre::{SmtpTransport, Transport};
+use std::time::Duration;
 
 #[derive(Debug, Default, Clone)]
 pub struct EmailConfig {
     host: String,
     port: u16,
     timeout: u64,
-    username: Option<String>,
-    password: Option<String>,
 
     /// Forgotten password config
-    forgotten_password_expiration_duration: i64,
     forgotten_password_base_url: String,
     forgotten_password_email_from: String,
 }
@@ -28,9 +29,6 @@ impl From<Config> for EmailConfig {
             host: config.smtp_host,
             port: config.smtp_port,
             timeout: config.smtp_timeout,
-            username: None, // TODO
-            password: None, // TODO
-            forgotten_password_expiration_duration: config.forgotten_password_expiration_duration,
             forgotten_password_base_url: config.forgotten_password_base_url,
             forgotten_password_email_from: config.forgotten_password_email_from,
         }
@@ -54,14 +52,78 @@ pub struct Email {
 }
 
 impl Email {
-    /// Init new email with SMTP config
-    pub fn init(config: EmailConfig) -> Self {
+    /// New email with SMTP config
+    pub fn new(config: EmailConfig) -> Self {
         Self { config }
+    }
+
+    /// Initialize email sending
+    fn init(&self) -> SmtpTransport {
+        let host = &self.config.host;
+        let port = self.config.port;
+        let timeout = match self.config.timeout {
+            0 => None,
+            t => Some(Duration::from_secs(t)),
+        };
+
+        SmtpTransport::builder_dangerous(host)
+            .port(port)
+            .timeout(timeout)
+            .build()
     }
 
     /// Send an email
     fn send(&self, message: Message) -> ApiResult<()> {
-        println!("Send message: {message:?}");
+        let mailer = self.init();
+
+        let mut email_builder = lettre::Message::builder().subject(message.subject).from(
+            message.from.parse().map_err(|_| {
+                api_error!(
+                    ApiErrorCode::InternalError,
+                    "cannot send password reset email because: invalid from email".to_string()
+                )
+            })?,
+        );
+
+        // Add destination emails
+        for to in message.to_list {
+            email_builder = email_builder.to(to.parse().map_err(|_| {
+                api_error!(
+                    ApiErrorCode::InternalError,
+                    "cannot send password reset email because: invalid to email".to_string()
+                )
+            })?)
+        }
+
+        let mut multipart = MultiPart::alternative().build();
+        if let Some(text) = message.text_body {
+            multipart = multipart.singlepart(
+                SinglePart::builder()
+                    .header(header::ContentType::TEXT_PLAIN)
+                    .body(text),
+            );
+        }
+        if let Some(html) = message.html_body {
+            multipart = multipart.singlepart(
+                SinglePart::builder()
+                    .header(header::ContentType::TEXT_HTML)
+                    .body(html),
+            );
+        }
+        let email = email_builder.multipart(multipart).map_err(|err| {
+            api_error!(
+                ApiErrorCode::InternalError,
+                format!("cannot send password reset email because: {err}")
+            )
+        })?;
+
+        mailer.send(&email).map_err(|err| {
+            api_error!(
+                ApiErrorCode::InternalError,
+                format!("SMTP Error when sending password reset email: {err}")
+            )
+        })?;
+
         Ok(())
     }
 }

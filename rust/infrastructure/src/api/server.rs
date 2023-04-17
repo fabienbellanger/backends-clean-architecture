@@ -78,7 +78,7 @@ async fn get_app(settings: &Config) -> ApiResult<Router> {
     let db = Db::new().await?;
 
     // Email
-    let email = Email::init(EmailConfig::from(settings.clone()));
+    let email = Email::new(EmailConfig::from(settings.clone()));
 
     app = app
         .fallback_service(ServeDir::new("assets").append_index_html_on_directories(true)) // FIXME: static_file_error not work this Axum 0.6.9!
