@@ -1,6 +1,10 @@
 //! User services module
 
-use crate::ports::requests::user::{CreateUserRequest, DeleteUserRequest};
+use crate::entities::password_reset::PasswordReset;
+use crate::ports::repositories::password_reset::PasswordResetRepository;
+use crate::ports::requests::user::{
+    CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest,
+};
 use crate::ports::{
     repositories::user::UserRepository,
     requests::user::{GetUserRequest, LoginRequest},
@@ -13,14 +17,18 @@ use clean_architecture_shared::error::{ApiError, ApiErrorCode, ApiResult};
 use clean_architecture_shared::query_parameter::PaginateSort;
 
 #[derive(Clone)]
-pub struct UserService<R: UserRepository> {
-    user_repository: R,
+pub struct UserService<U: UserRepository, P: PasswordResetRepository> {
+    user_repository: U,
+    password_reset_repository: P,
 }
 
-impl<R: UserRepository> UserService<R> {
+impl<U: UserRepository, P: PasswordResetRepository> UserService<U, P> {
     /// Create a new service
-    pub fn new(user_repository: R) -> Self {
-        Self { user_repository }
+    pub fn new(user_repository: U, password_reset_repository: P) -> Self {
+        Self {
+            user_repository,
+            password_reset_repository,
+        }
     }
 
     /// Login
@@ -94,10 +102,22 @@ impl<R: UserRepository> UserService<R> {
 
     /// Get user by email
     #[instrument(skip(self))]
-    pub async fn forgotten_password(&self, email: String) -> ApiResult<GetUserResponse> {
-        self.user_repository
-            .get_user_by_email(email)
-            .await
-            .map(|user| user.into())
+    pub async fn forgotten_password(
+        &self,
+        request: ForgottenPasswordRequest,
+    ) -> ApiResult<PasswordReset> {
+        let user = self
+            .user_repository
+            .get_user_by_email(request.email.clone())
+            .await?;
+
+        // Password reset
+        let password_reset = PasswordReset::new(user.id.to_string(), request.expiration_duration);
+
+        self.password_reset_repository
+            .create_or_update(password_reset.clone().try_into()?)
+            .await?;
+
+        Ok(password_reset)
     }
 }

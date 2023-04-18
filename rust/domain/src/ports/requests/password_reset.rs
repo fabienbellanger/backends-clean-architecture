@@ -29,7 +29,7 @@ impl TryFrom<PasswordReset> for PasswordResetRequest {
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct GetByTokenRequest {
-    token: String,
+    pub token: String,
 }
 
 #[derive(Debug, Deserialize, Clone)]

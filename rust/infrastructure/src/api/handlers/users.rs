@@ -9,6 +9,7 @@ use axum::{Extension, Json};
 use clean_architecture_domain::ports::requests::user::{
     CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest, GetUserRequest, LoginRequest,
 };
+use clean_architecture_domain::ports::responses::password_reset::PasswordResetResponse;
 use clean_architecture_domain::ports::responses::user::{
     GetUserResponse, GetUsersResponse, LoginResponse,
 };
@@ -26,12 +27,6 @@ pub async fn login(
     Json(request): Json<LoginRequest>,
 ) -> ApiResult<Json<LoginResponse>> {
     let response = uc.user.login(request, &state.jwt).await?;
-    uc.user
-        .send_forgotten_password(ForgottenPasswordRequest {
-            email: "test@testest.com".to_owned(),
-            expiration_duration: state.config.forgotten_password_expiration_duration,
-        })
-        .await?; // TODO: Remove after test
 
     Ok(Json(response))
 }
@@ -98,7 +93,7 @@ pub async fn forgotten_password(
     Extension(uc): Extension<AppUseCases>,
     State(state): State<SharedState>,
     ExtractRequestId(request_id): ExtractRequestId,
-) -> ApiResult<StatusCode> {
+) -> ApiResult<Json<PasswordResetResponse>> {
     let result = uc
         .user
         .send_forgotten_password(ForgottenPasswordRequest {
@@ -106,5 +101,6 @@ pub async fn forgotten_password(
             expiration_duration: state.config.forgotten_password_expiration_duration,
         })
         .await?;
-    Ok(StatusCode::NO_CONTENT)
+
+    Ok(Json(result))
 }

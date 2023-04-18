@@ -1,5 +1,5 @@
-use crate::helpers::email::TestEmailService;
 use crate::helpers::user::*;
+use crate::helpers::{email::TestEmailService, password_reset::TestPasswordResetRepository};
 use chrono::{DateTime, Days, Utc};
 use clean_architecture_domain::{
     ports::{
@@ -13,10 +13,12 @@ use clean_architecture_shared::{auth::Jwt, query_parameter::PaginateSort};
 use std::cmp::Ordering;
 use uuid::Uuid;
 
-fn init_use_case() -> UserUseCase<TestUserRepository, TestEmailService> {
+fn init_use_case() -> UserUseCase<TestUserRepository, TestPasswordResetRepository, TestEmailService>
+{
     let user_repository = TestUserRepository {};
+    let password_reset_repository = TestPasswordResetRepository {};
     let email_service = TestEmailService {};
-    let user_service = UserService::new(user_repository);
+    let user_service = UserService::new(user_repository, password_reset_repository);
     UserUseCase::new(user_service, email_service)
 }
 

@@ -1,9 +1,10 @@
 //! User use cases
 
-use crate::entities::password_reset::PasswordReset;
+use crate::ports::repositories::password_reset::PasswordResetRepository;
 use crate::ports::requests::user::{
     CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest,
 };
+use crate::ports::responses::password_reset::PasswordResetResponse;
 use crate::ports::services::email::EmailService;
 use crate::ports::{
     repositories::user::UserRepository,
@@ -11,6 +12,7 @@ use crate::ports::{
     responses::user::{GetUserResponse, GetUsersResponse, LoginResponse},
     services::user::UserService,
 };
+use chrono::SecondsFormat;
 use clean_architecture_shared::auth::Jwt;
 use clean_architecture_shared::error::ApiResult;
 use clean_architecture_shared::query_parameter::PaginateSort;
@@ -18,18 +20,24 @@ use clean_architecture_shared::validation::validate_request_data;
 
 #[derive(Clone)]
 /// Create new user use case
-pub struct UserUseCase<R: UserRepository, E: EmailService> {
-    user_service: UserService<R>,
+pub struct UserUseCase<U, P, E>
+where
+    U: UserRepository,
+    P: PasswordResetRepository,
+    E: EmailService,
+{
+    user_service: UserService<U, P>,
     email_service: E,
 }
 
-impl<R, E> UserUseCase<R, E>
+impl<U, P, E> UserUseCase<U, P, E>
 where
-    R: UserRepository,
+    U: UserRepository,
+    P: PasswordResetRepository,
     E: EmailService,
 {
     /// Create a new use case
-    pub fn new(user_service: UserService<R>, email_service: E) -> Self {
+    pub fn new(user_service: UserService<U, P>, email_service: E) -> Self {
         Self {
             user_service,
             email_service,
@@ -75,25 +83,33 @@ where
     }
 
     /// Send forgotten password request
+    // TODO: Add test
     #[instrument(skip(self))]
     pub async fn send_forgotten_password(
         &self,
         request: ForgottenPasswordRequest,
-    ) -> ApiResult<()> {
-        // Get user from email
-        let user = self
+    ) -> ApiResult<PasswordResetResponse> {
+        let password_reset = self
             .user_service
-            .forgotten_password(request.email.clone())
+            .forgotten_password(request.clone())
             .await?;
 
-        // Password reset
-        let password_reset = PasswordReset::new(user.id, request.expiration_duration);
-
-        // TODO: Insert in `password_resets` table
-
-        // Use EmailService
+        // Send email
         self.email_service
             .forgotten_password(request, &password_reset.token)?;
+
+        Ok(PasswordResetResponse {
+            token: password_reset.token,
+            expired_at: password_reset
+                .expired_at
+                .to_rfc3339_opts(SecondsFormat::Secs, true),
+        })
+    }
+
+    /// Update user password
+    // TODO: Add test
+    #[instrument(skip(self))]
+    pub async fn update_user_password(&self) -> ApiResult<()> {
         Ok(())
     }
 }

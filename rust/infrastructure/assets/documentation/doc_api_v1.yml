@@ -62,8 +62,12 @@ paths:
           required: true
           description: User email
       responses:
-        '204':
-          description: No Content
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PasswordResetResponse'
         '400':
           $ref: "#/components/responses/BadRequest"
         '401':
@@ -362,3 +366,14 @@ components:
         - firstname
         - email
         - password
+    PasswordResetResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        expired_at:
+          type: string
+          format: date-time
+      required:
+        - token
+        - expired_at

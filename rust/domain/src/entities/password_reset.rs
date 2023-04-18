@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use std::ops::Add;
 use uuid::Uuid;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct PasswordReset {
     #[serde(skip_serializing)]
     pub user_id: String,

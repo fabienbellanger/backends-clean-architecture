@@ -3,7 +3,7 @@ use chrono::{DateTime, Utc};
 use clean_architecture_domain::entities::user::User;
 use clean_architecture_domain::ports::repositories::user::UserRepository;
 use clean_architecture_domain::ports::requests::user::{
-    CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest, GetUserRequest, LoginRequest,
+    CreateUserRequest, DeleteUserRequest, GetUserRequest, LoginRequest,
 };
 use clean_architecture_shared::error::{ApiError, ApiResult};
 use clean_architecture_shared::query_parameter::PaginateSort;
