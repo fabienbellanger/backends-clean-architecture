@@ -12,9 +12,8 @@ pub trait PasswordResetRepository {
     async fn create_or_update(&self, request: PasswordResetRequest) -> ApiResult<()>;
 
     /// Get by token and return a tuple of user ID and user password
-    async fn get_by_token(&self, request: GetByTokenRequest)
-        -> ApiResult<Option<(String, String)>>;
+    async fn get_by_token(&self, request: GetByTokenRequest) -> ApiResult<Option<String>>;
 
-    /// Delete
+    /// Delete forgotten password entry
     async fn delete(&self, request: DeleteRequest) -> ApiResult<u64>;
 }

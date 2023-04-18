@@ -10,20 +10,17 @@ pub(crate) struct TestPasswordResetRepository {}
 #[async_trait]
 impl PasswordResetRepository for TestPasswordResetRepository {
     /// Add forgotten password request
-    async fn create_or_update(&self, request: PasswordResetRequest) -> ApiResult<()> {
+    async fn create_or_update(&self, _request: PasswordResetRequest) -> ApiResult<()> {
         Ok(())
     }
 
     /// Get by token and return a tuple of user ID and user password
-    async fn get_by_token(
-        &self,
-        request: GetByTokenRequest,
-    ) -> ApiResult<Option<(String, String)>> {
+    async fn get_by_token(&self, _request: GetByTokenRequest) -> ApiResult<Option<String>> {
         Ok(None)
     }
 
     /// Delete
-    async fn delete(&self, request: DeleteRequest) -> ApiResult<u64> {
+    async fn delete(&self, _request: DeleteRequest) -> ApiResult<u64> {
         Ok(0)
     }
 }

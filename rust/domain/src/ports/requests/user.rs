@@ -38,3 +38,10 @@ pub struct ForgottenPasswordRequest {
     pub email: String,
     pub expiration_duration: i64,
 }
+
+#[derive(Debug, Validate, Deserialize, Clone)]
+pub struct UpdateUserPasswordRequest {
+    pub token: String,
+    #[validate(length(min = 8))]
+    pub password: String,
+}

@@ -2,8 +2,9 @@
 
 use crate::entities::password_reset::PasswordReset;
 use crate::ports::repositories::password_reset::PasswordResetRepository;
+use crate::ports::requests::password_reset::{DeleteRequest, GetByTokenRequest};
 use crate::ports::requests::user::{
-    CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest,
+    CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest, UpdateUserPasswordRequest,
 };
 use crate::ports::{
     repositories::user::UserRepository,
@@ -100,7 +101,7 @@ impl<U: UserRepository, P: PasswordResetRepository> UserService<U, P> {
         self.user_repository.delete_user(request).await
     }
 
-    /// Get user by email
+    /// Forgotten password request
     #[instrument(skip(self))]
     pub async fn forgotten_password(
         &self,
@@ -119,5 +120,31 @@ impl<U: UserRepository, P: PasswordResetRepository> UserService<U, P> {
             .await?;
 
         Ok(password_reset)
+    }
+
+    // Update user password
+    #[instrument(skip(self))]
+    pub async fn update_user_password(&self, request: UpdateUserPasswordRequest) -> ApiResult<()> {
+        let result = self
+            .password_reset_repository
+            .get_by_token(GetByTokenRequest {
+                token: request.token.clone(),
+            })
+            .await?;
+
+        match result {
+            Some(user_id) => {
+                // Update user password
+                self.user_repository.update_password(request).await?;
+
+                // Delete password reset entry
+                self.password_reset_repository
+                    .delete(DeleteRequest { user_id })
+                    .await?;
+
+                Ok(())
+            }
+            None => Err(api_error!(ApiErrorCode::NotFound, "no user found")),
+        }
     }
 }

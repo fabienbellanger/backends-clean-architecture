@@ -32,7 +32,7 @@ pub async fn login(
 }
 
 /// Users list route: GET /api/v1/users
-#[instrument(skip(uc), level = "warn")]
+#[instrument(skip(uc))]
 pub async fn get_users(
     Query(pagination): Query<PaginateSortQuery>,
     Extension(uc): Extension<AppUseCases>,
@@ -45,7 +45,7 @@ pub async fn get_users(
 }
 
 /// User information route: GET /api/v1/users/:id
-#[instrument(skip(uc), level = "warn")]
+#[instrument(skip(uc))]
 pub async fn get_user(
     Path(id): Path<Uuid>,
     Extension(uc): Extension<AppUseCases>,
@@ -57,7 +57,7 @@ pub async fn get_user(
 }
 
 /// User creation route: POST /api/v1/users
-#[instrument(skip(uc), level = "warn")]
+#[instrument(skip(uc))]
 pub async fn create_user(
     Extension(uc): Extension<AppUseCases>,
     ExtractRequestId(request_id): ExtractRequestId,
@@ -69,7 +69,7 @@ pub async fn create_user(
 }
 
 /// Delete user route: DELETE /api/v1/users/:id
-#[instrument(skip(uc), level = "warn")]
+#[instrument(skip(uc))]
 pub async fn delete_user(
     Path(id): Path<Uuid>,
     Extension(uc): Extension<AppUseCases>,

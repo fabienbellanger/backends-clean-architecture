@@ -2,7 +2,7 @@
 
 use crate::ports::repositories::password_reset::PasswordResetRepository;
 use crate::ports::requests::user::{
-    CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest,
+    CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest, UpdateUserPasswordRequest,
 };
 use crate::ports::responses::password_reset::PasswordResetResponse;
 use crate::ports::services::email::EmailService;
@@ -89,6 +89,8 @@ where
         &self,
         request: ForgottenPasswordRequest,
     ) -> ApiResult<PasswordResetResponse> {
+        validate_request_data(&request)?;
+
         let password_reset = self
             .user_service
             .forgotten_password(request.clone())
@@ -109,7 +111,9 @@ where
     /// Update user password
     // TODO: Add test
     #[instrument(skip(self))]
-    pub async fn update_user_password(&self) -> ApiResult<()> {
-        Ok(())
+    pub async fn update_user_password(&self, request: UpdateUserPasswordRequest) -> ApiResult<()> {
+        validate_request_data(&request)?;
+
+        self.user_service.update_user_password(request).await
     }
 }

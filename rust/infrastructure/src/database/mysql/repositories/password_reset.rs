@@ -46,13 +46,10 @@ impl PasswordResetRepository for PasswordResetMysqlRepository {
     }
 
     #[instrument(skip(self))]
-    async fn get_by_token(
-        &self,
-        request: GetByTokenRequest,
-    ) -> ApiResult<Option<(String, String)>> {
+    async fn get_by_token(&self, request: GetByTokenRequest) -> ApiResult<Option<String>> {
         let result = sqlx::query!(
             r#"
-                SELECT u.id AS user_id, u.password AS password
+                SELECT u.id AS user_id
                 FROM password_resets pr
                     INNER JOIN users u ON u.id = pr.user_id AND u.deleted_at IS NULL
                 WHERE pr.token = ?
@@ -65,7 +62,7 @@ impl PasswordResetRepository for PasswordResetMysqlRepository {
         .await?;
 
         match result {
-            Some(result) => Ok(Some((result.user_id, result.password))),
+            Some(result) => Ok(Some(result.user_id)),
             None => Ok(None),
         }
     }

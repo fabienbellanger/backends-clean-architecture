@@ -4,7 +4,9 @@ use crate::database::mysql::models::user::UserModel;
 use crate::database::mysql::Db;
 use async_trait::async_trait;
 use chrono::Utc;
-use clean_architecture_domain::ports::requests::user::{CreateUserRequest, DeleteUserRequest};
+use clean_architecture_domain::ports::requests::user::{
+    CreateUserRequest, DeleteUserRequest, UpdateUserPasswordRequest,
+};
 use clean_architecture_domain::{
     entities::user::User,
     ports::{
@@ -152,5 +154,10 @@ impl UserRepository for UserMysqlRepository {
             .await?;
 
         Ok(result.total)
+    }
+
+    #[instrument(skip(self))]
+    async fn update_password(&self, _request: UpdateUserPasswordRequest) -> ApiResult<()> {
+        todo!("update_password")
     }
 }
