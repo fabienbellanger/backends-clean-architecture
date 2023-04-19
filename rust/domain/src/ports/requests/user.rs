@@ -45,3 +45,10 @@ pub struct UpdateUserPasswordRequest {
     #[validate(length(min = 8))]
     pub password: String,
 }
+
+#[derive(Debug, Validate, Deserialize, Clone)]
+pub struct UpdateUserPasswordRepositoryRequest {
+    pub id: String,
+    #[validate(length(min = 8))]
+    pub password: String,
+}

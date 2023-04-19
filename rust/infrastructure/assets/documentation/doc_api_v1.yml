@@ -78,6 +78,40 @@ paths:
           $ref: "#/components/responses/MethodNotAllowed"
         '500':
           $ref: "#/components/responses/InternalServerError"
+  /update-password/{token}:
+    patch:
+      summary: ""
+      description: Set a new user password
+      tags:
+        - "User password"
+      parameters:
+        - in: path
+          name: token
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Token to reset password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdatePassword"
+            example:
+              password: "11111111"
+      responses:
+        '204':
+          description: No Content
+        '400':
+            $ref: "#/components/responses/BadRequest"
+        '401':
+            $ref: "#/components/responses/Unauthorized"
+        '404':
+            $ref: "#/components/responses/NotFound"
+        '405':
+            $ref: "#/components/responses/MethodNotAllowed"
+        '500':
+            $ref: "#/components/responses/InternalServerError"
   /users:
     get:
       summary: ""
@@ -377,3 +411,11 @@ components:
       required:
         - token
         - expired_at
+    UserUpdatePassword:
+      type: object
+      properties:
+        password:
+          type: string
+          minLength: 8
+      required:
+        - password

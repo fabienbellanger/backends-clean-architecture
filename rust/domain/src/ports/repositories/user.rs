@@ -1,7 +1,7 @@
 //! User repository module
 
 use crate::ports::requests::user::{
-    CreateUserRequest, DeleteUserRequest, UpdateUserPasswordRequest,
+    CreateUserRequest, DeleteUserRequest, UpdateUserPasswordRepositoryRequest,
 };
 use crate::{
     entities::user::User,
@@ -35,5 +35,5 @@ pub trait UserRepository {
     async fn get_total_users(&self) -> ApiResult<i64>;
 
     /// Update user password
-    async fn update_password(&self, request: UpdateUserPasswordRequest) -> ApiResult<()>;
+    async fn update_password(&self, request: UpdateUserPasswordRepositoryRequest) -> ApiResult<()>;
 }

@@ -3,7 +3,8 @@ use chrono::{DateTime, Utc};
 use clean_architecture_domain::entities::user::User;
 use clean_architecture_domain::ports::repositories::user::UserRepository;
 use clean_architecture_domain::ports::requests::user::{
-    CreateUserRequest, DeleteUserRequest, GetUserRequest, LoginRequest, UpdateUserPasswordRequest,
+    CreateUserRequest, DeleteUserRequest, GetUserRequest, LoginRequest,
+    UpdateUserPasswordRepositoryRequest,
 };
 use clean_architecture_shared::error::{ApiError, ApiResult};
 use clean_architecture_shared::query_parameter::PaginateSort;
@@ -129,7 +130,10 @@ impl UserRepository for TestUserRepository {
         Ok(TOTAL_USERS)
     }
 
-    async fn update_password(&self, _request: UpdateUserPasswordRequest) -> ApiResult<()> {
+    async fn update_password(
+        &self,
+        _request: UpdateUserPasswordRepositoryRequest,
+    ) -> ApiResult<()> {
         Ok(())
     }
 }

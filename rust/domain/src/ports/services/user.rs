@@ -4,7 +4,8 @@ use crate::entities::password_reset::PasswordReset;
 use crate::ports::repositories::password_reset::PasswordResetRepository;
 use crate::ports::requests::password_reset::{DeleteRequest, GetByTokenRequest};
 use crate::ports::requests::user::{
-    CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest, UpdateUserPasswordRequest,
+    CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest,
+    UpdateUserPasswordRepositoryRequest, UpdateUserPasswordRequest,
 };
 use crate::ports::{
     repositories::user::UserRepository,
@@ -135,7 +136,12 @@ impl<U: UserRepository, P: PasswordResetRepository> UserService<U, P> {
         match result {
             Some(user_id) => {
                 // Update user password
-                self.user_repository.update_password(request).await?;
+                self.user_repository
+                    .update_password(UpdateUserPasswordRepositoryRequest {
+                        id: user_id.clone(),
+                        password: request.password,
+                    })
+                    .await?;
 
                 // Delete password reset entry
                 self.password_reset_repository

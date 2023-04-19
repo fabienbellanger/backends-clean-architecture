@@ -8,6 +8,7 @@ use axum::http::StatusCode;
 use axum::{Extension, Json};
 use clean_architecture_domain::ports::requests::user::{
     CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest, GetUserRequest, LoginRequest,
+    UpdateUserPasswordRequest,
 };
 use clean_architecture_domain::ports::responses::password_reset::PasswordResetResponse;
 use clean_architecture_domain::ports::responses::user::{
@@ -16,7 +17,16 @@ use clean_architecture_domain::ports::responses::user::{
 use clean_architecture_shared::api_error;
 use clean_architecture_shared::error::{ApiError, ApiErrorCode, ApiResult};
 use clean_architecture_shared::query_parameter::{PaginateSort, PaginateSortQuery};
+use serde::Deserialize;
 use uuid::Uuid;
+use validator::Validate;
+
+/// Update user password request body
+#[derive(Debug, Validate, Deserialize, Clone)]
+pub struct UpdatePasswordRequest {
+    #[validate(length(min = 8))]
+    pub password: String,
+}
 
 /// Login route: POST /api/v1/login
 #[instrument(skip(uc, state))]
@@ -103,4 +113,22 @@ pub async fn forgotten_password(
         .await?;
 
     Ok(Json(result))
+}
+
+/// Update user password: PATCH /api/v1/update-password/:token
+#[instrument(skip(uc))]
+pub async fn update_password(
+    Path(token): Path<Uuid>,
+    Extension(uc): Extension<AppUseCases>,
+    ExtractRequestId(request_id): ExtractRequestId,
+    Json(body): Json<UpdatePasswordRequest>,
+) -> ApiResult<StatusCode> {
+    uc.user
+        .update_user_password(UpdateUserPasswordRequest {
+            token: token.to_string(),
+            password: body.password,
+        })
+        .await?;
+
+    Ok(StatusCode::NO_CONTENT)
 }
