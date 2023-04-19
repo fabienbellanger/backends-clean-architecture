@@ -10,7 +10,7 @@ clean-architecture-domain = {path = "../domain"}
 clean-architecture-shared = {path = "../shared"}
 
 # Axum
-axum = { version = "0.6.15", features = ["headers"] }
+axum = { version = "0.6.16", features = ["headers"] }
 
 # Tower
 tower = { version = "0.4.13", features = ["timeout"] }
