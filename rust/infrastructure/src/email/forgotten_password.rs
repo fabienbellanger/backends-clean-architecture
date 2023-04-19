@@ -30,10 +30,7 @@ impl ForgottenPassword {
 
     /// Construct HTML and TEXT body
     fn construct_bodies(&self, link: String) -> ApiResult<(String, String)> {
-        Ok((
-            self.construct_html_body(&link)?,
-            self.construct_text_body(&link)?,
-        ))
+        Ok((self.construct_html_body(&link)?, self.construct_text_body(&link)?))
     }
 
     /// Construct TEXT body

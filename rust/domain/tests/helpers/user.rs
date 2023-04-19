@@ -3,8 +3,7 @@ use chrono::{DateTime, Utc};
 use clean_architecture_domain::entities::user::User;
 use clean_architecture_domain::ports::repositories::user::UserRepository;
 use clean_architecture_domain::ports::requests::user::{
-    CreateUserRequest, DeleteUserRequest, GetUserRequest, LoginRequest,
-    UpdateUserPasswordRepositoryRequest,
+    CreateUserRequest, DeleteUserRequest, GetUserRequest, LoginRequest, UpdateUserPasswordRepositoryRequest,
 };
 use clean_architecture_shared::error::{ApiError, ApiResult};
 use clean_architecture_shared::query_parameter::PaginateSort;
@@ -21,9 +20,7 @@ pub(crate) struct TestUserRepository {}
 #[async_trait]
 impl UserRepository for TestUserRepository {
     async fn get_users(&self, _paginate_sort: &PaginateSort) -> ApiResult<Vec<User>> {
-        let date = DateTime::parse_from_rfc3339(DATE)
-            .unwrap()
-            .with_timezone(&Utc);
+        let date = DateTime::parse_from_rfc3339(DATE).unwrap().with_timezone(&Utc);
 
         Ok(vec![User {
             id: Uuid::parse_str(USER_ID).unwrap(),
@@ -40,9 +37,7 @@ impl UserRepository for TestUserRepository {
     async fn get_user_by_id(&self, request: GetUserRequest) -> ApiResult<User> {
         let id = Uuid::parse_str(USER_ID).unwrap();
         if id == request.id {
-            let date = DateTime::parse_from_rfc3339(DATE)
-                .unwrap()
-                .with_timezone(&Utc);
+            let date = DateTime::parse_from_rfc3339(DATE).unwrap().with_timezone(&Utc);
             let user = User {
                 id: Uuid::parse_str(USER_ID).unwrap(),
                 lastname: "Doe".to_string(),
@@ -63,9 +58,7 @@ impl UserRepository for TestUserRepository {
 
     async fn get_user_by_email(&self, email: String) -> ApiResult<User> {
         if USER_EMAIL == &email {
-            let date = DateTime::parse_from_rfc3339(DATE)
-                .unwrap()
-                .with_timezone(&Utc);
+            let date = DateTime::parse_from_rfc3339(DATE).unwrap().with_timezone(&Utc);
             let user = User {
                 id: Uuid::parse_str(USER_ID).unwrap(),
                 lastname: "Doe".to_string(),
@@ -85,9 +78,7 @@ impl UserRepository for TestUserRepository {
     }
 
     async fn login(&self, request: LoginRequest) -> ApiResult<Option<User>> {
-        let date = DateTime::parse_from_rfc3339(DATE)
-            .unwrap()
-            .with_timezone(&Utc);
+        let date = DateTime::parse_from_rfc3339(DATE).unwrap().with_timezone(&Utc);
         if request.email == USER_EMAIL {
             let user = User {
                 id: Uuid::parse_str(USER_ID).unwrap(),
@@ -107,9 +98,7 @@ impl UserRepository for TestUserRepository {
     }
 
     async fn create_user(&self, request: CreateUserRequest) -> ApiResult<User> {
-        let date = DateTime::parse_from_rfc3339(DATE)
-            .unwrap()
-            .with_timezone(&Utc);
+        let date = DateTime::parse_from_rfc3339(DATE).unwrap().with_timezone(&Utc);
         Ok(User {
             id: Uuid::parse_str(USER_ID).unwrap(),
             lastname: request.lastname,
@@ -130,10 +119,7 @@ impl UserRepository for TestUserRepository {
         Ok(TOTAL_USERS)
     }
 
-    async fn update_password(
-        &self,
-        _request: UpdateUserPasswordRepositoryRequest,
-    ) -> ApiResult<()> {
+    async fn update_password(&self, _request: UpdateUserPasswordRepositoryRequest) -> ApiResult<()> {
         Ok(())
     }
 }

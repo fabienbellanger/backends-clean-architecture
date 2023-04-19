@@ -19,8 +19,6 @@ impl AppUseCases {
         let user_service = UserService::new(user_repository, password_reset_repository);
         let user_use_case = UserUseCase::new(user_service, email);
 
-        Ok(Self {
-            user: user_use_case,
-        })
+        Ok(Self { user: user_use_case })
     }
 }

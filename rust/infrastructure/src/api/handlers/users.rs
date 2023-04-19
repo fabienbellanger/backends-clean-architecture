@@ -11,9 +11,7 @@ use clean_architecture_domain::ports::requests::user::{
     UpdateUserPasswordRequest,
 };
 use clean_architecture_domain::ports::responses::password_reset::PasswordResetResponse;
-use clean_architecture_domain::ports::responses::user::{
-    GetUserResponse, GetUsersResponse, LoginResponse,
-};
+use clean_architecture_domain::ports::responses::user::{GetUserResponse, GetUsersResponse, LoginResponse};
 use clean_architecture_shared::api_error;
 use clean_architecture_shared::error::{ApiError, ApiErrorCode, ApiResult};
 use clean_architecture_shared::query_parameter::{PaginateSort, PaginateSortQuery};
@@ -89,10 +87,7 @@ pub async fn delete_user(
 
     match result {
         1 => Ok(StatusCode::NO_CONTENT),
-        _ => Err(api_error!(
-            ApiErrorCode::NotFound,
-            "no user or user already deleted"
-        )),
+        _ => Err(api_error!(ApiErrorCode::NotFound, "no user or user already deleted")),
     }
 }
 

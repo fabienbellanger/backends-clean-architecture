@@ -1,10 +1,7 @@
 use super::{TestApp, TestResponse};
 use clean_architecture_domain::{
     entities::user::User,
-    ports::{
-        repositories::user::UserRepository, requests::user::CreateUserRequest,
-        responses::user::LoginResponse,
-    },
+    ports::{repositories::user::UserRepository, requests::user::CreateUserRequest, responses::user::LoginResponse},
 };
 use clean_architecture_infrastructure::database::mysql::repositories::user::UserMysqlRepository;
 
@@ -40,8 +37,7 @@ pub async fn create_and_authenticate(app: &TestApp) -> (TestResponse, String) {
     )
     .await;
 
-    let res: LoginResponse =
-        serde_json::from_str(&response.body.to_string()).expect("error when deserializing body");
+    let res: LoginResponse = serde_json::from_str(&response.body.to_string()).expect("error when deserializing body");
 
     (response, res.token)
 }
@@ -63,24 +59,10 @@ pub async fn get_all(app: &TestApp, token: &str) -> TestResponse {
 
 /// Return a user
 pub async fn get_one(app: &TestApp, token: &str, id: &str) -> TestResponse {
-    TestResponse::new(
-        app,
-        &format!("/api/v1/users/{id}"),
-        "GET",
-        None,
-        Some(token),
-    )
-    .await
+    TestResponse::new(app, &format!("/api/v1/users/{id}"), "GET", None, Some(token)).await
 }
 
 /// Delete a user
 pub async fn delete(app: &TestApp, token: &str, id: &str) -> TestResponse {
-    TestResponse::new(
-        app,
-        &format!("/api/v1/users/{id}"),
-        "DELETE",
-        None,
-        Some(token),
-    )
-    .await
+    TestResponse::new(app, &format!("/api/v1/users/{id}"), "DELETE", None, Some(token)).await
 }

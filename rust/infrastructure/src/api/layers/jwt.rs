@@ -62,8 +62,7 @@ where
                 true => future.await?,
                 false => {
                     let (mut parts, _body) = response.into_parts();
-                    let msg =
-                        body_from_parts(&mut parts, StatusCode::UNAUTHORIZED, "Unauthorized", None);
+                    let msg = body_from_parts(&mut parts, StatusCode::UNAUTHORIZED, "Unauthorized", None);
                     Response::from_parts(parts, boxed(Full::from(msg)))
                 }
             };

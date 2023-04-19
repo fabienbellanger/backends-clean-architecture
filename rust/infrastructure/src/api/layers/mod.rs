@@ -33,10 +33,9 @@ pub fn body_from_parts(
     parts.status = status_code;
 
     // Headers
-    parts.headers.insert(
-        CONTENT_TYPE,
-        HeaderValue::from_static(mime::APPLICATION_JSON.as_ref()),
-    );
+    parts
+        .headers
+        .insert(CONTENT_TYPE, HeaderValue::from_static(mime::APPLICATION_JSON.as_ref()));
     if let Some(headers) = headers {
         for header in headers {
             parts.headers.insert(header.0, header.1);
@@ -79,13 +78,7 @@ pub fn cors(config: &Config) -> CorsLayer {
     let allow_origin = config.cors_allow_origin.clone();
 
     let layer = CorsLayer::new()
-        .allow_methods([
-            Method::GET,
-            Method::POST,
-            Method::PUT,
-            Method::PATCH,
-            Method::DELETE,
-        ])
+        .allow_methods([Method::GET, Method::POST, Method::PUT, Method::PATCH, Method::DELETE])
         .allow_headers([AUTHORIZATION, ACCEPT, ORIGIN, CONTENT_TYPE]);
 
     if allow_origin == "*" {
@@ -129,12 +122,8 @@ pub async fn override_http_errors<B>(req: Request<B>, next: Next<B>) -> impl Int
     match to_bytes(body).await {
         Ok(body_bytes) => match String::from_utf8(body_bytes.to_vec()) {
             Ok(body) => match parts.status {
-                StatusCode::METHOD_NOT_ALLOWED => {
-                    api_error!(ApiErrorCode::MethodNotAllowed).into_response()
-                }
-                StatusCode::UNPROCESSABLE_ENTITY => {
-                    api_error!(ApiErrorCode::UnprocessableEntity, body).into_response()
-                }
+                StatusCode::METHOD_NOT_ALLOWED => api_error!(ApiErrorCode::MethodNotAllowed).into_response(),
+                StatusCode::UNPROCESSABLE_ENTITY => api_error!(ApiErrorCode::UnprocessableEntity, body).into_response(),
                 _ => Response::from_parts(parts, axum::body::boxed(Full::from(body))),
             },
             Err(err) => api_error!(ApiErrorCode::InternalError, err.to_string()).into_response(),

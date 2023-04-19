@@ -28,14 +28,8 @@ pub fn api(state: SharedState) -> Router<SharedState> {
     Router::new()
         // Public routes
         .route("/login", post(handlers::users::login))
-        .route(
-            "/forgotten-password/:email",
-            post(handlers::users::forgotten_password),
-        )
-        .route(
-            "/update-password/:token",
-            patch(handlers::users::update_password),
-        )
+        .route("/forgotten-password/:email", post(handlers::users::forgotten_password))
+        .route("/update-password/:token", patch(handlers::users::update_password))
         // Private routes
         .nest("/", api_protected().layer(layers::jwt::JwtLayer { state }))
 }

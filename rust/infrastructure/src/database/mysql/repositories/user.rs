@@ -60,10 +60,7 @@ impl UserRepository for UserMysqlRepository {
             .fetch_all(self.db.pool.clone().as_ref())
             .await?;
 
-        Ok(users
-            .into_iter()
-            .filter_map(|u| u.try_into().ok())
-            .collect())
+        Ok(users.into_iter().filter_map(|u| u.try_into().ok()).collect())
     }
 
     #[instrument(skip(self))]
@@ -116,7 +113,8 @@ impl UserRepository for UserMysqlRepository {
         let user_id = uuid::Uuid::new_v4();
 
         // Create user
-        sqlx::query!("
+        sqlx::query!(
+            "
             INSERT INTO users (id, email, password, lastname, firstname, created_at, updated_at, deleted_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, NULL)
         ",
@@ -127,8 +125,9 @@ impl UserRepository for UserMysqlRepository {
             request.firstname,
             Utc::now(),
             Utc::now()
-        ).execute(self.db.pool.clone().as_ref())
-            .await?;
+        )
+        .execute(self.db.pool.clone().as_ref())
+        .await?;
 
         // Get user
         self.get_user_by_id(GetUserRequest { id: user_id }).await

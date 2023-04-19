@@ -62,11 +62,7 @@ impl Default for Jwt {
 
 impl Debug for Jwt {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "Jwt => algo: {:?}, lifetime: {:?}",
-            self.algorithm, self.lifetime
-        )
+        write!(f, "Jwt => algo: {:?}, lifetime: {:?}", self.algorithm, self.lifetime)
     }
 }
 

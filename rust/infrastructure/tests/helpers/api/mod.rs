@@ -33,13 +33,7 @@ pub struct TestResponse {
 impl TestResponse {
     /// Create a new `TestResponse`
     #[allow(dead_code, unused_variables)]
-    pub async fn new(
-        app: &TestApp,
-        url: &str,
-        method: &str,
-        body: Option<String>,
-        token: Option<&str>,
-    ) -> Self {
+    pub async fn new(app: &TestApp, url: &str, method: &str, body: Option<String>, token: Option<&str>) -> Self {
         let mut request = Request::builder()
             .uri(url)
             .method(method)
@@ -96,9 +90,7 @@ impl TestAppBuilder {
 
         let mut router = Router::new().nest("/api/v1", routes::api(state.clone()));
         router = router.nest("/", routes::web(&settings));
-        router = router.layer(Extension(
-            AppUseCases::new(database.database(), email).await.unwrap(),
-        ));
+        router = router.layer(Extension(AppUseCases::new(database.database(), email).await.unwrap()));
 
         let router = router.with_state(state);
 
@@ -118,12 +110,7 @@ impl TestAppBuilder {
                 jwt_lifetime,
                 forgotten_password_expiration_duration: 24,
             },
-            jwt: Jwt::new(
-                Algorithm::HS512,
-                jwt_lifetime,
-                Some(encoding_key),
-                Some(decoding_key),
-            ),
+            jwt: Jwt::new(Algorithm::HS512, jwt_lifetime, Some(encoding_key), Some(decoding_key)),
         };
 
         SharedState::new(state)

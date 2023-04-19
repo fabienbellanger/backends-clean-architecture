@@ -13,13 +13,9 @@ pub async fn health_check<'a>() -> &'a str {
 
 /// API documentation route: GET "/doc/api-v1"
 pub async fn doc_api_v1() -> ApiResult<Html<String>> {
-    let templates = TEMPLATES.as_ref().map_err(|err| {
-        api_error!(
-            ApiErrorCode::InternalError,
-            "error during template render",
-            err
-        )
-    })?;
+    let templates = TEMPLATES
+        .as_ref()
+        .map_err(|err| api_error!(ApiErrorCode::InternalError, "error during template render", err))?;
     Ok(Html(
         templates
             .render("doc/api_v1.html", &Context::new())

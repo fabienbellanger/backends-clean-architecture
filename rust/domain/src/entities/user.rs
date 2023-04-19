@@ -43,8 +43,6 @@ impl User {
     /// assert_eq!(user.fullname(), "".to_owned());
     /// ```
     pub fn fullname(&self) -> String {
-        format!("{} {}", self.firstname, self.lastname)
-            .trim()
-            .to_string()
+        format!("{} {}", self.firstname, self.lastname).trim().to_string()
     }
 }

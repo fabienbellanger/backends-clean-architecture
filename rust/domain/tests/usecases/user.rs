@@ -13,8 +13,7 @@ use clean_architecture_shared::{auth::Jwt, query_parameter::PaginateSort};
 use std::cmp::Ordering;
 use uuid::Uuid;
 
-fn init_use_case() -> UserUseCase<TestUserRepository, TestPasswordResetRepository, TestEmailService>
-{
+fn init_use_case() -> UserUseCase<TestUserRepository, TestPasswordResetRepository, TestEmailService> {
     let user_repository = TestUserRepository {};
     let password_reset_repository = TestPasswordResetRepository {};
     let email_service = TestEmailService {};

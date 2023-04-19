@@ -4,8 +4,8 @@ use crate::entities::password_reset::PasswordReset;
 use crate::ports::repositories::password_reset::PasswordResetRepository;
 use crate::ports::requests::password_reset::{DeleteRequest, GetByTokenRequest};
 use crate::ports::requests::user::{
-    CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest,
-    UpdateUserPasswordRepositoryRequest, UpdateUserPasswordRequest,
+    CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest, UpdateUserPasswordRepositoryRequest,
+    UpdateUserPasswordRequest,
 };
 use crate::ports::{
     repositories::user::UserRepository,
@@ -90,10 +90,7 @@ impl<U: UserRepository, P: PasswordResetRepository> UserService<U, P> {
     /// Create a user
     #[instrument(skip(self))]
     pub async fn create_user(&self, request: CreateUserRequest) -> ApiResult<GetUserResponse> {
-        self.user_repository
-            .create_user(request)
-            .await
-            .map(|user| user.into())
+        self.user_repository.create_user(request).await.map(|user| user.into())
     }
 
     /// Delete a user
@@ -104,14 +101,8 @@ impl<U: UserRepository, P: PasswordResetRepository> UserService<U, P> {
 
     /// Forgotten password request
     #[instrument(skip(self))]
-    pub async fn forgotten_password(
-        &self,
-        request: ForgottenPasswordRequest,
-    ) -> ApiResult<PasswordReset> {
-        let user = self
-            .user_repository
-            .get_user_by_email(request.email.clone())
-            .await?;
+    pub async fn forgotten_password(&self, request: ForgottenPasswordRequest) -> ApiResult<PasswordReset> {
+        let user = self.user_repository.get_user_by_email(request.email.clone()).await?;
 
         // Password reset
         let password_reset = PasswordReset::new(user.id.to_string(), request.expiration_duration);
@@ -144,9 +135,7 @@ impl<U: UserRepository, P: PasswordResetRepository> UserService<U, P> {
                     .await?;
 
                 // Delete password reset entry
-                self.password_reset_repository
-                    .delete(DeleteRequest { user_id })
-                    .await?;
+                self.password_reset_repository.delete(DeleteRequest { user_id }).await?;
 
                 Ok(())
             }

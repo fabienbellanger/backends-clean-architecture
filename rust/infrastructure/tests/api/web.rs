@@ -7,12 +7,7 @@ use tower::ServiceExt;
 async fn test_health_check() {
     let router = TestAppBuilder::new().await.build().router;
     let response = router
-        .oneshot(
-            Request::builder()
-                .uri("/health-check")
-                .body(Body::empty())
-                .unwrap(),
-        )
+        .oneshot(Request::builder().uri("/health-check").body(Body::empty()).unwrap())
         .await
         .unwrap();
 

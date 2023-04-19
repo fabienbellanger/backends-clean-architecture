@@ -1,8 +1,6 @@
 //! User repository module
 
-use crate::ports::requests::user::{
-    CreateUserRequest, DeleteUserRequest, UpdateUserPasswordRepositoryRequest,
-};
+use crate::ports::requests::user::{CreateUserRequest, DeleteUserRequest, UpdateUserPasswordRepositoryRequest};
 use crate::{
     entities::user::User,
     ports::requests::user::{GetUserRequest, LoginRequest},

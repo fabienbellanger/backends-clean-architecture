@@ -246,10 +246,7 @@ mod test {
                 page: 1,
                 limit: PAGINATION_MAX_LIMIT,
                 offset: 0,
-                sorts: vec![
-                    ("id".to_owned(), Sort::Asc),
-                    ("created_at".to_owned(), Sort::Desc)
-                ],
+                sorts: vec![("id".to_owned(), Sort::Asc), ("created_at".to_owned(), Sort::Desc)],
             },
             data
         );
@@ -279,10 +276,7 @@ mod test {
             offset: 0,
             sorts: vec![],
         };
-        assert_eq!(
-            String::from(" LIMIT 50 OFFSET 0"),
-            paginate_sort.get_pagination_sql()
-        );
+        assert_eq!(String::from(" LIMIT 50 OFFSET 0"), paginate_sort.get_pagination_sql());
     }
 
     #[test]
@@ -308,10 +302,7 @@ mod test {
         };
         assert_eq!(String::new(), paginate_sort.get_sorts_sql(valid_fields));
 
-        paginate_sort.sorts = vec![
-            ("id".to_owned(), Sort::Asc),
-            ("name".to_owned(), Sort::Desc),
-        ];
+        paginate_sort.sorts = vec![("id".to_owned(), Sort::Asc), ("name".to_owned(), Sort::Desc)];
         assert_eq!(String::new(), paginate_sort.get_sorts_sql(valid_fields));
 
         valid_fields = None;
@@ -333,10 +324,7 @@ mod test {
         };
         assert_eq!(String::new(), paginate_sort.get_sorts_sql(valid_fields));
 
-        paginate_sort.sorts = vec![
-            ("id".to_owned(), Sort::Asc),
-            ("name".to_owned(), Sort::Desc),
-        ];
+        paginate_sort.sorts = vec![("id".to_owned(), Sort::Asc), ("name".to_owned(), Sort::Desc)];
         assert_eq!(
             " ORDER BY id ASC, name DESC".to_owned(),
             paginate_sort.get_sorts_sql(valid_fields)
@@ -349,30 +337,18 @@ mod test {
         );
 
         let valid_fields: Option<&[&str]> = Some(&["id", "name"]);
-        paginate_sort.sorts = vec![
-            ("idz".to_owned(), Sort::Asc),
-            ("name".to_owned(), Sort::Desc),
-        ];
+        paginate_sort.sorts = vec![("idz".to_owned(), Sort::Asc), ("name".to_owned(), Sort::Desc)];
         assert_eq!(
             " ORDER BY name DESC".to_owned(),
             paginate_sort.get_sorts_sql(valid_fields)
         );
 
         let valid_fields: Option<&[&str]> = Some(&["id", "name"]);
-        paginate_sort.sorts = vec![
-            ("id".to_owned(), Sort::Asc),
-            ("namee".to_owned(), Sort::Desc),
-        ];
-        assert_eq!(
-            " ORDER BY id ASC".to_owned(),
-            paginate_sort.get_sorts_sql(valid_fields)
-        );
+        paginate_sort.sorts = vec![("id".to_owned(), Sort::Asc), ("namee".to_owned(), Sort::Desc)];
+        assert_eq!(" ORDER BY id ASC".to_owned(), paginate_sort.get_sorts_sql(valid_fields));
 
         let valid_fields: Option<&[&str]> = Some(&["id", "name"]);
-        paginate_sort.sorts = vec![
-            ("idz".to_owned(), Sort::Asc),
-            ("namee".to_owned(), Sort::Desc),
-        ];
+        paginate_sort.sorts = vec![("idz".to_owned(), Sort::Asc), ("namee".to_owned(), Sort::Desc)];
         assert_eq!("".to_owned(), paginate_sort.get_sorts_sql(valid_fields));
     }
 
@@ -383,10 +359,7 @@ mod test {
             page: 1,
             limit: 50,
             offset: 0,
-            sorts: vec![
-                ("user.id".to_owned(), Sort::Asc),
-                ("role.name".to_owned(), Sort::Desc),
-            ],
+            sorts: vec![("user.id".to_owned(), Sort::Asc), ("role.name".to_owned(), Sort::Desc)],
         };
         assert_eq!(
             " ORDER BY user.id ASC, role.name DESC".to_owned(),

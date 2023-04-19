@@ -38,19 +38,13 @@ pub async fn start_server() -> ApiResult<()> {
     )
     .serve(app.into_make_service_with_connect_info::<SocketAddr>());
 
-    server
-        .await
-        .map_err(|err| api_error!(ApiErrorCode::InternalError, err))
+    server.await.map_err(|err| api_error!(ApiErrorCode::InternalError, err))
 }
 
 /// Initialize router
 async fn get_app(settings: &Config) -> ApiResult<Router> {
     // Tracing
-    logger::init(
-        &settings.environment,
-        &settings.logs_path,
-        &settings.logs_file,
-    )?;
+    logger::init(&settings.environment, &settings.logs_path, &settings.logs_file)?;
 
     // CORS
     let cors = layers::cors(settings);

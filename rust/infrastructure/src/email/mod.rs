@@ -76,14 +76,15 @@ impl Email {
     fn send(&self, message: Message) -> ApiResult<()> {
         let mailer = self.init();
 
-        let mut email_builder = lettre::Message::builder().subject(message.subject).from(
-            message.from.parse().map_err(|_| {
-                api_error!(
-                    ApiErrorCode::InternalError,
-                    "cannot send password reset email because: invalid from email".to_string()
-                )
-            })?,
-        );
+        let mut email_builder =
+            lettre::Message::builder()
+                .subject(message.subject)
+                .from(message.from.parse().map_err(|_| {
+                    api_error!(
+                        ApiErrorCode::InternalError,
+                        "cannot send password reset email because: invalid from email".to_string()
+                    )
+                })?);
 
         // Add destination emails
         for to in message.to_list {
@@ -97,18 +98,10 @@ impl Email {
 
         let mut multipart = MultiPart::alternative().build();
         if let Some(text) = message.text_body {
-            multipart = multipart.singlepart(
-                SinglePart::builder()
-                    .header(header::ContentType::TEXT_PLAIN)
-                    .body(text),
-            );
+            multipart = multipart.singlepart(SinglePart::builder().header(header::ContentType::TEXT_PLAIN).body(text));
         }
         if let Some(html) = message.html_body {
-            multipart = multipart.singlepart(
-                SinglePart::builder()
-                    .header(header::ContentType::TEXT_HTML)
-                    .body(html),
-            );
+            multipart = multipart.singlepart(SinglePart::builder().header(header::ContentType::TEXT_HTML).body(html));
         }
         let email = email_builder.multipart(multipart).map_err(|err| {
             api_error!(

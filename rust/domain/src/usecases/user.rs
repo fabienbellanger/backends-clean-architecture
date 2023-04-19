@@ -85,26 +85,17 @@ where
     /// Send forgotten password request
     // TODO: Add test
     #[instrument(skip(self))]
-    pub async fn send_forgotten_password(
-        &self,
-        request: ForgottenPasswordRequest,
-    ) -> ApiResult<PasswordResetResponse> {
+    pub async fn send_forgotten_password(&self, request: ForgottenPasswordRequest) -> ApiResult<PasswordResetResponse> {
         validate_request_data(&request)?;
 
-        let password_reset = self
-            .user_service
-            .forgotten_password(request.clone())
-            .await?;
+        let password_reset = self.user_service.forgotten_password(request.clone()).await?;
 
         // Send email
-        self.email_service
-            .forgotten_password(request, &password_reset.token)?;
+        self.email_service.forgotten_password(request, &password_reset.token)?;
 
         Ok(PasswordResetResponse {
             token: password_reset.token,
-            expired_at: password_reset
-                .expired_at
-                .to_rfc3339_opts(SecondsFormat::Secs, true),
+            expired_at: password_reset.expired_at.to_rfc3339_opts(SecondsFormat::Secs, true),
         })
     }
 

@@ -19,8 +19,7 @@ impl TryFrom<PasswordReset> for PasswordResetRequest {
 
     fn try_from(value: PasswordReset) -> Result<Self, Self::Error> {
         Ok(Self {
-            user_id: Uuid::parse_str(&value.user_id)
-                .map_err(|err| api_error!(ApiErrorCode::BadRequest, err))?,
+            user_id: Uuid::parse_str(&value.user_id).map_err(|err| api_error!(ApiErrorCode::BadRequest, err))?,
             token: value.token,
             expired_at: value.expired_at,
         })

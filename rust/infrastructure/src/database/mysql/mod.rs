@@ -54,8 +54,6 @@ impl GenericDb for Db {
                 .map_err(|err| api_error!(ApiErrorCode::InternalError, err))?
         }
 
-        Ok(Self {
-            pool: Arc::new(pool),
-        })
+        Ok(Self { pool: Arc::new(pool) })
     }
 }

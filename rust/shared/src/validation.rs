@@ -9,9 +9,6 @@ use validator::Validate;
 pub fn validate_request_data<T: Validate>(data: &T) -> ApiResult<()> {
     match data.validate() {
         Ok(_) => Ok(()),
-        Err(errors) => Err(api_error!(
-            ApiErrorCode::BadRequest,
-            json!(errors).to_string()
-        )),
+        Err(errors) => Err(api_error!(ApiErrorCode::BadRequest, json!(errors).to_string())),
     }
 }

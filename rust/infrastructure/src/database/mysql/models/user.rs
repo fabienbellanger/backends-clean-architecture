@@ -42,8 +42,7 @@ impl TryInto<User> for UserModel {
 
     fn try_into(self) -> Result<User, Self::Error> {
         Ok(User {
-            id: Uuid::from_str(&self.id)
-                .map_err(|err| api_error!(ApiErrorCode::InternalError, err))?,
+            id: Uuid::from_str(&self.id).map_err(|err| api_error!(ApiErrorCode::InternalError, err))?,
             lastname: self.lastname,
             firstname: self.firstname,
             email: self.email,
