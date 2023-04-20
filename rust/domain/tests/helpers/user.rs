@@ -14,6 +14,7 @@ pub(crate) const JWT_SECRET: &str = "mySecretKey";
 pub(crate) const USER_ID: &str = "3288fb86-db99-471d-95bc-1451c7ec6f7b";
 pub(crate) const USER_EMAIL: &str = "test@test.com";
 pub(crate) const TOTAL_USERS: i64 = 10;
+pub(crate) const FORGOTTEN_PASSWORD_TOKEN: &str = "3288fb86-db99-471d-95bc-1451c7ec6f7c";
 
 pub(crate) struct TestUserRepository {}
 
@@ -111,8 +112,13 @@ impl UserRepository for TestUserRepository {
         })
     }
 
-    async fn delete_user(&self, _request: DeleteUserRequest) -> ApiResult<u64> {
-        Ok(1)
+    async fn delete_user(&self, request: DeleteUserRequest) -> ApiResult<u64> {
+        let user_id: Uuid = USER_ID.parse().unwrap();
+        if user_id == request.id {
+            Ok(1)
+        } else {
+            Ok(0)
+        }
     }
 
     async fn get_total_users(&self) -> ApiResult<i64> {
@@ -120,6 +126,7 @@ impl UserRepository for TestUserRepository {
     }
 
     async fn update_password(&self, _request: UpdateUserPasswordRepositoryRequest) -> ApiResult<()> {
+    
         Ok(())
     }
 }

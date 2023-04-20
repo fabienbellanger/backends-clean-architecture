@@ -83,7 +83,6 @@ where
     }
 
     /// Send forgotten password request
-    // TODO: Add test
     #[instrument(skip(self))]
     pub async fn send_forgotten_password(&self, request: ForgottenPasswordRequest) -> ApiResult<PasswordResetResponse> {
         validate_request_data(&request)?;

@@ -1,6 +1,9 @@
 use crate::helpers::user::*;
 use crate::helpers::{email::TestEmailService, password_reset::TestPasswordResetRepository};
 use chrono::{DateTime, Days, Utc};
+use clean_architecture_domain::ports::requests::user::{
+    DeleteUserRequest, ForgottenPasswordRequest, UpdateUserPasswordRequest,
+};
 use clean_architecture_domain::{
     ports::{
         requests::user::{CreateUserRequest, GetUserRequest, LoginRequest},
@@ -9,6 +12,7 @@ use clean_architecture_domain::{
     },
     usecases::user::*,
 };
+use clean_architecture_shared::error::ApiError;
 use clean_architecture_shared::{auth::Jwt, query_parameter::PaginateSort};
 use std::cmp::Ordering;
 use uuid::Uuid;
@@ -141,4 +145,57 @@ async fn test_login_use_case_with_bad_email() {
     let response = use_case.login(request, &jwt).await;
 
     assert!(response.is_err());
+}
+
+#[tokio::test]
+async fn test_delete_user() {
+    let use_case = init_use_case();
+    let request = DeleteUserRequest {
+        id: USER_ID.parse().unwrap(),
+    };
+    assert_eq!(use_case.delete_user(request).await.unwrap(), 1);
+
+    // Not found user ID
+    let request = DeleteUserRequest { id: Uuid::new_v4() };
+    assert_eq!(use_case.delete_user(request).await.unwrap(), 0);
+}
+
+#[tokio::test]
+async fn test_forgotten_password() {
+    let use_case = init_use_case();
+    let request = ForgottenPasswordRequest {
+        email: USER_EMAIL.to_owned(),
+        expiration_duration: 1,
+    };
+
+    let response = use_case.send_forgotten_password(request).await;
+    assert!(response.is_ok());
+
+    // Not found user email
+    let request = ForgottenPasswordRequest {
+        email: "john.doe@test.com".to_owned(),
+        expiration_duration: 1,
+    };
+
+    let response = use_case.send_forgotten_password(request).await;
+    assert!(response.is_err());
+    if let Err(err) = response {
+        assert_eq!(
+            err,
+            ApiError::InternalError {
+                message: "Not found".to_owned(),
+            }
+        );
+    }
+}
+
+#[tokio::test]
+async fn test_update_password() {
+    let use_case = init_use_case();
+    let request = UpdateUserPasswordRequest {
+        token: "token".to_owned(),
+        password: "123456789".to_owned(),
+    };
+    let response = use_case.update_user_password(request).await;
+    assert!(response.is_ok());
 }
