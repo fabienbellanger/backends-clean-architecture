@@ -8,3 +8,6 @@ extern crate lazy_static;
 
 #[macro_use]
 extern crate tracing;
+
+/// Application name
+pub const APP_NAME: &str = "Backend Clean Architecture with Rust";

@@ -4,6 +4,7 @@ mod forgotten_password;
 
 use crate::config::Config;
 use crate::email::forgotten_password::ForgottenPassword;
+use crate::APP_NAME;
 use clean_architecture_domain::ports::requests::user::ForgottenPasswordRequest;
 use clean_architecture_domain::ports::services::email::EmailService;
 use clean_architecture_shared::api_error;
@@ -124,7 +125,7 @@ impl Email {
 impl EmailService for Email {
     fn forgotten_password(&self, request: ForgottenPasswordRequest, token: &str) -> ApiResult<()> {
         let message = ForgottenPassword {
-            app_name: "Backend Clean Architecture with Rust".to_owned(), // TODO: Add appplication name
+            app_name: APP_NAME.to_owned(),
             base_url: self.config.forgotten_password_base_url.clone(),
             token: token.to_string(),
             email_from: self.config.forgotten_password_email_from.clone(),
