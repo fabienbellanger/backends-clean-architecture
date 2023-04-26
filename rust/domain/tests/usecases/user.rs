@@ -1,3 +1,4 @@
+use crate::helpers::password_reset::FORGOTTEN_PASSWORD_TOKEN;
 use crate::helpers::user::*;
 use crate::helpers::{email::TestEmailService, password_reset::TestPasswordResetRepository};
 use chrono::{DateTime, Days, Utc};
@@ -179,6 +180,7 @@ async fn test_forgotten_password() {
 
     let response = use_case.send_forgotten_password(request).await;
     assert!(response.is_err());
+
     if let Err(err) = response {
         assert_eq!(
             err,
@@ -193,9 +195,29 @@ async fn test_forgotten_password() {
 async fn test_update_password() {
     let use_case = init_use_case();
     let request = UpdateUserPasswordRequest {
-        token: "token".to_owned(),
+        token: FORGOTTEN_PASSWORD_TOKEN.to_owned(),
         password: "123456789".to_owned(),
     };
     let response = use_case.update_user_password(request).await;
     assert!(response.is_ok());
+}
+
+#[tokio::test]
+async fn test_update_password_no_user() {
+    let use_case = init_use_case();
+    let request = UpdateUserPasswordRequest {
+        token: "not_found_token".to_owned(),
+        password: "123456789".to_owned(),
+    };
+    let response = use_case.update_user_password(request).await;
+    assert!(response.is_err());
+
+    if let Err(err) = response {
+        assert_eq!(
+            err,
+            ApiError::NotFound {
+                message: "no user found".to_owned(),
+            }
+        );
+    }
 }

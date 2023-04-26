@@ -5,6 +5,10 @@ use clean_architecture_domain::ports::{
 };
 use clean_architecture_shared::error::ApiResult;
 
+use super::user::USER_ID;
+
+pub(crate) const FORGOTTEN_PASSWORD_TOKEN: &str = "3288fb86-db99-471d-95bc-1451c7ec6f7c";
+
 pub(crate) struct TestPasswordResetRepository {}
 
 #[async_trait]
@@ -15,7 +19,10 @@ impl PasswordResetRepository for TestPasswordResetRepository {
     }
 
     /// Get by token and return a tuple of user ID and user password
-    async fn get_by_token(&self, _request: GetByTokenRequest) -> ApiResult<Option<String>> {
+    async fn get_by_token(&self, request: GetByTokenRequest) -> ApiResult<Option<String>> {
+        if &request.token == FORGOTTEN_PASSWORD_TOKEN {
+            return Ok(Some(USER_ID.to_owned()));
+        }
         Ok(None)
     }
 

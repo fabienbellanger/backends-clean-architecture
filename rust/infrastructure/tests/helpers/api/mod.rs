@@ -3,7 +3,7 @@ pub mod user;
 use super::mysql::TestMySQL;
 use axum::Router;
 use axum::{http::StatusCode, Extension};
-use clean_architecture_infrastructure::api::{
+use clean_architecture_infrastructure::api::axum_rest::{
     layers::{
         self,
         states::{ConfigState, SharedState, State},
