@@ -15,7 +15,6 @@ pub struct PasswordReset {
 
 impl PasswordReset {
     /// Create a new password recovery
-    // TODO: Add test
     pub fn new(user_id: String, expiration_duration: i64) -> Self {
         let now = Utc::now();
 

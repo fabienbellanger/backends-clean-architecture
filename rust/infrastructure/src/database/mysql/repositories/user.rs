@@ -14,7 +14,7 @@ use clean_architecture_domain::{
         requests::user::{GetUserRequest, LoginRequest},
     },
 };
-use clean_architecture_shared::error::ApiResult;
+use clean_architecture_shared::error::{ApiError, ApiResult};
 use clean_architecture_shared::query_parameter::PaginateSort;
 use sha2::{Digest, Sha512};
 use std::sync::Arc;
@@ -70,10 +70,15 @@ impl UserRepository for UserMysqlRepository {
             "SELECT * FROM users WHERE id = ? AND deleted_at IS NULL",
             request.id.to_string()
         )
-        .fetch_one(self.db.pool.clone().as_ref()) // TODO: Change because generate a 500 instead of 404
+        .fetch_optional(self.db.pool.clone().as_ref())
         .await?;
 
-        user.try_into()
+        match user {
+            Some(user) => user.try_into(),
+            None => Err(ApiError::NotFound {
+                message: "no user found".to_owned(),
+            }),
+        }
     }
 
     #[instrument(skip(self))]
@@ -83,10 +88,15 @@ impl UserRepository for UserMysqlRepository {
             "SELECT * FROM users WHERE email = ? AND deleted_at IS NULL",
             email
         )
-        .fetch_one(self.db.pool.clone().as_ref()) // TODO: Change because generate a 500 instead of 404
+        .fetch_optional(self.db.pool.clone().as_ref())
         .await?;
 
-        user.try_into()
+        match user {
+            Some(user) => user.try_into(),
+            None => Err(ApiError::NotFound {
+                message: "no user found".to_owned(),
+            }),
+        }
     }
 
     #[instrument(skip(self))]

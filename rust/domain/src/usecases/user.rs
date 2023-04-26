@@ -99,7 +99,6 @@ where
     }
 
     /// Update user password
-    // TODO: Add test
     #[instrument(skip(self))]
     pub async fn update_user_password(&self, request: UpdateUserPasswordRequest) -> ApiResult<()> {
         validate_request_data(&request)?;

@@ -50,8 +50,8 @@ impl UserRepository for TestUserRepository {
             };
             Ok(user)
         } else {
-            Err(ApiError::InternalError {
-                message: "Not found".to_owned(),
+            Err(ApiError::NotFound {
+                message: "no user found".to_owned(),
             })
         }
     }
@@ -71,8 +71,8 @@ impl UserRepository for TestUserRepository {
             };
             Ok(user)
         } else {
-            Err(ApiError::InternalError {
-                message: "Not found".to_owned(),
+            Err(ApiError::NotFound {
+                message: "no user found".to_owned(),
             })
         }
     }

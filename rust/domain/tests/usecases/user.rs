@@ -184,8 +184,8 @@ async fn test_forgotten_password() {
     if let Err(err) = response {
         assert_eq!(
             err,
-            ApiError::InternalError {
-                message: "Not found".to_owned(),
+            ApiError::NotFound {
+                message: "no user found".to_owned(),
             }
         );
     }
