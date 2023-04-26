@@ -1,6 +1,6 @@
 //! Web handler module
 
-use crate::api::TEMPLATES;
+use crate::api::axum_rest::TEMPLATES;
 use axum::response::Html;
 use clean_architecture_shared::api_error;
 use clean_architecture_shared::error::{ApiError, ApiErrorCode, ApiResult};

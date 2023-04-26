@@ -1,8 +1,8 @@
 //! Users handler module
 
-use crate::api::extractors::{ExtractRequestId, Path};
-use crate::api::layers::states::SharedState;
-use crate::api::usecases::AppUseCases;
+use crate::api::axum_rest::extractors::{ExtractRequestId, Path};
+use crate::api::axum_rest::layers::states::SharedState;
+use crate::api::axum_rest::usecases::AppUseCases;
 use axum::extract::{Query, State};
 use axum::http::StatusCode;
 use axum::{Extension, Json};
