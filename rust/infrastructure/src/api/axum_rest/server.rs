@@ -14,8 +14,11 @@ use axum::error_handling::HandleErrorLayer;
 use axum::{middleware, Extension, Router};
 use clean_architecture_shared::api_error;
 use clean_architecture_shared::error::{ApiError, ApiErrorCode, ApiResult};
-use std::net::{AddrParseError, SocketAddr};
 use std::time::Duration;
+use std::{
+    net::{AddrParseError, SocketAddr},
+    sync::Arc,
+};
 use tower::ServiceBuilder;
 use tower_http::{services::ServeDir, ServiceBuilderExt};
 
@@ -72,13 +75,13 @@ async fn get_app(settings: &Config) -> ApiResult<Router> {
     let db = Db::new().await?;
 
     // Email
-    let email = Email::new(EmailConfig::from(settings.clone()));
+    let email = Arc::new(Email::new(EmailConfig::from(settings.clone())));
 
     app = app
         .fallback_service(ServeDir::new("assets").append_index_html_on_directories(true)) // FIXME: static_file_error not work this Axum 0.6.9!
         .layer(middleware::from_fn(layers::override_http_errors))
         .layer(layers)
-        .layer(Extension(AppUseCases::new(db, email).await?));
+        .layer(Extension(Arc::new(AppUseCases::new(db, email).await?)));
 
     // State
     let app = app.with_state(global_state);

@@ -1,5 +1,6 @@
 //! User services module
 
+use std::sync::Arc;
 use crate::entities::password_reset::PasswordReset;
 use crate::ports::repositories::password_reset::PasswordResetRepository;
 use crate::ports::requests::password_reset::{DeleteRequest, GetByTokenRequest};
@@ -20,13 +21,13 @@ use clean_architecture_shared::query_parameter::PaginateSort;
 
 #[derive(Clone)]
 pub struct UserService<U: UserRepository, P: PasswordResetRepository> {
-    user_repository: U,
-    password_reset_repository: P,
+    user_repository: Arc<U>,
+    password_reset_repository: Arc<P>,
 }
 
 impl<U: UserRepository, P: PasswordResetRepository> UserService<U, P> {
     /// Create a new service
-    pub fn new(user_repository: U, password_reset_repository: P) -> Self {
+    pub fn new(user_repository: Arc<U>, password_reset_repository: Arc<P>) -> Self {
         Self {
             user_repository,
             password_reset_repository,

@@ -1,5 +1,6 @@
 //! User use cases
 
+use std::sync::Arc;
 use crate::ports::repositories::password_reset::PasswordResetRepository;
 use crate::ports::requests::user::{
     CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest, UpdateUserPasswordRequest,
@@ -26,8 +27,8 @@ where
     P: PasswordResetRepository,
     E: EmailService,
 {
-    user_service: UserService<U, P>,
-    email_service: E,
+    user_service: Arc<UserService<U, P>>,
+    email_service: Arc<E>,
 }
 
 impl<U, P, E> UserUseCase<U, P, E>
@@ -37,7 +38,7 @@ where
     E: EmailService,
 {
     /// Create a new use case
-    pub fn new(user_service: UserService<U, P>, email_service: E) -> Self {
+    pub fn new(user_service: Arc<UserService<U, P>>, email_service: Arc<E>) -> Self {
         Self {
             user_service,
             email_service,

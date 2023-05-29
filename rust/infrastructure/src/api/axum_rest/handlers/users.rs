@@ -16,6 +16,7 @@ use clean_architecture_shared::api_error;
 use clean_architecture_shared::error::{ApiError, ApiErrorCode, ApiResult};
 use clean_architecture_shared::query_parameter::{PaginateSort, PaginateSortQuery};
 use serde::Deserialize;
+use std::sync::Arc;
 use uuid::Uuid;
 use validator::Validate;
 
@@ -29,12 +30,12 @@ pub struct UpdatePasswordRequest {
 /// Login route: POST /api/v1/login
 #[instrument(skip(uc, state))]
 pub async fn login(
-    Extension(uc): Extension<AppUseCases>,
+    Extension(uc): Extension<Arc<AppUseCases>>,
     State(state): State<SharedState>,
     ExtractRequestId(request_id): ExtractRequestId,
     Json(request): Json<LoginRequest>,
 ) -> ApiResult<Json<LoginResponse>> {
-    let response = uc.user.login(request, &state.jwt).await?;
+    let response = uc.clone().user.login(request, &state.jwt).await?;
 
     Ok(Json(response))
 }
@@ -43,11 +44,11 @@ pub async fn login(
 #[instrument(skip(uc))]
 pub async fn get_users(
     Query(pagination): Query<PaginateSortQuery>,
-    Extension(uc): Extension<AppUseCases>,
+    Extension(uc): Extension<Arc<AppUseCases>>,
     ExtractRequestId(request_id): ExtractRequestId,
 ) -> ApiResult<Json<GetUsersResponse>> {
     let paginate_sort = PaginateSort::from(pagination);
-    let response = uc.user.get_users(&paginate_sort).await?;
+    let response = uc.clone().user.get_users(&paginate_sort).await?;
 
     Ok(Json(response))
 }
@@ -56,10 +57,10 @@ pub async fn get_users(
 #[instrument(skip(uc))]
 pub async fn get_user(
     Path(id): Path<Uuid>,
-    Extension(uc): Extension<AppUseCases>,
+    Extension(uc): Extension<Arc<AppUseCases>>,
     ExtractRequestId(request_id): ExtractRequestId,
 ) -> ApiResult<Json<GetUserResponse>> {
-    let response = uc.user.get_user(GetUserRequest { id }).await?;
+    let response = uc.clone().user.get_user(GetUserRequest { id }).await?;
 
     Ok(Json(response))
 }
@@ -67,11 +68,11 @@ pub async fn get_user(
 /// User creation route: POST /api/v1/users
 #[instrument(skip(uc))]
 pub async fn create_user(
-    Extension(uc): Extension<AppUseCases>,
+    Extension(uc): Extension<Arc<AppUseCases>>,
     ExtractRequestId(request_id): ExtractRequestId,
     Json(request): Json<CreateUserRequest>,
 ) -> ApiResult<Json<GetUserResponse>> {
-    let response = uc.user.create_user(request).await?;
+    let response = uc.clone().user.create_user(request).await?;
 
     Ok(Json(response))
 }
@@ -80,10 +81,10 @@ pub async fn create_user(
 #[instrument(skip(uc))]
 pub async fn delete_user(
     Path(id): Path<Uuid>,
-    Extension(uc): Extension<AppUseCases>,
+    Extension(uc): Extension<Arc<AppUseCases>>,
     ExtractRequestId(request_id): ExtractRequestId,
 ) -> ApiResult<StatusCode> {
-    let result = uc.user.delete_user(DeleteUserRequest { id }).await?;
+    let result = uc.clone().user.delete_user(DeleteUserRequest { id }).await?;
 
     match result {
         1 => Ok(StatusCode::NO_CONTENT),
@@ -95,11 +96,12 @@ pub async fn delete_user(
 #[instrument(skip(uc, state))]
 pub async fn forgotten_password(
     Path(email): Path<String>,
-    Extension(uc): Extension<AppUseCases>,
+    Extension(uc): Extension<Arc<AppUseCases>>,
     State(state): State<SharedState>,
     ExtractRequestId(request_id): ExtractRequestId,
 ) -> ApiResult<Json<PasswordResetResponse>> {
     let result = uc
+        .clone()
         .user
         .send_forgotten_password(ForgottenPasswordRequest {
             email,
@@ -114,11 +116,12 @@ pub async fn forgotten_password(
 #[instrument(skip(uc))]
 pub async fn update_password(
     Path(token): Path<Uuid>,
-    Extension(uc): Extension<AppUseCases>,
+    Extension(uc): Extension<Arc<AppUseCases>>,
     ExtractRequestId(request_id): ExtractRequestId,
     Json(body): Json<UpdatePasswordRequest>,
 ) -> ApiResult<StatusCode> {
-    uc.user
+    uc.clone()
+        .user
         .update_user_password(UpdateUserPasswordRequest {
             token: token.to_string(),
             password: body.password,

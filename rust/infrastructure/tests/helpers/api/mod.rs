@@ -19,6 +19,7 @@ use hyper::{Body, Request};
 use jsonwebtoken::{Algorithm, DecodingKey, EncodingKey};
 use serde_json::Value;
 use std::collections::HashMap;
+use std::sync::Arc;
 use tower::{ServiceBuilder, ServiceExt};
 use tower_http::ServiceBuilderExt;
 
@@ -86,11 +87,11 @@ impl TestAppBuilder {
         let state = Self::get_state();
         let settings = Config::default();
         let database = TestMySQL::new().await;
-        let email = Email::new(EmailConfig::default());
+        let email = Arc::new(Email::new(EmailConfig::default()));
 
         let mut router = Router::new().nest("/api/v1", routes::api(state.clone()));
         router = router.nest("/", routes::web(&settings));
-        router = router.layer(Extension(AppUseCases::new(database.database(), email).await.unwrap()));
+        router = router.layer(Extension(Arc::new(AppUseCases::new(database.database(), email).await.unwrap())));
 
         let router = router.with_state(state);
 
