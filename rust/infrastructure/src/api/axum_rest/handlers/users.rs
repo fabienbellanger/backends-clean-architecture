@@ -35,7 +35,7 @@ pub async fn login(
     ExtractRequestId(request_id): ExtractRequestId,
     Json(request): Json<LoginRequest>,
 ) -> ApiResult<Json<LoginResponse>> {
-    let response = uc.clone().user.login(request, &state.jwt).await?;
+    let response = uc.user.login(request, &state.jwt).await?;
 
     Ok(Json(response))
 }
@@ -48,7 +48,7 @@ pub async fn get_users(
     ExtractRequestId(request_id): ExtractRequestId,
 ) -> ApiResult<Json<GetUsersResponse>> {
     let paginate_sort = PaginateSort::from(pagination);
-    let response = uc.clone().user.get_users(&paginate_sort).await?;
+    let response = uc.user.get_users(&paginate_sort).await?;
 
     Ok(Json(response))
 }
@@ -60,7 +60,7 @@ pub async fn get_user(
     Extension(uc): Extension<Arc<AppUseCases>>,
     ExtractRequestId(request_id): ExtractRequestId,
 ) -> ApiResult<Json<GetUserResponse>> {
-    let response = uc.clone().user.get_user(GetUserRequest { id }).await?;
+    let response = uc.user.get_user(GetUserRequest { id }).await?;
 
     Ok(Json(response))
 }
@@ -72,7 +72,7 @@ pub async fn create_user(
     ExtractRequestId(request_id): ExtractRequestId,
     Json(request): Json<CreateUserRequest>,
 ) -> ApiResult<Json<GetUserResponse>> {
-    let response = uc.clone().user.create_user(request).await?;
+    let response = uc.user.create_user(request).await?;
 
     Ok(Json(response))
 }
@@ -84,7 +84,7 @@ pub async fn delete_user(
     Extension(uc): Extension<Arc<AppUseCases>>,
     ExtractRequestId(request_id): ExtractRequestId,
 ) -> ApiResult<StatusCode> {
-    let result = uc.clone().user.delete_user(DeleteUserRequest { id }).await?;
+    let result = uc.user.delete_user(DeleteUserRequest { id }).await?;
 
     match result {
         1 => Ok(StatusCode::NO_CONTENT),
@@ -101,7 +101,7 @@ pub async fn forgotten_password(
     ExtractRequestId(request_id): ExtractRequestId,
 ) -> ApiResult<Json<PasswordResetResponse>> {
     let result = uc
-        .clone()
+        
         .user
         .send_forgotten_password(ForgottenPasswordRequest {
             email,
@@ -120,7 +120,7 @@ pub async fn update_password(
     ExtractRequestId(request_id): ExtractRequestId,
     Json(body): Json<UpdatePasswordRequest>,
 ) -> ApiResult<StatusCode> {
-    uc.clone()
+    uc
         .user
         .update_user_password(UpdateUserPasswordRequest {
             token: token.to_string(),
