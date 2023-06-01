@@ -2,12 +2,12 @@ package usecases
 
 import (
 	"clean-architecture/pkg/domain/entities"
-	"clean-architecture/pkg/domain/ports/repositories"
 	"clean-architecture/pkg/domain/ports/requests"
+	"clean-architecture/pkg/domain/ports/services"
 )
 
 type userUseCase struct {
-	userRepository repositories.UserRepository
+	userService services.UserService
 }
 
 type User interface {
@@ -16,32 +16,15 @@ type User interface {
 }
 
 // NewUserUseCase returns a new CreateUser use case.
-func NewUserUseCase(repo repositories.UserRepository) User {
-	return &userUseCase{repo}
+func NewUserUseCase(userService services.UserService) User {
+	return &userUseCase{userService}
 }
 
-// Create user use case.
+// Create user.
 func (uc *userUseCase) Create(req *requests.UserCreateRequest) (*entities.User, error) {
-	// Validation
-	if err := req.Validate(); err != nil {
-		return nil, err
-	}
-
-	// Save user in database
-	user := req.ToUserEntity()
-	err := uc.userRepository.CreateUser(&user)
-
-	return &user, err
+	return uc.userService.Create(req)
 }
 
 func (uc *userUseCase) GetUser(req *requests.GetUserRequest) (*entities.User, error) {
-	// Validation
-	if err := req.Validate(); err != nil {
-		return nil, err
-	}
-
-	// Get user from ID
-	user, err := uc.userRepository.GetUser(req.ID)
-
-	return &user, err
+	return uc.userService.GetUser(req)
 }
