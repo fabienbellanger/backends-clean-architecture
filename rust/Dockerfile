@@ -14,10 +14,11 @@ WORKDIR /app
 # Copy
 # ----
 # TODO: Improve copy
-COPY ./domain/ domain
+COPY ./domain domain
 COPY ./infrastructure infrastructure
 COPY ./shared shared
 COPY ./.env.docker .env
+COPY ./Cargo.toml Cargo.toml
 
 # sqlx
 # ----
@@ -28,8 +29,6 @@ ENV SQLX_OFFLINE true
 # Build
 # -----
 ENV PKG_CONFIG_ALLOW_CROSS=1
-
-WORKDIR /app/infrastructure
 
 # RUN cargo build --release
 RUN cargo build
@@ -43,9 +42,8 @@ WORKDIR /app
 COPY --from=builder /app/.env .
 COPY --from=builder /app/infrastructure/assets assets
 COPY --from=builder /app/infrastructure/templates templates
-# COPY --from=builder /app/infrastructure/target/release/clean-architecture-infrastructure .
-COPY --from=builder /app/infrastructure/target/debug/clean-architecture-infrastructure .
+# COPY --from=builder /app/target/release/clean-architecture-infrastructure .
+COPY --from=builder /app/target/debug/clean-architecture-infrastructure .
 
-EXPOSE 8087
 ENTRYPOINT ["./clean-architecture-infrastructure"]
 CMD [""]
