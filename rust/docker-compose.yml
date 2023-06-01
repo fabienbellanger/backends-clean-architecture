@@ -1,0 +1,150 @@
+version: '3.9'
+
+services:
+  mariadb:
+    container_name: rust_clean_archi_mariadb
+    image: mariadb:latest
+    ports:
+      - "3308:3306"
+    volumes:
+      - database:/var/lib/mysql:delegated
+    environment:
+      MYSQL_ROOT_PASSWORD: test123
+      MYSQL_DATABASE: rust_clean_architecture
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+    networks:
+      - backend
+    restart: on-failure
+
+  adminer:
+    container_name: rust_clean_archi_adminer
+    image: adminer:latest
+    ports:
+      - 8083:8080
+    links:
+      - mariadb:db
+    networks:
+      - backend
+    restart: on-failure
+
+  maildev:
+    container_name: rust_clean_archi_maildev
+    image: djfarrelly/maildev
+    ports:
+        - "1081:80"
+        - "1026:25"
+    networks:
+        - backend
+    restart: on-failure
+
+  server:
+    container_name: rust_clean_archi_server
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8086:8086"
+    links:
+      - mariadb
+    networks:
+      - backend
+    restart: on-failure
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: rust_clean_archi_prometheus
+    volumes:
+      - ./docker/prometheus:/etc/prometheus
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      # - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    restart: on-failure
+    expose:
+      - 9090
+    ports:
+      - "9090:9090"
+    networks:
+      - monitoring
+      - backend
+    # labels:
+    #   org.label-schema.group: "monitoring"
+
+  nodeexporter:
+    image: prom/node-exporter:latest
+    container_name: rust_clean_archi_nodeexporter
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      # - /:/rootfs:ro # Does not work on macOS
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    restart: on-failure
+    expose:
+      - 9100
+    ports:
+      - "9100:9100"
+    networks:
+      - monitoring
+
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: rust_clean_archi_alertmanager
+    volumes:
+      - ./docker/alertmanager:/etc/alertmanager
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
+    restart: on-failure
+    # expose:
+    #   - 9093
+    ports:
+      - "9093:9093"
+    networks:
+      - monitoring
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: rust_clean_archi_grafana
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./docker/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./docker/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin # Puis 00000000
+      - GF_USERS_ALLOW_SIGN_UP=false
+    restart: on-failure
+    expose:
+      - 3000
+    ports:
+      - "3003:3000"
+    networks:
+      - monitoring
+    # labels:
+    #   org.label-schema.group: "monitoring"
+
+networks:
+  backend:
+    driver: bridge
+  monitoring:
+    driver: bridge
+
+volumes:
+  database:
+    name: rust_clean_archi_database
+    external: false
+  prometheus_data:
+    name: rust_clean_archi_prometheus
+    external: false
+  grafana_data:
+    name: rust_clean_archi_grafana
+    external: false

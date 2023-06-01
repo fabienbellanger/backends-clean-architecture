@@ -15,6 +15,7 @@ servers:
     variables:
       port:
         enum:
+          - "8086"
           - "8087"
         default: "8087"
   - url: https://localhost/api/v1

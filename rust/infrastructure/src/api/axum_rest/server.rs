@@ -81,7 +81,7 @@ async fn get_app(settings: &Config) -> ApiResult<Router> {
         .fallback_service(ServeDir::new("assets").append_index_html_on_directories(true)) // FIXME: static_file_error not work this Axum 0.6.9!
         .layer(middleware::from_fn(layers::override_http_errors))
         .layer(layers)
-        .layer(Extension(AppUseCases::new(db, email).await?));
+        .layer(Extension(Arc::new(AppUseCases::new(db, email).await?)));
 
     // State
     let app = app.with_state(global_state);
