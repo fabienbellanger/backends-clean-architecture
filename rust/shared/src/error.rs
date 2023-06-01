@@ -9,6 +9,28 @@ use serde::{Deserialize, Serialize};
 use serde_json::json;
 use thiserror::Error;
 
+/// Custom Result typefor `CliError`
+pub type CliResult<T> = Result<T, CliError>;
+
+/// Custom CLI Error
+#[derive(Debug, Clone, PartialEq, Eq, Error)]
+pub enum CliError {
+    #[error("Panic: {0}")]
+    Panic(String),
+
+    #[error("Config error: {0}")]
+    ConfigError(String),
+
+    #[error("Database error: {0}")]
+    DatabaseError(String),
+
+    #[error("CLI error: {0}")]
+    Error(String),
+
+    #[error("Server error: {0}")]
+    ServerError(String),
+}
+
 /// Custom Result type for `ApiError`
 pub type ApiResult<T> = Result<T, ApiError>;
 

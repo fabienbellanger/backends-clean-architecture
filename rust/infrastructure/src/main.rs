@@ -1,7 +1,7 @@
-use clean_architecture_infrastructure::api::axum_rest::server::start_server;
-use clean_architecture_shared::error::ApiResult;
+use clean_architecture_infrastructure::cli;
+use clean_architecture_shared::error::CliResult;
 
 #[tokio::main]
-async fn main() -> ApiResult<()> {
-    start_server().await
+async fn main() -> CliResult<()> {
+    cli::start().await
 }
