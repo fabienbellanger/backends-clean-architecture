@@ -91,7 +91,9 @@ impl TestAppBuilder {
 
         let mut router = Router::new().nest("/api/v1", routes::api(state.clone()));
         router = router.nest("/", routes::web(&settings));
-        router = router.layer(Extension(Arc::new(AppUseCases::new(database.database(), email).await.unwrap())));
+        router = router.layer(Extension(Arc::new(
+            AppUseCases::new(database.database(), email).await.unwrap(),
+        )));
 
         let router = router.with_state(state);
 

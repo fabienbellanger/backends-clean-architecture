@@ -101,7 +101,6 @@ pub async fn forgotten_password(
     ExtractRequestId(request_id): ExtractRequestId,
 ) -> ApiResult<Json<PasswordResetResponse>> {
     let result = uc
-        
         .user
         .send_forgotten_password(ForgottenPasswordRequest {
             email,
@@ -120,8 +119,7 @@ pub async fn update_password(
     ExtractRequestId(request_id): ExtractRequestId,
     Json(body): Json<UpdatePasswordRequest>,
 ) -> ApiResult<StatusCode> {
-    uc
-        .user
+    uc.user
         .update_user_password(UpdateUserPasswordRequest {
             token: token.to_string(),
             password: body.password,

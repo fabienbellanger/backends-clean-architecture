@@ -1,6 +1,5 @@
 //! User use cases
 
-use std::sync::Arc;
 use crate::ports::repositories::password_reset::PasswordResetRepository;
 use crate::ports::requests::user::{
     CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest, UpdateUserPasswordRequest,
@@ -18,6 +17,7 @@ use clean_architecture_shared::auth::Jwt;
 use clean_architecture_shared::error::ApiResult;
 use clean_architecture_shared::query_parameter::PaginateSort;
 use clean_architecture_shared::validation::validate_request_data;
+use std::sync::Arc;
 
 #[derive(Clone)]
 /// Create new user use case

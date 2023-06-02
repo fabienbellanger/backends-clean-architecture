@@ -13,7 +13,9 @@
 	docker-up \
 	docker-up-no-daemon \
 	docker-down \
-	docker-down-rm
+	docker-down-rm \
+	docker-cli-build \
+	docker-cli-register
 
 .DEFAULT_GOAL=help
 
@@ -24,6 +26,10 @@ DOCKER_COMPOSE=docker-compose
 DOCKER=docker
 CARGO=cargo
 CARGO_BIN_NAME="clean-architecture-infrastructure"
+USER_LASTNAME="Admin"
+USER_FIRSTNAME="Test"
+USER_EMAIL="test2@testest.com"
+USER_PASSWORD="00000000"
 
 help: Makefile
 	@echo
@@ -42,7 +48,8 @@ watch:
 
 ## lint: Run clippy and rustfmt
 lint:
-	$(CARGO) clippy && $(CARGO) fmt
+	$(CARGO) fmt
+	$(CARGO) clippy -- -Dwarnings
 
 ## lint-audit: Run clippy, rustfmt and audit
 lint-audit: lint
@@ -90,3 +97,12 @@ docker-down:
 ## docker-down-rm: Stop running containers and remove linked volumes
 docker-down-rm:
 	$(DOCKER_COMPOSE) down --remove-orphans --volumes
+
+## docker-cli-build: Build project for CLI
+docker-cli-build: docker-pull
+	$(DOCKER) build -f Dockerfile.cli -t rust-clean-architecture-infrastructure-cli .
+
+## docker-cli-register: Run CLI container to register an admin user
+docker-cli-register: docker-cli-build
+	$(DOCKER) run -i --rm --net rust_clean_archi_backend --link rust_clean_archi_mariadb rust-clean-architecture-infrastructure-cli \
+	register -l $(USER_LASTNAME) -f $(USER_FIRSTNAME) -e $(USER_EMAIL) -p $(USER_PASSWORD)

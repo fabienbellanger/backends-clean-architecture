@@ -1,6 +1,5 @@
 //! User services module
 
-use std::sync::Arc;
 use crate::entities::password_reset::PasswordReset;
 use crate::ports::repositories::password_reset::PasswordResetRepository;
 use crate::ports::requests::password_reset::{DeleteRequest, GetByTokenRequest};
@@ -18,6 +17,7 @@ use clean_architecture_shared::api_error;
 use clean_architecture_shared::auth::Jwt;
 use clean_architecture_shared::error::{ApiError, ApiErrorCode, ApiResult};
 use clean_architecture_shared::query_parameter::PaginateSort;
+use std::sync::Arc;
 
 #[derive(Clone)]
 pub struct UserService<U: UserRepository, P: PasswordResetRepository> {

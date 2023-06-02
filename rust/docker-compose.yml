@@ -134,8 +134,10 @@ services:
 
 networks:
   backend:
+    name: rust_clean_archi_backend
     driver: bridge
   monitoring:
+    name: rust_clean_archi_monitoring
     driver: bridge
 
 volumes:
