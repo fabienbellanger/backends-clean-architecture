@@ -55,4 +55,4 @@ COPY --from=builder /app/infrastructure/templates templates
 COPY --from=builder /app/target/debug/clean-architecture-infrastructure .
 
 ENTRYPOINT ["./clean-architecture-infrastructure"]
-CMD ["serve"]
+# CMD ["serve"]

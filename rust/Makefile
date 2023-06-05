@@ -100,7 +100,7 @@ docker-down-rm:
 
 ## docker-cli-build: Build project for CLI
 docker-cli-build: docker-pull
-	$(DOCKER) build -f Dockerfile.cli -t rust-clean-architecture-infrastructure-cli .
+	$(DOCKER) build -f Dockerfile -t rust-clean-architecture-infrastructure-cli .
 
 ## docker-cli-register: Run CLI container to register an admin user
 docker-cli-register: docker-cli-build
