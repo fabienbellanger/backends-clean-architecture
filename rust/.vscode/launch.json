@@ -1,0 +1,140 @@
+{
+    // Utilisez IntelliSense pour en savoir plus sur les attributs possibles.
+    // Pointez pour afficher la description des attributs existants.
+    // Pour plus d'informations, visitez : https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in library 'clean-architecture-domain'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--lib",
+                    "--package=clean-architecture-domain"
+                ],
+                "filter": {
+                    "name": "clean-architecture-domain",
+                    "kind": "lib"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug integration test 'mod'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--test=mod",
+                    "--package=clean-architecture-domain"
+                ],
+                "filter": {
+                    "name": "mod",
+                    "kind": "test"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in library 'clean-architecture-shared'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--lib",
+                    "--package=clean-architecture-shared"
+                ],
+                "filter": {
+                    "name": "clean-architecture-shared",
+                    "kind": "lib"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in library 'clean-architecture-infrastructure'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--lib",
+                    "--package=clean-architecture-infrastructure"
+                ],
+                "filter": {
+                    "name": "clean-architecture-infrastructure",
+                    "kind": "lib"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'clean-architecture-infrastructure' - API",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=clean-architecture-infrastructure",
+                    "--package=clean-architecture-infrastructure"
+                ],
+                "filter": {
+                    "name": "clean-architecture-infrastructure",
+                    "kind": "bin"
+                }
+            },
+            "args": ["serve"],
+            "cwd": "${workspaceFolder}/infrastructure"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'clean-architecture-infrastructure'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=clean-architecture-infrastructure",
+                    "--package=clean-architecture-infrastructure"
+                ],
+                "filter": {
+                    "name": "clean-architecture-infrastructure",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug integration test 'mod'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--test=mod",
+                    "--package=clean-architecture-infrastructure"
+                ],
+                "filter": {
+                    "name": "mod",
+                    "kind": "test"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}

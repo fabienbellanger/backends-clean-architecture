@@ -1,7 +1,5 @@
 //! User module
 
-use std::sync::Arc;
-
 use crate::{
     config::Config,
     database::{
@@ -18,6 +16,7 @@ use clean_architecture_domain::{
     usecases::user::UserUseCase,
 };
 use clean_architecture_shared::error::{CliError, CliResult};
+use std::sync::Arc;
 
 /// Create a new user
 pub async fn register(lastname: &str, firstname: &str, email: &str, password: &str) -> CliResult<()> {
