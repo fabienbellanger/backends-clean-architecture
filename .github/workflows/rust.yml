@@ -14,6 +14,9 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./rust
     services:
       mysql:
         image: mariadb:latest
