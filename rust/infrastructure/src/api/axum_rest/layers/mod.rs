@@ -3,6 +3,7 @@
 pub(crate) mod basic_auth;
 pub(crate) mod jwt;
 pub mod logger;
+pub(crate) mod prometheus;
 pub mod states;
 
 use crate::config::Config;

@@ -31,6 +31,12 @@ pub enum CliError {
     ServerError(String),
 }
 
+impl From<ApiError> for CliError {
+    fn from(err: ApiError) -> Self {
+        Self::ServerError(err.to_string())
+    }
+}
+
 /// Custom Result type for `ApiError`
 pub type ApiResult<T> = Result<T, ApiError>;
 
@@ -214,4 +220,22 @@ macro_rules! api_error {
             },
         }
     };
+}
+
+#[cfg(test)]
+mod test {
+    use super::{ApiError, CliError};
+
+    #[test]
+    fn test_from_api_error_to_cli_error() {
+        let api_error = ApiError::Unauthorized;
+        let expected = CliError::ServerError("Unauthorized".to_owned());
+        assert_eq!(CliError::from(api_error), expected);
+
+        let api_error = ApiError::NotFound {
+            message: "resource not found".to_owned(),
+        };
+        let expected = CliError::ServerError("resource not found".to_owned());
+        assert_eq!(CliError::from(api_error), expected);
+    }
 }

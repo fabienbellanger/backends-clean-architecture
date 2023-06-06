@@ -70,6 +70,9 @@ pub struct Config {
     pub forgotten_password_base_url: String,
     /// Forgotten password email from
     pub forgotten_password_email_from: String,
+
+    /// Prometheus metics enabled
+    pub prometheus_metrics_enabled: bool,
 }
 
 impl Config {

@@ -4,7 +4,7 @@ mod user;
 
 use crate::api::axum_rest::server::start_server;
 use clap::{Parser, Subcommand};
-use clean_architecture_shared::error::{CliError, CliResult};
+use clean_architecture_shared::error::CliResult;
 
 #[derive(Parser)]
 #[clap(
@@ -76,9 +76,7 @@ enum Commands {
 pub async fn start() -> CliResult<()> {
     let args = Cli::parse();
     match &args.commands {
-        Commands::Serve => start_server()
-            .await
-            .map_err(|err| CliError::ServerError(err.to_string())),
+        Commands::Serve => start_server().await.map_err(|err| err.into()),
         Commands::Register {
             lastname,
             firstname,
