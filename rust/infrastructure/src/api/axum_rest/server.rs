@@ -1,7 +1,6 @@
 //! Server module
 
 use super::layers::{
-    basic_auth::BasicAuthLayer,
     prometheus::PrometheusMetric,
     states::{SharedState, State},
     MakeRequestUuid,
@@ -9,17 +8,17 @@ use super::layers::{
 use super::usecases::AppUseCases;
 use super::{handlers, layers, logger, routes};
 use crate::config::Config;
-use crate::database::mysql::Db;
-use crate::database::GenericDb;
+use crate::database::{mysql::Db, GenericDb};
 use crate::email::{Email, EmailConfig};
-use axum::{error_handling::HandleErrorLayer, routing::get};
-use axum::{middleware, Extension, Router};
-use clean_architecture_shared::api_error;
-use clean_architecture_shared::error::{ApiError, ApiErrorCode, ApiResult};
-use std::{future::ready, time::Duration};
+use axum::{error_handling::HandleErrorLayer, middleware, Extension, Router};
+use clean_architecture_shared::{
+    api_error,
+    error::{ApiError, ApiErrorCode, ApiResult},
+};
 use std::{
     net::{AddrParseError, SocketAddr},
     sync::Arc,
+    time::Duration,
 };
 use tower::ServiceBuilder;
 use tower_http::{services::ServeDir, ServiceBuilderExt};
@@ -75,17 +74,10 @@ async fn get_app(settings: &Config) -> ApiResult<Router> {
 
     // Prometheus metrics
     if settings.prometheus_metrics_enabled {
-        let handle = PrometheusMetric::get_handle()?;
         app = app
             .nest(
                 "/metrics",
-                Router::new().route(
-                    "/",
-                    get(move || ready(handle.render())).layer(BasicAuthLayer::new(
-                        &settings.basic_auth_username,
-                        &settings.basic_auth_password,
-                    )),
-                ),
+                routes::prometheus(settings, PrometheusMetric::get_handle()?),
             )
             .route_layer(middleware::from_fn(PrometheusMetric::get_layer));
     }

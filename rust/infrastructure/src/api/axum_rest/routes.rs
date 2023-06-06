@@ -6,6 +6,8 @@ use super::{handlers, layers};
 use crate::config::Config;
 use axum::routing::{delete, get, patch, post};
 use axum::Router;
+use metrics_exporter_prometheus::PrometheusHandle;
+use std::future::ready;
 
 /// Return web routes list
 pub fn web(settings: &Config) -> Router<SharedState> {
@@ -21,6 +23,17 @@ pub fn web(settings: &Config) -> Router<SharedState> {
                     &settings.basic_auth_password,
                 )),
         )
+}
+
+/// Add Prometheus route
+pub fn prometheus(settings: &Config, handle: PrometheusHandle) -> Router<SharedState> {
+    Router::new().route(
+        "/",
+        get(move || ready(handle.render())).layer(BasicAuthLayer::new(
+            &settings.basic_auth_username,
+            &settings.basic_auth_password,
+        )),
+    )
 }
 
 /// Return API routes list
