@@ -7,7 +7,7 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug unit tests in library 'clean-architecture-domain'",
+            "name": "Debug unit tests in library 'domain'",
             "cargo": {
                 "args": [
                     "test",
@@ -45,7 +45,7 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug unit tests in library 'clean-architecture-shared'",
+            "name": "Debug unit tests in library 'shared'",
             "cargo": {
                 "args": [
                     "test",
@@ -64,7 +64,7 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug unit tests in library 'clean-architecture-infrastructure'",
+            "name": "Debug unit tests in library 'infrastructure'",
             "cargo": {
                 "args": [
                     "test",
@@ -83,7 +83,7 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug executable 'clean-architecture-infrastructure' - API",
+            "name": "Debug executable 'infrastructure' - API",
             "cargo": {
                 "args": [
                     "build",
@@ -101,7 +101,7 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug unit tests in executable 'clean-architecture-infrastructure'",
+            "name": "Debug unit tests in executable 'infrastructure'",
             "cargo": {
                 "args": [
                     "test",
