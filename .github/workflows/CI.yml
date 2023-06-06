@@ -1,4 +1,4 @@
-name: Rust CI
+name: CI
 
 on:
   push:
@@ -9,10 +9,9 @@ on:
 env:
   CARGO_TERM_COLOR: always
   SQLX_OFFLINE: true
-  DATABASE_URL: mysql://root:root@127.0.0.1:3306/rust_clean_architecture
 
 jobs:
-  build:
+  rust-build:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -37,6 +36,6 @@ jobs:
     - name: Clippy
       run: cargo clippy
     - name: Run tests
-      run: cargo test --verbose -- --test-threads 1
+      run: DATABASE_URL=mysql://root:root@127.0.0.1:3306/rust_clean_architecture cargo test --verbose -- --test-threads 1
     - name: Build
       run: cargo build --verbose
