@@ -40,11 +40,11 @@ help: Makefile
 
 ## serve: Start web server
 serve:
-	cd infrastructure && $(CARGO) run
+	cd infrastructure && $(CARGO) run -- serve
 
 ## watch: Start web server with hot reload
 watch:
-	cd infrastructure && $(CARGO) watch -x "run"
+	cd infrastructure && $(CARGO) watch -x "run -- serve"
 
 ## lint: Run clippy and rustfmt
 lint:
