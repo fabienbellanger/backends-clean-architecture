@@ -106,6 +106,7 @@ where
     }
 }
 
+// We define our own `Query` extractor that customizes the error from `axum::extract::Query`
 pub struct Query<T>(pub T);
 
 #[async_trait]
