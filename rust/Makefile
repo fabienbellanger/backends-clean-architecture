@@ -1,8 +1,10 @@
 .PHONY: help \
 	serve \
 	watch \
+	upgrade \
 	lint \
 	lint-audit \
+	audit-fix \
 	test \
 	clean \
 	sqlx-prepare \
@@ -46,6 +48,10 @@ serve:
 watch:
 	cd infrastructure && $(CARGO) watch -x "run -- serve"
 
+## upgrade: Upgrade workspace crates
+upgrade:
+	$(CARGO) upgrade --workspace
+
 ## lint: Run clippy and rustfmt
 lint:
 	$(CARGO) fmt
@@ -54,6 +60,10 @@ lint:
 ## lint-audit: Run clippy, rustfmt and audit
 lint-audit: lint
 	$(CARGO) audit
+
+## audit-fix: Fix audit
+audit-fix:
+	$(CARGO) audit fix
 
 ## test: Launch unit tests in a single thread
 test:
