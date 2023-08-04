@@ -4,6 +4,7 @@ use crate::api_error;
 use crate::error::{ApiError, ApiErrorCode, ApiResult};
 use axum::http::{header, HeaderMap};
 use chrono::Utc;
+use jsonwebtoken::errors::ErrorKind::ExpiredSignature;
 use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Validation};
 use serde::{Deserialize, Serialize};
 use std::fmt::{Debug, Formatter};
@@ -136,12 +137,13 @@ impl Jwt {
         let validation = Validation::new(self.algorithm);
         match self.decoding_key.clone() {
             Some(decoding_key) => {
-                let token = decode::<Claims>(token, &decoding_key, &validation).map_err(|err| {
-                    api_error!(
+                let token = decode::<Claims>(token, &decoding_key, &validation).map_err(|err| match err.kind() {
+                    ExpiredSignature => api_error!(
                         ApiErrorCode::InternalError,
                         "error during JWT decoding",
                         format!("error during JWT decoding: {err}")
-                    )
+                    ),
+                    _ => api_error!(ApiErrorCode::InternalError),
                 })?;
 
                 Ok(token.claims)
