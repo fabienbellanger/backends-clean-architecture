@@ -1,7 +1,10 @@
 [package]
-edition = "2021"
 name = "clean-architecture-shared"
-version = "0.1.0"
+version = { workspace = true }
+edition = { workspace = true }
+authors = { workspace = true }
+repository = "https://github.com/fabienbellanger/backends-clean-architecture/rust/shared"
+readme = "../README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

@@ -4,3 +4,15 @@ members = [
   "shared",
   "infrastructure",
 ]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["Fabien Bellanger <valentil@gmail.com>"]
+repository = "https://github.com/fabienbellanger/backends-clean-architecture/rust"
+readme = "./README.md"
+
+[workspace.dependencies]
+clean-architecture-domain = { path = "./domain", version = "0.1.0" }
+clean-architecture-infrastructure = { path = "./infrastructure", version = "0.1.0" }
+clean-architecture-shared = { path = "./shared", version = "0.1.0" }

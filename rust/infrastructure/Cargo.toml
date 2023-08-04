@@ -1,13 +1,16 @@
 [package]
-edition = "2021"
 name = "clean-architecture-infrastructure"
-version = "0.1.0"
+version = { workspace = true }
+edition = { workspace = true }
+authors = { workspace = true }
+repository = "https://github.com/fabienbellanger/backends-clean-architecture/rust/infrastructure"
+readme = "../README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-clean-architecture-domain = {path = "../domain"}
-clean-architecture-shared = {path = "../shared"}
+clean-architecture-domain = { workspace = true }
+clean-architecture-shared = { workspace = true }
 
 # Axum
 axum = { version = "0.6.20", features = ["headers"] }
