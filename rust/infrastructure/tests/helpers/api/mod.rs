@@ -1,5 +1,6 @@
 pub mod user;
 
+use self::user::create_and_authenticate;
 use super::mysql::TestMySQL;
 use axum::Router;
 use axum::{http::StatusCode, Extension};
@@ -75,6 +76,13 @@ impl TryInto<ApiErrorMessage> for TestResponse {
 pub struct TestApp {
     pub router: Router,
     pub database: TestMySQL,
+}
+
+impl TestApp {
+    /// Create a new user and return a tuple with login response and token
+    pub async fn make_authentication(&self) -> (TestResponse, String) {
+        create_and_authenticate(self).await
+    }
 }
 
 pub struct TestAppBuilder {

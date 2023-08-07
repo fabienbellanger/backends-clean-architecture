@@ -1,5 +1,5 @@
 use crate::helpers::api::{
-    user::{create_and_authenticate, create_user_request, delete, get_all, get_one, login_request},
+    user::{create_user_request, delete, get_all, get_one, login_request},
     TestApp, TestAppBuilder,
 };
 use axum::http::StatusCode;
@@ -31,7 +31,7 @@ async fn test_api_login_unauthorized_user() {
 #[tokio::test]
 async fn test_api_login_authorized_user() {
     let app: TestApp = TestAppBuilder::new().await.build();
-    let (response, _token) = create_and_authenticate(&app).await;
+    let (response, _token) = app.make_authentication().await;
 
     assert_eq!(response.status_code, StatusCode::OK);
 }
@@ -39,7 +39,7 @@ async fn test_api_login_authorized_user() {
 #[tokio::test]
 async fn test_api_user_creation_success() {
     let app: TestApp = TestAppBuilder::new().await.build();
-    let (_response, token) = create_and_authenticate(&app).await;
+    let (_response, token) = app.make_authentication().await;
 
     let response = create_user_request(
         &app,
@@ -60,7 +60,7 @@ async fn test_api_user_creation_success() {
 #[tokio::test]
 async fn test_api_user_creation_invalid_password() {
     let app: TestApp = TestAppBuilder::new().await.build();
-    let (_response, token) = create_and_authenticate(&app).await;
+    let (_response, token) = app.make_authentication().await;
 
     let response = create_user_request(
         &app,
@@ -81,7 +81,7 @@ async fn test_api_user_creation_invalid_password() {
 #[tokio::test]
 async fn test_api_user_list_all() {
     let app: TestApp = TestAppBuilder::new().await.build();
-    let (_response, token) = create_and_authenticate(&app).await;
+    let (_response, token) = app.make_authentication().await;
 
     // Create 2 users
     for i in 1..3 {
@@ -112,7 +112,7 @@ async fn test_api_user_list_all() {
 #[tokio::test]
 async fn test_api_user_list_one() {
     let app: TestApp = TestAppBuilder::new().await.build();
-    let (_response, token) = create_and_authenticate(&app).await;
+    let (_response, token) = app.make_authentication().await;
 
     // Create a user
     let response = create_user_request(
@@ -141,7 +141,7 @@ async fn test_api_user_list_one() {
 #[tokio::test]
 async fn test_api_user_get_one_bad_parameter() {
     let app: TestApp = TestAppBuilder::new().await.build();
-    let (_response, token) = create_and_authenticate(&app).await;
+    let (_response, token) = app.make_authentication().await;
 
     let response = get_one(&app, &token, "bad_id").await;
     assert_eq!(response.status_code, StatusCode::BAD_REQUEST);
@@ -150,7 +150,7 @@ async fn test_api_user_get_one_bad_parameter() {
 #[tokio::test]
 async fn test_api_user_delete() {
     let app: TestApp = TestAppBuilder::new().await.build();
-    let (_response, token) = create_and_authenticate(&app).await;
+    let (_response, token) = app.make_authentication().await;
 
     // Create a user
     let response = create_user_request(
