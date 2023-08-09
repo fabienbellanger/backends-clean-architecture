@@ -7,6 +7,8 @@
 	audit-fix \
 	test \
 	clean \
+	build \
+	build-no-audit \
 	sqlx-prepare \
 	doc \
 	doc-deps \
@@ -72,6 +74,14 @@ test:
 ## clean: Remove target directory
 clean:
 	$(CARGO) clean
+
+## build: Build application in release mode
+build: lint-audit test
+	$(CARGO) build --release
+
+## build-no-audit: Build application in release mode
+build-no-audit: lint test
+	$(CARGO) build --release
 
 ## sqlx-prepare: Prepare for sqlx offline mode
 sqlx-prepare:
