@@ -1,11 +1,12 @@
 //! User entity
 
 use chrono::{DateTime, Utc};
-use uuid::Uuid;
+
+pub type UserId = uuid::Uuid;
 
 #[derive(Debug, Default, PartialEq, Eq)]
 pub struct User {
-    pub id: Uuid,
+    pub id: UserId,
     pub lastname: String,
     pub firstname: String,
     pub email: String,

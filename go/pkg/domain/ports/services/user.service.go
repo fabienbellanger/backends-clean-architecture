@@ -10,7 +10,7 @@ type userService struct {
 	userRepository repositories.UserRepository
 }
 
-// NewUserService returns a new user service.
+// NewUserService returns a new user service
 func NewUserService(repo repositories.UserRepository) UserService {
 	return &userService{repo}
 }

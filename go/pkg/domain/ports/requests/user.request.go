@@ -4,11 +4,9 @@ import (
 	"clean-architecture/pkg/domain/entities"
 	"clean-architecture/utils"
 	"time"
-
-	"github.com/google/uuid"
 )
 
-// UserCreateRequest is the type provide in the request.
+// UserCreateRequest is the type provide in the request
 type UserCreateRequest struct {
 	Lastname  string `json:"lastname" xml:"lastname" form:"lastname" validate:"required"`
 	Firstname string `json:"firstname" xml:"firstname" form:"firstname" validate:"required"`
@@ -16,10 +14,10 @@ type UserCreateRequest struct {
 	Password  string `json:"-" xml:"-" form:"password" validate:"required,min=8"`
 }
 
-// ToUserEntity transforms a UserCreateRequest into a User entity.
+// ToUserEntity transforms a UserCreateRequest into a User entity
 func (uc *UserCreateRequest) ToUserEntity() entities.User {
 	return entities.NewUser(
-		uuid.New(),
+		entities.NewUserID(),
 		uc.Lastname,
 		uc.Firstname,
 		uc.Email,
@@ -28,17 +26,17 @@ func (uc *UserCreateRequest) ToUserEntity() entities.User {
 	)
 }
 
-// Validate request input data.
+// Validate request input data
 func (uc *UserCreateRequest) Validate() utils.ValidatorErrors {
 	return utils.ValidateStruct(uc)
 }
 
-// GetUserRequest is the type provide in the request.
+// GetUserRequest is the type provide in the request
 type GetUserRequest struct {
 	ID string `json:"id" xml:"id" form:"id" validate:"uuid4,required"`
 }
 
-// Validate request input data.
+// Validate request input data
 func (uc *GetUserRequest) Validate() utils.ValidatorErrors {
 	return utils.ValidateStruct(uc)
 }

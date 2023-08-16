@@ -16,12 +16,12 @@ type User interface {
 	CreateUser(c Context) error
 }
 
-// NewUserController creates a new User controller.
+// NewUserController creates a new User controller
 func NewUserController(us usecases.User) User {
 	return &userController{us}
 }
 
-// CreateUser controller.
+// CreateUser controller
 func (uc *userController) CreateUser(ctx Context) error {
 	var params requests.UserCreateRequest
 	if err := ctx.Bind(&params); err != nil {
@@ -36,7 +36,7 @@ func (uc *userController) CreateUser(ctx Context) error {
 	return ctx.JSON(user)
 }
 
-// GetUser controller.
+// GetUser controller
 func (uc *userController) GetUser(ctx Context) error {
 	var user *entities.User
 	req := requests.GetUserRequest{ID: ctx.Query("id")}

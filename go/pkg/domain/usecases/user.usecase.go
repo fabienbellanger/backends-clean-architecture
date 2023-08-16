@@ -15,12 +15,12 @@ type User interface {
 	GetUser(r *requests.GetUserRequest) (*entities.User, error)
 }
 
-// NewUserUseCase returns a new CreateUser use case.
+// NewUserUseCase returns a new CreateUser use case
 func NewUserUseCase(userService services.UserService) User {
 	return &userUseCase{userService}
 }
 
-// Create user.
+// Create user
 func (uc *userUseCase) Create(req *requests.UserCreateRequest) (*entities.User, error) {
 	return uc.userService.Create(req)
 }

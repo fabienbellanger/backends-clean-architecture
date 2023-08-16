@@ -3,8 +3,6 @@ package models
 import (
 	"clean-architecture/pkg/domain/entities"
 	"time"
-
-	"github.com/google/uuid"
 )
 
 // User models.
@@ -17,11 +15,11 @@ type User struct {
 	CreatedAt time.Time `json:"created_at" xml:"created_at" form:"created_at" gorm:"not null;autoCreateTime"`
 }
 
-// UserToEntity converts a user model into a domain user entity.
+// UserToEntity converts a user model into a domain user entity
 // TODO: Add test
 func (u *User) UserToEntity() entities.User {
 	return entities.NewUser(
-		uuid.MustParse(u.ID),
+		entities.UserIDFromString(u.ID),
 		u.Lastname,
 		u.Firstname,
 		u.Email,
@@ -30,7 +28,7 @@ func (u *User) UserToEntity() entities.User {
 	)
 }
 
-// UserFromEntity converts a user entity into a user model.
+// UserFromEntity converts a user entity into a user model
 func UserFromEntity(u *entities.User) User {
 	return User{
 		u.ID.String(),
