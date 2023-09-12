@@ -46,7 +46,7 @@ impl<U: UserRepository, P: PasswordResetRepository> UserService<U, P> {
                 let (token, expired_at) = jwt.generate(user.id.to_string())?;
                 match NaiveDateTime::from_timestamp_opt(expired_at, 0) {
                     Some(expired_at) => {
-                        let expired_at: DateTime<Utc> = DateTime::from_utc(expired_at, Utc);
+                        let expired_at: DateTime<Utc> = DateTime::from_naive_utc_and_offset(expired_at, Utc);
 
                         Ok(LoginResponse {
                             id: user.id.to_string(),

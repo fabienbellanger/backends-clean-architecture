@@ -47,9 +47,11 @@ impl TryInto<User> for UserModel {
             firstname: self.firstname,
             email: self.email,
             password: self.password,
-            created_at: DateTime::<Utc>::from_utc(self.created_at, Utc),
-            updated_at: DateTime::<Utc>::from_utc(self.updated_at, Utc),
-            deleted_at: self.deleted_at.map(|dt| DateTime::<Utc>::from_utc(dt, Utc)),
+            created_at: DateTime::<Utc>::from_naive_utc_and_offset(self.created_at, Utc),
+            updated_at: DateTime::<Utc>::from_naive_utc_and_offset(self.updated_at, Utc),
+            deleted_at: self
+                .deleted_at
+                .map(|dt| DateTime::<Utc>::from_naive_utc_and_offset(dt, Utc)),
         })
     }
 }

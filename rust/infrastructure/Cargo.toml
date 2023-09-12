@@ -17,7 +17,7 @@ axum = { version = "0.6.20", features = ["headers"] }
 
 # Tower
 tower = { version = "0.4.13", features = ["timeout"] }
-tower-http = { version = "0.4.3", features = ["cors", "fs", "request-id", "util"] }
+tower-http = { version = "0.4.4", features = ["cors", "fs", "request-id", "util"] }
 
 # Hyper
 hyper = "0.14.27"
@@ -33,9 +33,9 @@ tracing-appender = "0.2.2"
 tracing-subscriber = { version = "0.3.17", features = ["registry", "env-filter", "fmt", "json"] }
 
 async-trait = "0.1.73"
-bytes = "1.4.0"
-chrono = { version = "0.4.26", features = ["clock", "std", "serde"], default-features = false }
-clap = { version = "4.3.24", features = ["cargo", "derive"] }
+bytes = "1.5.0"
+chrono = { version = "0.4.30", features = ["clock", "std", "serde"], default-features = false }
+clap = { version = "4.4.2", features = ["cargo", "derive"] }
 config = "0.13.3"
 dotenvy = "0.15.7"
 futures = "0.3.28"
@@ -47,12 +47,12 @@ metrics = "0.21.1"
 metrics-exporter-prometheus = "0.12.1"
 mime = "0.3.17"
 rand = "0.8.5"
-serde = { version = "1.0.186", features = ["derive"] }
-serde_json = "1.0.105"
+serde = { version = "1.0.188", features = ["derive"] }
+serde_json = "1.0.106"
 serde_urlencoded = "0.7.1"
 sha2 = "0.10.7"
-tera = "1.19.0"
-thiserror = "1.0.47"
+tera = "1.19.1"
+thiserror = "1.0.48"
 tokio = { version = "1.32.0", features = ["full"] }
 uuid = "1.4.1"
 validator = { version = "0.16.1", features = ["derive"] }
