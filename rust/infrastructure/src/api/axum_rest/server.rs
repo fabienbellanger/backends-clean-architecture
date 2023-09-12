@@ -17,7 +17,6 @@ use clean_architecture_shared::{
 };
 use std::{
     net::{AddrParseError, SocketAddr},
-    sync::Arc,
     time::Duration,
 };
 use tokio::signal;
@@ -95,13 +94,13 @@ async fn get_app(settings: &Config) -> ApiResult<Router> {
     let db = Db::new().await?;
 
     // Email
-    let email = Arc::new(Email::new(EmailConfig::from(settings.clone())));
+    let email = Email::new(EmailConfig::from(settings.clone()));
 
     app = app
         .fallback_service(ServeDir::new("assets").append_index_html_on_directories(true)) // FIXME: static_file_error not work this Axum 0.6.9!
         .layer(middleware::from_fn(layers::override_http_errors))
         .layer(layers)
-        .layer(Extension(Arc::new(AppUseCases::new(db, email).await?)));
+        .layer(Extension(AppUseCases::new(db, email).await?));
 
     // State
     let app = app.with_state(global_state);

@@ -16,7 +16,6 @@ use clean_architecture_domain::{
     usecases::user::UserUseCase,
 };
 use clean_architecture_shared::error::{CliError, CliResult};
-use std::sync::Arc;
 
 /// Create a new user
 pub async fn register(lastname: &str, firstname: &str, email: &str, password: &str) -> CliResult<()> {
@@ -33,10 +32,10 @@ pub async fn register(lastname: &str, firstname: &str, email: &str, password: &s
     println!("    ► Database..........OK");
 
     // User use case
-    let email_service = Arc::new(Email::new(EmailConfig::from(config)));
-    let user_repository = Arc::new(UserMysqlRepository::new(db.clone()));
-    let password_reset_repository = Arc::new(PasswordResetMysqlRepository::new(db));
-    let user_service = Arc::new(UserService::new(user_repository, password_reset_repository));
+    let email_service = Email::new(EmailConfig::from(config));
+    let user_repository = UserMysqlRepository::new(db.clone());
+    let password_reset_repository = PasswordResetMysqlRepository::new(db);
+    let user_service = UserService::new(user_repository, password_reset_repository);
     let user_use_case = UserUseCase::new(user_service, email_service);
 
     user_use_case

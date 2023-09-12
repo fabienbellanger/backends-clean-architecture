@@ -17,7 +17,6 @@ use clean_architecture_shared::auth::Jwt;
 use clean_architecture_shared::error::ApiResult;
 use clean_architecture_shared::query_parameter::PaginateSort;
 use clean_architecture_shared::validation::validate_request_data;
-use std::sync::Arc;
 
 #[derive(Clone)]
 /// Create new user use case
@@ -27,8 +26,8 @@ where
     P: PasswordResetRepository,
     E: EmailService,
 {
-    user_service: Arc<UserService<U, P>>,
-    email_service: Arc<E>,
+    user_service: UserService<U, P>,
+    email_service: E,
 }
 
 impl<U, P, E> UserUseCase<U, P, E>
@@ -38,7 +37,7 @@ where
     E: EmailService,
 {
     /// Create a new use case
-    pub fn new(user_service: Arc<UserService<U, P>>, email_service: Arc<E>) -> Self {
+    pub fn new(user_service: UserService<U, P>, email_service: E) -> Self {
         Self {
             user_service,
             email_service,

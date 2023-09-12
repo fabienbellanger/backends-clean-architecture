@@ -16,14 +16,13 @@ use clean_architecture_domain::{
 use clean_architecture_shared::error::ApiError;
 use clean_architecture_shared::{auth::Jwt, query_parameter::PaginateSort};
 use std::cmp::Ordering;
-use std::sync::Arc;
 use uuid::Uuid;
 
 fn init_use_case() -> UserUseCase<TestUserRepository, TestPasswordResetRepository, TestEmailService> {
-    let user_repository = Arc::new(TestUserRepository {});
-    let password_reset_repository = Arc::new(TestPasswordResetRepository {});
-    let email_service = Arc::new(TestEmailService {});
-    let user_service = Arc::new(UserService::new(user_repository, password_reset_repository));
+    let user_repository = TestUserRepository {};
+    let password_reset_repository = TestPasswordResetRepository {};
+    let email_service = TestEmailService {};
+    let user_service = UserService::new(user_repository, password_reset_repository);
     UserUseCase::new(user_service, email_service)
 }
 

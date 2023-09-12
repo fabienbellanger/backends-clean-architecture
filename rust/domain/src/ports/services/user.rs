@@ -17,17 +17,16 @@ use clean_architecture_shared::api_error;
 use clean_architecture_shared::auth::Jwt;
 use clean_architecture_shared::error::{ApiError, ApiErrorCode, ApiResult};
 use clean_architecture_shared::query_parameter::PaginateSort;
-use std::sync::Arc;
 
 #[derive(Clone)]
 pub struct UserService<U: UserRepository, P: PasswordResetRepository> {
-    user_repository: Arc<U>,
-    password_reset_repository: Arc<P>,
+    user_repository: U,
+    password_reset_repository: P,
 }
 
 impl<U: UserRepository, P: PasswordResetRepository> UserService<U, P> {
     /// Create a new service
-    pub fn new(user_repository: Arc<U>, password_reset_repository: Arc<P>) -> Self {
+    pub fn new(user_repository: U, password_reset_repository: P) -> Self {
         Self {
             user_repository,
             password_reset_repository,
