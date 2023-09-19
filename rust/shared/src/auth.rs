@@ -101,7 +101,13 @@ impl Jwt {
     /// Generate JWT
     pub fn generate(&self, user_id: String) -> ApiResult<(String, i64)> {
         let header = jsonwebtoken::Header::new(self.algorithm);
-        let now = Utc::now().timestamp_nanos() / 1_000_000_000; // nanosecond -> second
+        let now = Utc::now().timestamp_nanos_opt().ok_or_else(|| {
+            api_error!(
+                ApiErrorCode::InternalError,
+                "error during JWT encoding",
+                "'Utc::now()' failed when encoding JWT"
+            )
+        })? / 1_000_000_000; // nanosecond -> second
         let expired_at = now + (self.lifetime * 3600);
 
         let payload = Claims {

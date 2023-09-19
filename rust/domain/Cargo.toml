@@ -12,7 +12,7 @@ readme = "../README.md"
 clean-architecture-shared = { workspace = true }
 
 async-trait = "0.1.73"
-chrono = { version = "0.4.30", features = ["clock", "std", "serde"], default-features = false }
+chrono = { version = "0.4.31", features = ["clock", "std", "serde"], default-features = false }
 serde = { version = "1.0.188", features = ["derive"] }
 thiserror = "1.0.48"
 uuid = { version = "1.4.1", features = ["v4", "serde"] }
