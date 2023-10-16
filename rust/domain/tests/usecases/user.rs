@@ -121,8 +121,8 @@ async fn test_login_use_case() {
     };
     let mut jwt = Jwt::default();
     jwt.set_lifetime(20);
-    jwt.set_encoding_key(JWT_SECRET);
-    jwt.set_decoding_key(JWT_SECRET);
+    jwt.set_encoding_key(JWT_SECRET).unwrap();
+    jwt.set_decoding_key(JWT_SECRET).unwrap();
     let response = use_case.login(request, &jwt).await.unwrap();
     let expired_at = DateTime::parse_from_rfc3339(&response.expired_at)
         .unwrap()
@@ -141,8 +141,8 @@ async fn test_login_use_case_with_bad_email() {
         password: "00000000".to_owned(),
     };
     let mut jwt = Jwt::default();
-    jwt.set_encoding_key(JWT_SECRET);
-    jwt.set_decoding_key(JWT_SECRET);
+    jwt.set_encoding_key(JWT_SECRET).unwrap();
+    jwt.set_decoding_key(JWT_SECRET).unwrap();
     let response = use_case.login(request, &jwt).await;
 
     assert!(response.is_err());
