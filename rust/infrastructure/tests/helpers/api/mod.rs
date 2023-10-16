@@ -17,7 +17,6 @@ use clean_architecture_infrastructure::config::Config;
 use clean_architecture_infrastructure::email::{Email, EmailConfig};
 use clean_architecture_shared::{auth::Jwt, error::ApiErrorMessage};
 use hyper::{Body, Request};
-use jsonwebtoken::{Algorithm, DecodingKey, EncodingKey};
 use serde_json::Value;
 use std::collections::HashMap;
 use tower::{ServiceBuilder, ServiceExt};
@@ -108,17 +107,12 @@ impl TestAppBuilder {
     fn get_state() -> SharedState {
         let jwt_secret_key = "mySecretJwtKey";
         let jwt_lifetime = 24;
-        let encoding_key = EncodingKey::from_secret(jwt_secret_key.as_bytes());
-        let decoding_key = DecodingKey::from_secret(jwt_secret_key.as_bytes());
 
         let state = State {
             config: ConfigState {
-                jwt_encoding_key: encoding_key.clone(),
-                jwt_decoding_key: decoding_key.clone(),
-                jwt_lifetime,
                 forgotten_password_expiration_duration: 24,
             },
-            jwt: Jwt::new(Algorithm::HS512, jwt_lifetime, Some(encoding_key), Some(decoding_key)),
+            jwt: Jwt::new("HS512", jwt_lifetime, Some(jwt_secret_key), None, None).unwrap(),
         };
 
         SharedState::new(state)

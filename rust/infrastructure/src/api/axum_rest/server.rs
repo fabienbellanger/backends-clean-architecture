@@ -70,7 +70,7 @@ async fn get_app(settings: &Config) -> ApiResult<Router> {
         .propagate_x_request_id();
 
     // Global state
-    let global_state = SharedState::new(State::init(settings));
+    let global_state = SharedState::new(State::init(settings)?);
 
     // Routing - API
     let mut app = Router::new()

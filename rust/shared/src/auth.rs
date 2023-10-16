@@ -54,7 +54,7 @@ impl Default for Jwt {
     fn default() -> Self {
         Self {
             algorithm: Algorithm::HS512,
-            lifetime: 24, // 24h
+            lifetime: 1, // 1h
             encoding_key: None,
             decoding_key: None,
         }
@@ -68,19 +68,64 @@ impl Debug for Jwt {
 }
 
 impl Jwt {
+    /// Use a secret key instead of a pair of keys
+    fn use_secret(&self) -> bool {
+        self.algorithm == Algorithm::HS256 || self.algorithm == Algorithm::HS384 || self.algorithm == Algorithm::HS512
+    }
+
+    /// Convert `&str` to `Algorithm`
+    fn algorithm_from_str(algo: &str) -> ApiResult<Algorithm> {
+        Ok(match algo {
+            "HS256" => Algorithm::HS256,
+            "HS384" => Algorithm::HS384,
+            "HS512" => Algorithm::HS512,
+            "ES256" => Algorithm::ES256,
+            "ES384" => Algorithm::ES384,
+            _ => {
+                return Err(ApiError::InternalError {
+                    message: format!("{algo} is not a valid or supported algorithm"),
+                })
+            }
+        })
+    }
+
     /// Create a new `Jwt`
     pub fn new(
-        algorithm: Algorithm,
+        algorithm: &str,
         lifetime: i64,
-        encoding_key: Option<EncodingKey>,
-        decoding_key: Option<DecodingKey>,
-    ) -> Self {
-        Self {
-            algorithm,
+        secret: Option<&str>,
+        private_key: Option<&str>,
+        public_key: Option<&str>,
+    ) -> ApiResult<Self> {
+        let mut jwt = Jwt {
+            algorithm: Self::algorithm_from_str(algorithm)?,
             lifetime,
-            encoding_key,
-            decoding_key,
+            ..Default::default()
+        };
+
+        // Encoding key
+        match (secret, private_key, jwt.use_secret()) {
+            (Some(secret), _, true) => jwt.set_encoding_key(secret.trim())?,
+            (_, Some(private_key), false) => jwt.set_encoding_key(private_key.trim())?,
+            _ => {
+                return Err(ApiError::InternalError {
+                    message: "invalid JWT encoding key".to_owned(),
+                })
+            }
         }
+
+        // Decoding key
+        match (secret, public_key, jwt.use_secret()) {
+            (Some(secret), _, true) => jwt.set_decoding_key(secret.trim())?,
+            (_, Some(public_key), false) => jwt.set_decoding_key(public_key.trim())?,
+            _ => {
+                return Err(ApiError::InternalError {
+                    message: "invalided JWT decoding key".to_owned(),
+                })
+            }
+        }
+
+        Ok(jwt)
     }
 
     /// Update lifetime
@@ -88,14 +133,64 @@ impl Jwt {
         self.lifetime = hours;
     }
 
+    ///
+    pub fn encoding_key_from_str(algo: Algorithm, secret: &str) -> ApiResult<EncodingKey> {
+        let key = match algo {
+            Algorithm::HS256 | Algorithm::HS384 | Algorithm::HS512 => EncodingKey::from_secret(secret.as_bytes()),
+            Algorithm::ES256 | Algorithm::ES384 => {
+                EncodingKey::from_ec_pem(secret.as_bytes()).map_err(|err| ApiError::InternalError {
+                    message: err.to_string(),
+                })?
+            }
+            Algorithm::RS256 | Algorithm::RS384 | Algorithm::RS512 => EncodingKey::from_rsa_pem(secret.as_bytes())
+                .map_err(|err| ApiError::InternalError {
+                    message: err.to_string(),
+                })?,
+            Algorithm::PS256 | Algorithm::PS384 | Algorithm::PS512 => EncodingKey::from_rsa_pem(secret.as_bytes())
+                .map_err(|err| ApiError::InternalError {
+                    message: err.to_string(),
+                })?,
+            Algorithm::EdDSA => EncodingKey::from_ed_pem(secret.as_bytes()).map_err(|err| ApiError::InternalError {
+                message: err.to_string(),
+            })?,
+        };
+        Ok(key)
+    }
+
+    ///
+    pub fn decoding_key_from_str(algo: Algorithm, secret: &str) -> ApiResult<DecodingKey> {
+        let key = match algo {
+            Algorithm::HS256 | Algorithm::HS384 | Algorithm::HS512 => DecodingKey::from_secret(secret.as_bytes()),
+            Algorithm::ES256 | Algorithm::ES384 => {
+                DecodingKey::from_ec_pem(secret.as_bytes()).map_err(|err| ApiError::InternalError {
+                    message: err.to_string(),
+                })?
+            }
+            Algorithm::RS256 | Algorithm::RS384 | Algorithm::RS512 => DecodingKey::from_rsa_pem(secret.as_bytes())
+                .map_err(|err| ApiError::InternalError {
+                    message: err.to_string(),
+                })?,
+            Algorithm::PS256 | Algorithm::PS384 | Algorithm::PS512 => DecodingKey::from_rsa_pem(secret.as_bytes())
+                .map_err(|err| ApiError::InternalError {
+                    message: err.to_string(),
+                })?,
+            Algorithm::EdDSA => DecodingKey::from_ed_pem(secret.as_bytes()).map_err(|err| ApiError::InternalError {
+                message: err.to_string(),
+            })?,
+        };
+        Ok(key)
+    }
+
     /// Update encoding key
-    pub fn set_encoding_key(&mut self, secret: &str) {
-        self.encoding_key = Some(EncodingKey::from_secret(secret.as_bytes()));
+    pub fn set_encoding_key(&mut self, secret: &str) -> ApiResult<()> {
+        self.encoding_key = Some(Self::encoding_key_from_str(self.algorithm, secret)?);
+        Ok(())
     }
 
     /// Update decoding key
-    pub fn set_decoding_key(&mut self, secret: &str) {
-        self.decoding_key = Some(DecodingKey::from_secret(secret.as_bytes()));
+    pub fn set_decoding_key(&mut self, secret: &str) -> ApiResult<()> {
+        self.decoding_key = Some(Self::decoding_key_from_str(self.algorithm, secret)?);
+        Ok(())
     }
 
     /// Generate JWT

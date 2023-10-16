@@ -40,8 +40,14 @@ pub struct Config {
     /// Server requests timeout (in second)
     pub request_timeout: u64,
 
+    /// JWT algorithm
+    pub jwt_algorithm: String,
     /// JWT secret key
-    pub jwt_secret_key: String,
+    pub jwt_secret_key: Option<String>,
+    /// JWT private key
+    pub jwt_private_key: Option<String>,
+    /// JWT public key
+    pub jwt_public_key: Option<String>,
     /// JWT lifetime
     pub jwt_lifetime: i64,
 

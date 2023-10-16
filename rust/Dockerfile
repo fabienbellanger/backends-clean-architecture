@@ -20,6 +20,7 @@ COPY ./infrastructure/src infrastructure/src
 COPY ./infrastructure/assets infrastructure/assets
 COPY ./infrastructure/migrations infrastructure/migrations
 COPY ./infrastructure/templates infrastructure/templates
+COPY ./infrastructure/keys infrastructure/keys
 COPY ./infrastructure/Cargo.toml infrastructure/Cargo.toml
 COPY ./infrastructure/sqlx-data.json infrastructure/sqlx-data.json
 
@@ -49,6 +50,7 @@ WORKDIR /app
 COPY --from=builder /app/.env .
 COPY --from=builder /app/infrastructure/assets assets
 COPY --from=builder /app/infrastructure/templates templates
+COPY --from=builder /app/infrastructure/keys keys
 # COPY --from=builder /app/target/release/clean-architecture-infrastructure .
 COPY --from=builder /app/target/debug/clean-architecture-infrastructure .
 
