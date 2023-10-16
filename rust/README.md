@@ -184,6 +184,8 @@ drill --benchmark drill.yml --stats --quiet
 ## Generate JWT ES384 keys
 
 ```bash
+mkdir infrastructure/keys
+
 # Private key
 openssl ecparam -name secp384r1 -genkey -noout -out infrastructure/keys/private.ec.key
 
