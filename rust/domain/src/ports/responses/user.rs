@@ -10,7 +10,7 @@ pub struct LoginResponse {
     pub lastname: String,
     pub firstname: String,
     pub email: String,
-    pub token: String,
+    pub access_token: String,
     pub expired_at: String,
 }
 

@@ -52,7 +52,7 @@ impl<U: UserRepository, P: PasswordResetRepository> UserService<U, P> {
                             lastname: user.lastname,
                             firstname: user.firstname,
                             email: user.email.value(),
-                            token,
+                            access_token: token,
                             expired_at: expired_at.to_rfc3339_opts(SecondsFormat::Secs, true),
                         })
                     }

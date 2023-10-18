@@ -40,7 +40,7 @@ pub async fn create_and_authenticate(app: &TestApp) -> (TestResponse, String) {
 
     let res: LoginResponse = serde_json::from_str(&response.body.to_string()).expect("error when deserializing body");
 
-    (response, res.token)
+    (response, res.access_token)
 }
 
 /// Login request helper

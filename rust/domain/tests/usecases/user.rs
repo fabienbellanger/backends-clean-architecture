@@ -130,7 +130,7 @@ async fn test_login_use_case() {
     let tomorrow = Utc::now().checked_add_days(Days::new(1)).unwrap();
 
     assert_eq!(expired_at.cmp(&tomorrow), Ordering::Less);
-    assert!(!response.token.is_empty());
+    assert!(!response.access_token.is_empty());
 }
 
 #[tokio::test]

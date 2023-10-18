@@ -334,7 +334,7 @@ components:
         email:
           type: string
           format: email
-        token:
+        access_token:
           type: string
         expired_at:
           type: string
@@ -344,7 +344,7 @@ components:
         - lastname
         - firstname
         - email
-        - token
+        - access_token
         - expired_at
     GetUserResponse:
       type: object
