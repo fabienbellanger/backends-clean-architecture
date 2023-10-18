@@ -1,4 +1,4 @@
-//! Password Reset MySQL repository module
+//! Password Reset MySQL repository
 
 use crate::database::mysql::Db;
 use async_trait::async_trait;

@@ -3,8 +3,10 @@
 use crate::value_objects::{email::Email, password::Password};
 use chrono::{DateTime, Utc};
 
+/// User ID type
 pub type UserId = uuid::Uuid;
 
+/// User entity
 #[derive(Debug, Default, PartialEq, Eq)]
 pub struct User {
     pub id: UserId,

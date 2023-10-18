@@ -1,4 +1,5 @@
 use crate::helpers::password_reset::FORGOTTEN_PASSWORD_TOKEN;
+use crate::helpers::refresh_token::TestRefreshTokenRepository;
 use crate::helpers::user::*;
 use crate::helpers::{email::TestEmailService, password_reset::TestPasswordResetRepository};
 use chrono::{DateTime, Days, Utc};
@@ -18,11 +19,13 @@ use clean_architecture_shared::{auth::Jwt, query_parameter::PaginateSort};
 use std::cmp::Ordering;
 use uuid::Uuid;
 
-fn init_use_case() -> UserUseCase<TestUserRepository, TestPasswordResetRepository, TestEmailService> {
+fn init_use_case(
+) -> UserUseCase<TestUserRepository, TestPasswordResetRepository, TestRefreshTokenRepository, TestEmailService> {
     let user_repository = TestUserRepository {};
     let password_reset_repository = TestPasswordResetRepository {};
+    let refresh_token_repository = TestRefreshTokenRepository {};
     let email_service = TestEmailService {};
-    let user_service = UserService::new(user_repository, password_reset_repository);
+    let user_service = UserService::new(user_repository, password_reset_repository, refresh_token_repository);
     UserUseCase::new(user_service, email_service)
 }
 
@@ -120,11 +123,12 @@ async fn test_login_use_case() {
         password: "00000000".to_owned(),
     };
     let mut jwt = Jwt::default();
-    jwt.set_lifetime(20);
+    jwt.set_access_lifetime(20);
+    jwt.set_refresh_lifetime(2);
     jwt.set_encoding_key(JWT_SECRET).unwrap();
     jwt.set_decoding_key(JWT_SECRET).unwrap();
     let response = use_case.login(request, &jwt).await.unwrap();
-    let expired_at = DateTime::parse_from_rfc3339(&response.expired_at)
+    let expired_at = DateTime::parse_from_rfc3339(&response.access_token_expired_at)
         .unwrap()
         .with_timezone(&Utc);
     let tomorrow = Utc::now().checked_add_days(Days::new(1)).unwrap();

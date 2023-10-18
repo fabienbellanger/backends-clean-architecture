@@ -40,8 +40,11 @@ pub struct Jwt {
     /// The algorithm supported for signing/verifying JWT
     algorithm: Algorithm,
 
-    /// Token lifetime
-    lifetime: i64,
+    /// Access Token lifetime (in hour)
+    access_lifetime: i64,
+
+    /// Refresh Token lifetime (in day)
+    pub refresh_lifetime: i64,
 
     /// Encoding key
     encoding_key: Option<EncodingKey>,
@@ -54,7 +57,8 @@ impl Default for Jwt {
     fn default() -> Self {
         Self {
             algorithm: Algorithm::HS512,
-            lifetime: 1, // 1h
+            access_lifetime: 1,  // 1h
+            refresh_lifetime: 1, // 1 day
             encoding_key: None,
             decoding_key: None,
         }
@@ -63,7 +67,11 @@ impl Default for Jwt {
 
 impl Debug for Jwt {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Jwt => algo: {:?}, lifetime: {:?}", self.algorithm, self.lifetime)
+        write!(
+            f,
+            "Jwt => algo: {:?}, access_lifetime: {:?}, refresh_lifetime: {:?}",
+            self.algorithm, self.access_lifetime, self.refresh_lifetime
+        )
     }
 }
 
@@ -92,14 +100,16 @@ impl Jwt {
     /// Create a new `Jwt`
     pub fn new(
         algorithm: &str,
-        lifetime: i64,
+        access_lifetime: i64,
+        refresh_lifetime: i64,
         secret: Option<&str>,
         private_key: Option<&str>,
         public_key: Option<&str>,
     ) -> ApiResult<Self> {
         let mut jwt = Jwt {
             algorithm: Self::algorithm_from_str(algorithm)?,
-            lifetime,
+            access_lifetime,
+            refresh_lifetime,
             ..Default::default()
         };
 
@@ -128,9 +138,14 @@ impl Jwt {
         Ok(jwt)
     }
 
-    /// Update lifetime
-    pub fn set_lifetime(&mut self, hours: i64) {
-        self.lifetime = hours;
+    /// Update access token lifetime
+    pub fn set_access_lifetime(&mut self, hours: i64) {
+        self.access_lifetime = hours;
+    }
+
+    /// Update refresh token lifetime
+    pub fn set_refresh_lifetime(&mut self, days: i64) {
+        self.refresh_lifetime = days;
     }
 
     ///
@@ -197,11 +212,11 @@ impl Jwt {
     pub fn generate(&self, user_id: String) -> ApiResult<(String, i64)> {
         let header = jsonwebtoken::Header::new(self.algorithm);
         let now = Utc::now().timestamp();
-        let expired_at = now + (self.lifetime * 3600);
+        let access_expired_at = now + (self.access_lifetime * 3600);
 
         let payload = Claims {
             sub: user_id.clone(),
-            exp: expired_at,
+            exp: access_expired_at,
             iat: now,
             nbf: now,
             user_id,
@@ -217,7 +232,7 @@ impl Jwt {
                     )
                 })?;
 
-                Ok((token, expired_at))
+                Ok((token, access_expired_at))
             }
             _ => Err(api_error!(
                 ApiErrorCode::InternalError,

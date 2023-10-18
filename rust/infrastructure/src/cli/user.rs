@@ -1,5 +1,6 @@
 //! User module
 
+use crate::database::mysql::repositories::refresh_token::RefreshTokenMysqlRepository;
 use crate::{
     config::Config,
     database::{
@@ -34,8 +35,9 @@ pub async fn register(lastname: &str, firstname: &str, email: &str, password: &s
     // User use case
     let email_service = Email::new(EmailConfig::from(config));
     let user_repository = UserMysqlRepository::new(db.clone());
-    let password_reset_repository = PasswordResetMysqlRepository::new(db);
-    let user_service = UserService::new(user_repository, password_reset_repository);
+    let password_reset_repository = PasswordResetMysqlRepository::new(db.clone());
+    let refresh_token_repository = RefreshTokenMysqlRepository::new(db);
+    let user_service = UserService::new(user_repository, password_reset_repository, refresh_token_repository);
     let user_use_case = UserUseCase::new(user_service, email_service);
 
     user_use_case

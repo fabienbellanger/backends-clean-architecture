@@ -1,6 +1,7 @@
 //! User use cases
 
 use crate::ports::repositories::password_reset::PasswordResetRepository;
+use crate::ports::repositories::refresh_token::RefreshTokenRepository;
 use crate::ports::requests::user::{
     CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest, UpdateUserPasswordRequest,
 };
@@ -20,24 +21,26 @@ use clean_architecture_shared::validation::validate_request_data;
 
 #[derive(Clone)]
 /// Create new user use case
-pub struct UserUseCase<U, P, E>
+pub struct UserUseCase<U, P, T, E>
 where
     U: UserRepository,
     P: PasswordResetRepository,
+    T: RefreshTokenRepository,
     E: EmailService,
 {
-    user_service: UserService<U, P>,
+    user_service: UserService<U, P, T>,
     email_service: E,
 }
 
-impl<U, P, E> UserUseCase<U, P, E>
+impl<U, P, E, T> UserUseCase<U, P, T, E>
 where
     U: UserRepository,
     P: PasswordResetRepository,
+    T: RefreshTokenRepository,
     E: EmailService,
 {
     /// Create a new use case
-    pub fn new(user_service: UserService<U, P>, email_service: E) -> Self {
+    pub fn new(user_service: UserService<U, P, T>, email_service: E) -> Self {
         Self {
             user_service,
             email_service,

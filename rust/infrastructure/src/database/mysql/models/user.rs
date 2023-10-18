@@ -1,4 +1,4 @@
-//! User model module
+//! User model
 
 use chrono::{DateTime, NaiveDateTime, Utc};
 use clean_architecture_domain::{

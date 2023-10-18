@@ -106,13 +106,22 @@ impl TestAppBuilder {
 
     fn get_state() -> SharedState {
         let jwt_secret_key = "mySecretJwtKey";
-        let jwt_lifetime = 24;
+        let jwt_access_lifetime = 24;
+        let jwt_refresh_lifetime = 24;
 
         let state = State {
             config: ConfigState {
                 forgotten_password_expiration_duration: 24,
             },
-            jwt: Jwt::new("HS512", jwt_lifetime, Some(jwt_secret_key), None, None).unwrap(),
+            jwt: Jwt::new(
+                "HS512",
+                jwt_access_lifetime,
+                jwt_refresh_lifetime,
+                Some(jwt_secret_key),
+                None,
+                None,
+            )
+            .unwrap(),
         };
 
         SharedState::new(state)

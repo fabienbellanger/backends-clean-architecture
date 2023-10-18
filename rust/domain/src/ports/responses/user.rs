@@ -11,7 +11,9 @@ pub struct LoginResponse {
     pub firstname: String,
     pub email: String,
     pub access_token: String,
-    pub expired_at: String,
+    pub access_token_expired_at: String,
+    pub refresh_token: String,
+    pub refresh_token_expired_at: String,
 }
 
 #[derive(Debug, PartialEq, Eq, Serialize, Deserialize)]

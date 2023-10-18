@@ -1,11 +1,10 @@
+use super::user::USER_ID;
 use async_trait::async_trait;
 use clean_architecture_domain::ports::{
     repositories::password_reset::PasswordResetRepository,
     requests::password_reset::{DeleteRequest, GetByTokenRequest, PasswordResetRequest},
 };
 use clean_architecture_shared::error::ApiResult;
-
-use super::user::USER_ID;
 
 pub(crate) const FORGOTTEN_PASSWORD_TOKEN: &str = "3288fb86-db99-471d-95bc-1451c7ec6f7c";
 

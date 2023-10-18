@@ -336,7 +336,13 @@ components:
           format: email
         access_token:
           type: string
-        expired_at:
+        access_token_expired_at:
+          type: string
+          format: date-time
+        refresh_token:
+          type: string
+          format: uuid
+        refresh_token_expired_at:
           type: string
           format: date-time
       required:
@@ -345,7 +351,9 @@ components:
         - firstname
         - email
         - access_token
-        - expired_at
+        - access_token_expired_at
+        - refresh_token
+        - refresh_token_expired_at
     GetUserResponse:
       type: object
       properties:

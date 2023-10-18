@@ -27,7 +27,8 @@ impl State {
         };
         let jwt = Jwt::new(
             &config.jwt_algorithm,
-            config.jwt_lifetime,
+            config.jwt_access_lifetime,
+            config.jwt_refresh_lifetime,
             config.jwt_secret_key.as_deref(),
             private_key.as_deref(),
             public_key.as_deref(),

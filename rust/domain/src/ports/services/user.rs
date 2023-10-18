@@ -1,7 +1,9 @@
 //! User services module
 
 use crate::entities::password_reset::PasswordReset;
+use crate::entities::refresh_token::RefreshToken;
 use crate::ports::repositories::password_reset::PasswordResetRepository;
+use crate::ports::repositories::refresh_token::RefreshTokenRepository;
 use crate::ports::requests::password_reset::{DeleteRequest, GetByTokenRequest};
 use crate::ports::requests::user::{
     CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest, UpdateUserPasswordRepositoryRequest,
@@ -19,17 +21,19 @@ use clean_architecture_shared::error::{ApiError, ApiErrorCode, ApiResult};
 use clean_architecture_shared::query_parameter::PaginateSort;
 
 #[derive(Clone)]
-pub struct UserService<U: UserRepository, P: PasswordResetRepository> {
+pub struct UserService<U: UserRepository, P: PasswordResetRepository, T: RefreshTokenRepository> {
     user_repository: U,
     password_reset_repository: P,
+    refresh_token_repository: T,
 }
 
-impl<U: UserRepository, P: PasswordResetRepository> UserService<U, P> {
+impl<U: UserRepository, P: PasswordResetRepository, T: RefreshTokenRepository> UserService<U, P, T> {
     /// Create a new service
-    pub fn new(user_repository: U, password_reset_repository: P) -> Self {
+    pub fn new(user_repository: U, password_reset_repository: P, refresh_token_repository: T) -> Self {
         Self {
             user_repository,
             password_reset_repository,
+            refresh_token_repository,
         }
     }
 
@@ -42,18 +46,31 @@ impl<U: UserRepository, P: PasswordResetRepository> UserService<U, P> {
             None => Err(api_error!(ApiErrorCode::Unauthorized)),
             Some(user) => {
                 // JWT
-                let (token, expired_at) = jwt.generate(user.id.to_string())?;
-                match NaiveDateTime::from_timestamp_opt(expired_at, 0) {
-                    Some(expired_at) => {
-                        let expired_at: DateTime<Utc> = DateTime::from_naive_utc_and_offset(expired_at, Utc);
+                let (access_token, access_expired_at) = jwt.generate(user.id.to_string())?;
+                match NaiveDateTime::from_timestamp_opt(access_expired_at, 0) {
+                    Some(access_expired_at) => {
+                        let access_expired_at: DateTime<Utc> =
+                            DateTime::from_naive_utc_and_offset(access_expired_at, Utc);
+
+                        // Generate refresh token
+                        let refresh_token = RefreshToken::new(user.id, &access_token, jwt.refresh_lifetime);
+
+                        // Save refresh token
+                        self.refresh_token_repository
+                            .create(refresh_token.clone().into())
+                            .await?;
 
                         Ok(LoginResponse {
                             id: user.id.to_string(),
                             lastname: user.lastname,
                             firstname: user.firstname,
                             email: user.email.value(),
-                            access_token: token,
-                            expired_at: expired_at.to_rfc3339_opts(SecondsFormat::Secs, true),
+                            access_token,
+                            access_token_expired_at: access_expired_at.to_rfc3339_opts(SecondsFormat::Secs, true),
+                            refresh_token: refresh_token.refresh_token.to_string(),
+                            refresh_token_expired_at: refresh_token
+                                .expired_at
+                                .to_rfc3339_opts(SecondsFormat::Secs, true),
                         })
                     }
                     None => Err(api_error!(
@@ -61,7 +78,7 @@ impl<U: UserRepository, P: PasswordResetRepository> UserService<U, P> {
                         "error during JWT generation",
                         format!(
                             "error during JWT generation: invalid 'expired_at' field in JWT claims ({})",
-                            expired_at
+                            access_expired_at
                         )
                     )),
                 }
@@ -96,6 +113,7 @@ impl<U: UserRepository, P: PasswordResetRepository> UserService<U, P> {
     /// Delete a user
     #[instrument(skip(self))]
     pub async fn delete_user(&self, request: DeleteUserRequest) -> ApiResult<u64> {
+        // TODO: Check if user to delete is different of user who make the deletion
         self.user_repository.delete_user(request).await
     }
 

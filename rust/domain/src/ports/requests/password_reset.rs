@@ -1,6 +1,7 @@
 //! Password Reset requests modules
 
 use crate::entities::password_reset::PasswordReset;
+use crate::entities::user::UserId;
 use chrono::{DateTime, Utc};
 use clean_architecture_shared::api_error;
 use clean_architecture_shared::error::{ApiError, ApiErrorCode};
@@ -9,7 +10,7 @@ use uuid::Uuid;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct PasswordResetRequest {
-    pub user_id: Uuid,
+    pub user_id: UserId,
     pub token: String,
     pub expired_at: DateTime<Utc>,
 }
