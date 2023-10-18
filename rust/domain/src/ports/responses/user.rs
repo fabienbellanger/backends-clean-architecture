@@ -29,6 +29,8 @@ impl From<User> for GetUserResponse {
     /// ```
     /// use clean_architecture_domain::entities::user::User;
     /// use clean_architecture_domain::ports::responses::user::GetUserResponse;
+    /// use clean_architecture_domain::value_objects::email::Email;
+    /// use clean_architecture_domain::value_objects::password::Password;
     /// use chrono::{DateTime, Utc};
     /// use uuid::Uuid;
     ///
@@ -38,8 +40,8 @@ impl From<User> for GetUserResponse {
     ///     id: user_id,
     ///     lastname: "Doe".to_owned(),
     ///     firstname: "John".to_owned(),
-    ///     email: "john.doe@test.com".to_owned(),
-    ///     password: "1234567890".to_owned(),
+    ///     email: Email::new("john.doe@test.com").unwrap(),
+    ///     password: Password::new("1234567890").unwrap(),
     ///     created_at: now,
     ///     updated_at: now,
     ///     deleted_at: None,
@@ -75,9 +77,11 @@ impl From<(Vec<User>, i64)> for GetUsersResponse {
     /// ```
     /// use clean_architecture_domain::entities::user::User;
     /// use clean_architecture_domain::ports::responses::user::{GetUserResponse, GetUsersResponse};
+    /// use clean_architecture_domain::ports::responses::pagination::PaginateResponse;
+    /// use clean_architecture_domain::value_objects::email::Email;
+    /// use clean_architecture_domain::value_objects::password::Password;
     /// use chrono::{DateTime, Utc};
     /// use uuid::Uuid;
-    /// use clean_architecture_domain::ports::responses::pagination::PaginateResponse;
     ///
     /// let user_id_1 = Uuid::new_v4();
     /// let user_id_2 = Uuid::new_v4();
@@ -87,8 +91,8 @@ impl From<(Vec<User>, i64)> for GetUsersResponse {
     ///         id: user_id_1,
     ///         lastname: "Doe".to_owned(),
     ///         firstname: "John".to_owned(),
-    ///         email: "john.doe@test.com".to_owned(),
-    ///         password: "1234567890".to_owned(),
+    ///         email: Email::new("john.doe@test.com").unwrap(),
+    ///         password: Password::new("1234567890").unwrap(),
     ///         created_at: now,
     ///         updated_at: now,
     ///         deleted_at: None,
@@ -97,8 +101,8 @@ impl From<(Vec<User>, i64)> for GetUsersResponse {
     ///         id: user_id_2,
     ///         lastname: "Doe1".to_owned(),
     ///         firstname: "John".to_owned(),
-    ///         email: "john.doe.1@test.com".to_owned(),
-    ///         password: "1234567899".to_owned(),
+    ///         email: Email::new("john.doe.1@test.com").unwrap(),
+    ///         password: Password::new("1234567899").unwrap(),
     ///         created_at: now,
     ///         updated_at: now,
     ///         deleted_at: None,

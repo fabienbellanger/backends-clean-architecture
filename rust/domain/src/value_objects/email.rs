@@ -18,7 +18,7 @@ impl Email {
     /// ```rust
     /// use fake::Fake;
     /// use fake::faker::internet::fr_fr::FreeEmail;
-    /// use pos_async_api_domain::value_objects::email::Email;
+    /// use clean_architecture_domain::value_objects::email::Email;
     ///
     /// let valid_email: String = FreeEmail().fake();
     /// let email = Email::new(&valid_email).unwrap();

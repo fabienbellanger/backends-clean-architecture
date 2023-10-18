@@ -18,7 +18,7 @@ impl Password {
     /// ```rust
     /// use fake::Fake;
     /// use fake::faker::internet::fr_fr::Password as FakePassword;
-    /// use pos_async_api_domain::value_objects::password::Password;
+    /// use clean_architecture_domain::value_objects::password::Password;
     ///
     /// let valid_password: String = FakePassword(6..9).fake();
     /// let password = Password::new(&valid_password).unwrap();
