@@ -51,7 +51,7 @@ impl<U: UserRepository, P: PasswordResetRepository> UserService<U, P> {
                             id: user.id.to_string(),
                             lastname: user.lastname,
                             firstname: user.firstname,
-                            email: user.email,
+                            email: user.email.value(),
                             token,
                             expired_at: expired_at.to_rfc3339_opts(SecondsFormat::Secs, true),
                         })

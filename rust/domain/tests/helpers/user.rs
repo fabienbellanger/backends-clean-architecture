@@ -5,6 +5,8 @@ use clean_architecture_domain::ports::repositories::user::UserRepository;
 use clean_architecture_domain::ports::requests::user::{
     CreateUserRequest, DeleteUserRequest, GetUserRequest, LoginRequest, UpdateUserPasswordRepositoryRequest,
 };
+use clean_architecture_domain::value_objects::email::Email;
+use clean_architecture_domain::value_objects::password::Password;
 use clean_architecture_shared::error::{ApiError, ApiResult};
 use clean_architecture_shared::query_parameter::PaginateSort;
 use uuid::Uuid;
@@ -26,8 +28,8 @@ impl UserRepository for TestUserRepository {
             id: Uuid::parse_str(USER_ID).unwrap(),
             lastname: "Doe".to_string(),
             firstname: "John".to_string(),
-            email: "john.doe@test.com".to_string(),
-            password: "00000000".to_string(),
+            email: Email::new("john.doe@test.com").unwrap(),
+            password: Password::new("00000000").unwrap(),
             created_at: date,
             updated_at: date,
             deleted_at: None,
@@ -42,8 +44,8 @@ impl UserRepository for TestUserRepository {
                 id: Uuid::parse_str(USER_ID).unwrap(),
                 lastname: "Doe".to_string(),
                 firstname: "John".to_string(),
-                email: "john.doe@test.com".to_string(),
-                password: "00000000".to_string(),
+                email: Email::new("john.doe@test.com").unwrap(),
+                password: Password::new("00000000").unwrap(),
                 created_at: date,
                 updated_at: date,
                 deleted_at: None,
@@ -63,8 +65,8 @@ impl UserRepository for TestUserRepository {
                 id: Uuid::parse_str(USER_ID).unwrap(),
                 lastname: "Doe".to_string(),
                 firstname: "John".to_string(),
-                email: USER_EMAIL.to_string(),
-                password: "00000000".to_string(),
+                email: Email::new(USER_EMAIL).unwrap(),
+                password: Password::new("00000000").unwrap(),
                 created_at: date,
                 updated_at: date,
                 deleted_at: None,
@@ -84,8 +86,8 @@ impl UserRepository for TestUserRepository {
                 id: Uuid::parse_str(USER_ID).unwrap(),
                 lastname: "Doe".to_owned(),
                 firstname: "John".to_owned(),
-                email: request.email,
-                password: request.password,
+                email: Email::new(&request.email).unwrap(),
+                password: Password::new(&request.password).unwrap(),
                 created_at: date,
                 updated_at: date,
                 deleted_at: None,
@@ -103,8 +105,8 @@ impl UserRepository for TestUserRepository {
             id: Uuid::parse_str(USER_ID).unwrap(),
             lastname: request.lastname,
             firstname: request.firstname,
-            email: request.email,
-            password: request.password,
+            email: Email::new(&request.email).unwrap(),
+            password: Password::new(&request.password).unwrap(),
             created_at: date,
             updated_at: date,
             deleted_at: None,

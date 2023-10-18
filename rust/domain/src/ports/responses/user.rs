@@ -61,7 +61,7 @@ impl From<User> for GetUserResponse {
             id: user.id.to_string(),
             lastname: user.lastname,
             firstname: user.firstname,
-            email: user.email,
+            email: user.email.value(),
             created_at: user.created_at.to_rfc3339(),
             updated_at: user.updated_at.to_rfc3339(),
         }

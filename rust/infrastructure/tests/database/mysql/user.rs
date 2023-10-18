@@ -1,7 +1,10 @@
 use crate::helpers::mysql::TestMySQL;
-use clean_architecture_domain::ports::{
-    repositories::user::UserRepository,
-    requests::user::{CreateUserRequest, GetUserRequest},
+use clean_architecture_domain::{
+    ports::{
+        repositories::user::UserRepository,
+        requests::user::{CreateUserRequest, GetUserRequest},
+    },
+    value_objects::email::Email,
 };
 use clean_architecture_infrastructure::database::mysql::repositories::user::UserMysqlRepository;
 
@@ -23,7 +26,7 @@ async fn test_create_user() {
     if let Ok(user) = result {
         assert_eq!(user.lastname, request.lastname);
         assert_eq!(user.firstname, request.firstname);
-        assert_eq!(user.email, request.email);
+        assert_eq!(user.email, Email::new(&request.email).unwrap());
     }
 }
 

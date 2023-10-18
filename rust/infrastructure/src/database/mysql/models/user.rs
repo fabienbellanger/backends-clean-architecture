@@ -1,7 +1,10 @@
 //! User model module
 
 use chrono::{DateTime, NaiveDateTime, Utc};
-use clean_architecture_domain::entities::user::User;
+use clean_architecture_domain::{
+    entities::user::User,
+    value_objects::{email::Email, password::Password},
+};
 use clean_architecture_shared::{
     api_error,
     error::{ApiError, ApiErrorCode},
@@ -28,8 +31,8 @@ impl From<User> for UserModel {
             id: user.id.to_string(),
             lastname: user.lastname,
             firstname: user.firstname,
-            email: user.email,
-            password: user.password,
+            email: user.email.value(),
+            password: user.password.value(),
             created_at: user.created_at.naive_utc(),
             updated_at: user.updated_at.naive_utc(),
             deleted_at: user.deleted_at.map(|dt| dt.naive_utc()),
@@ -45,8 +48,8 @@ impl TryInto<User> for UserModel {
             id: Uuid::from_str(&self.id).map_err(|err| api_error!(ApiErrorCode::InternalError, err))?,
             lastname: self.lastname,
             firstname: self.firstname,
-            email: self.email,
-            password: self.password,
+            email: Email::new(&self.email)?,
+            password: Password::new(&self.password)?,
             created_at: DateTime::<Utc>::from_naive_utc_and_offset(self.created_at, Utc),
             updated_at: DateTime::<Utc>::from_naive_utc_and_offset(self.updated_at, Utc),
             deleted_at: self
@@ -70,8 +73,8 @@ mod tests {
             id: user_id,
             lastname: "Doe".to_owned(),
             firstname: "John".to_owned(),
-            email: "john.doe@test.com".to_owned(),
-            password: "0000000".to_owned(),
+            email: Email::new("john.doe@test.com").unwrap(),
+            password: Password::new("0000000").unwrap(),
             created_at: now,
             updated_at: now,
             deleted_at: None,
@@ -110,8 +113,8 @@ mod tests {
             id: user_id,
             lastname: "Doe".to_owned(),
             firstname: "John".to_owned(),
-            email: "john.doe@test.com".to_owned(),
-            password: "0000000".to_owned(),
+            email: Email::new("john.doe@test.com").unwrap(),
+            password: Password::new("0000000").unwrap(),
             created_at: now,
             updated_at: now,
             deleted_at: None,

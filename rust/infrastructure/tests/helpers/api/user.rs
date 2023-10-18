@@ -2,6 +2,7 @@ use super::{TestApp, TestResponse};
 use clean_architecture_domain::{
     entities::user::User,
     ports::{repositories::user::UserRepository, requests::user::CreateUserRequest, responses::user::LoginResponse},
+    value_objects::password::Password,
 };
 use clean_architecture_infrastructure::database::mysql::repositories::user::UserMysqlRepository;
 
@@ -18,7 +19,7 @@ pub async fn create_user(app: &TestApp) -> User {
         password: password.clone(),
     };
     let mut user = repository.create_user(request.clone()).await.unwrap();
-    user.password = password;
+    user.password = Password::new(&password).unwrap();
 
     user
 }
@@ -30,8 +31,8 @@ pub async fn create_and_authenticate(app: &TestApp) -> (TestResponse, String) {
     let response = login_request(
         &app,
         serde_json::json!({
-            "email": user.email,
-            "password": user.password
+            "email": user.email.value(),
+            "password": user.password.value()
         })
         .to_string(),
     )
