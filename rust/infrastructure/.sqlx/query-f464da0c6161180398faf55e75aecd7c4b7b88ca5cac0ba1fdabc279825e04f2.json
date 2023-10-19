@@ -1,0 +1,58 @@
+{
+  "db_name": "MySQL",
+  "query": "\n                SELECT refresh_token, user_id, access_token, expired_at\n                FROM refresh_tokens\n                WHERE refresh_token = ?\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "refresh_token",
+        "type_info": {
+          "type": "VarString",
+          "flags": "NOT_NULL | PRIMARY_KEY | NO_DEFAULT_VALUE",
+          "char_set": 224,
+          "max_size": 144
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "user_id",
+        "type_info": {
+          "type": "VarString",
+          "flags": "NOT_NULL | MULTIPLE_KEY | NO_DEFAULT_VALUE",
+          "char_set": 224,
+          "max_size": 144
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "access_token",
+        "type_info": {
+          "type": "Blob",
+          "flags": "NOT_NULL | MULTIPLE_KEY | BLOB | NO_DEFAULT_VALUE",
+          "char_set": 224,
+          "max_size": 262140
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "expired_at",
+        "type_info": {
+          "type": "Datetime",
+          "flags": "NOT_NULL | MULTIPLE_KEY | BINARY | NO_DEFAULT_VALUE",
+          "char_set": 63,
+          "max_size": 23
+        }
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "f464da0c6161180398faf55e75aecd7c4b7b88ca5cac0ba1fdabc279825e04f2"
+}
