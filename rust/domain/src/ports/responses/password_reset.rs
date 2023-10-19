@@ -1,4 +1,4 @@
-//! Password resset responses modules
+//! Password reset responses modules
 
 use serde::{Deserialize, Serialize};
 

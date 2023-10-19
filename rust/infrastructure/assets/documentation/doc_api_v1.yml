@@ -48,6 +48,32 @@ paths:
             $ref: "#/components/responses/Unauthorized"
         '500':
             $ref: "#/components/responses/InternalServerError"
+  /refresh-token/{token}:
+    post:
+      description: Refresh user token
+      tags:
+        - "Authentication"
+      parameters:
+        - in: path
+          name: token
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: Refresh token
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefreshTokenResponse'
+        '400':
+            $ref: "#/components/responses/BadRequest"
+        '401':
+            $ref: "#/components/responses/Unauthorized"
+        '500':
+            $ref: "#/components/responses/InternalServerError"
   /forgotten-password/{email}:
     post:
       summary: ""
@@ -428,3 +454,31 @@ components:
           minLength: 8
       required:
         - password
+    RefreshTokenHttpRequest:
+      type: object
+      properties:
+        refresh_token:
+          type: string
+          format: uuid
+      required:
+        - refresh_token
+    RefreshTokenResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+        access_token_expired_at:
+          type: string
+          format: date-time
+        refresh_token:
+          type: string
+          format: uuid
+        refresh_token_expired_at:
+          type: string
+          format: date-time
+      required:
+        - access_token
+        - access_token_expired_at
+        - refresh_token
+        - refresh_token_expired_at
+    

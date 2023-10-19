@@ -26,4 +26,11 @@ impl RefreshToken {
             expired_at: now.add(Duration::days(expiration_duration)),
         }
     }
+
+    /// Check if the token is valid (now > expired datetime)
+    pub fn is_valid(&self) -> bool {
+        let now = Utc::now();
+
+        now <= self.expired_at
+    }
 }

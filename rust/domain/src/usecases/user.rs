@@ -2,10 +2,12 @@
 
 use crate::ports::repositories::password_reset::PasswordResetRepository;
 use crate::ports::repositories::refresh_token::RefreshTokenRepository;
+use crate::ports::requests::refresh_token::RefreshTokenHttpRequest;
 use crate::ports::requests::user::{
     CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest, UpdateUserPasswordRequest,
 };
 use crate::ports::responses::password_reset::PasswordResetResponse;
+use crate::ports::responses::refresh_token::RefreshTokenResponse;
 use crate::ports::services::email::EmailService;
 use crate::ports::{
     repositories::user::UserRepository,
@@ -53,6 +55,12 @@ where
         validate_request_data(&request)?;
 
         self.user_service.login(request, jwt).await
+    }
+
+    /// Refresh token
+    #[instrument(skip(self))]
+    pub async fn refresh_token(&self, request: RefreshTokenHttpRequest, jwt: &Jwt) -> ApiResult<RefreshTokenResponse> {
+        self.user_service.refresh_token(request, jwt).await
     }
 
     /// Get all users

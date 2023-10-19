@@ -5,10 +5,12 @@ use crate::entities::refresh_token::RefreshToken;
 use crate::ports::repositories::password_reset::PasswordResetRepository;
 use crate::ports::repositories::refresh_token::RefreshTokenRepository;
 use crate::ports::requests::password_reset::{DeleteRequest, GetByTokenRequest};
+use crate::ports::requests::refresh_token::{RefreshTokenHttpRequest, RefreshTokenId};
 use crate::ports::requests::user::{
     CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest, UpdateUserPasswordRepositoryRequest,
     UpdateUserPasswordRequest,
 };
+use crate::ports::responses::refresh_token::RefreshTokenResponse;
 use crate::ports::{
     repositories::user::UserRepository,
     requests::user::{GetUserRequest, LoginRequest},
@@ -65,6 +67,59 @@ impl<U: UserRepository, P: PasswordResetRepository, T: RefreshTokenRepository> U
                             lastname: user.lastname,
                             firstname: user.firstname,
                             email: user.email.value(),
+                            access_token,
+                            access_token_expired_at: access_expired_at.to_rfc3339_opts(SecondsFormat::Secs, true),
+                            refresh_token: refresh_token.refresh_token.to_string(),
+                            refresh_token_expired_at: refresh_token
+                                .expired_at
+                                .to_rfc3339_opts(SecondsFormat::Secs, true),
+                        })
+                    }
+                    None => Err(api_error!(
+                        ApiErrorCode::InternalError,
+                        "error during JWT generation",
+                        format!(
+                            "error during JWT generation: invalid 'expired_at' field in JWT claims ({})",
+                            access_expired_at
+                        )
+                    )),
+                }
+            }
+        }
+    }
+
+    /// Get all users
+    #[instrument(skip(self))]
+    pub async fn refresh_token(&self, request: RefreshTokenHttpRequest, jwt: &Jwt) -> ApiResult<RefreshTokenResponse> {
+        let refresh_token_id = RefreshTokenId {
+            refresh_token: request.refresh_token,
+        };
+
+        let refresh_token = self.refresh_token_repository.get(refresh_token_id.clone()).await?;
+
+        // Remove old refresh token
+        self.refresh_token_repository.delete(refresh_token_id).await?;
+
+        match refresh_token.is_valid() {
+            false => Err(api_error!(ApiErrorCode::Unauthorized)),
+            true => {
+                // Generate new access and refresh token
+                let (access_token, access_expired_at) = jwt.generate(refresh_token.user_id.to_string())?;
+                match NaiveDateTime::from_timestamp_opt(access_expired_at, 0) {
+                    Some(access_expired_at) => {
+                        let access_expired_at: DateTime<Utc> =
+                            DateTime::from_naive_utc_and_offset(access_expired_at, Utc);
+
+                        // Generate refresh token
+                        let refresh_token =
+                            RefreshToken::new(refresh_token.user_id, &access_token, jwt.refresh_lifetime);
+
+                        // Save refresh token
+                        self.refresh_token_repository
+                            .create(refresh_token.clone().into())
+                            .await?;
+
+                        Ok(RefreshTokenResponse {
                             access_token,
                             access_token_expired_at: access_expired_at.to_rfc3339_opts(SecondsFormat::Secs, true),
                             refresh_token: refresh_token.refresh_token.to_string(),

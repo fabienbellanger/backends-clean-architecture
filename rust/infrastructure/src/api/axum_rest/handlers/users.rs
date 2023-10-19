@@ -6,11 +6,13 @@ use crate::api::axum_rest::usecases::AppUseCases;
 use axum::extract::{Query, State};
 use axum::http::StatusCode;
 use axum::{Extension, Json};
+use clean_architecture_domain::ports::requests::refresh_token::RefreshTokenHttpRequest;
 use clean_architecture_domain::ports::requests::user::{
     CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest, GetUserRequest, LoginRequest,
     UpdateUserPasswordRequest,
 };
 use clean_architecture_domain::ports::responses::password_reset::PasswordResetResponse;
+use clean_architecture_domain::ports::responses::refresh_token::RefreshTokenResponse;
 use clean_architecture_domain::ports::responses::user::{GetUserResponse, GetUsersResponse, LoginResponse};
 use clean_architecture_shared::api_error;
 use clean_architecture_shared::error::{ApiError, ApiErrorCode, ApiResult};
@@ -35,6 +37,22 @@ pub async fn login(
     Json(request): Json<LoginRequest>,
 ) -> ApiResult<Json<LoginResponse>> {
     let response = uc.user.login(request, &state.jwt).await?;
+
+    Ok(Json(response))
+}
+
+/// Refresh token route: POST /api/v1/refresh-token/:token
+#[instrument(skip(uc, state))]
+pub async fn refresh_token(
+    Path(refresh_token): Path<String>,
+    Extension(uc): Extension<AppUseCases>,
+    State(state): State<SharedState>,
+    ExtractRequestId(request_id): ExtractRequestId,
+) -> ApiResult<Json<RefreshTokenResponse>> {
+    let response = uc
+        .user
+        .refresh_token(RefreshTokenHttpRequest { refresh_token }, &state.jwt)
+        .await?;
 
     Ok(Json(response))
 }

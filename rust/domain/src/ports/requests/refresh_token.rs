@@ -22,3 +22,13 @@ impl From<RefreshToken> for RefreshTokenRequest {
         }
     }
 }
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct RefreshTokenHttpRequest {
+    pub refresh_token: String,
+}
+
+#[derive(Debug, Deserialize, Clone)]
+pub struct RefreshTokenId {
+    pub refresh_token: String,
+}
