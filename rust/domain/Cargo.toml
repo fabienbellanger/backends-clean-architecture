@@ -13,12 +13,12 @@ clean-architecture-shared = { workspace = true }
 
 async-trait = "0.1.74"
 chrono = { version = "0.4.31", features = ["clock", "std", "serde"], default-features = false }
-serde = { version = "1.0.189", features = ["derive"] }
-thiserror = "1.0.49"
+serde = { version = "1.0.192", features = ["derive"] }
+thiserror = "1.0.50"
 uuid = { version = "1.5.0", features = ["v4", "serde"] }
 validator = { version = "0.16.1", features = ["derive"] }
 tracing = "0.1.40"
-tokio = { version = "1.33.0", features = ["rt", "macros"] }
+tokio = { version = "1.34.0", features = ["rt", "macros"] }
 
 [dev-dependencies]
-fake = { version = "2.8.0", features = ["chrono"] }
+fake = { version = "2.9.1", features = ["chrono"] }

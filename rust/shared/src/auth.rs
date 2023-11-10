@@ -148,7 +148,7 @@ impl Jwt {
         self.refresh_lifetime = days;
     }
 
-    ///
+    /// Encode key with the good algoritm
     pub fn encoding_key_from_str(algo: Algorithm, secret: &str) -> ApiResult<EncodingKey> {
         let key = match algo {
             Algorithm::HS256 | Algorithm::HS384 | Algorithm::HS512 => EncodingKey::from_secret(secret.as_bytes()),
@@ -172,7 +172,7 @@ impl Jwt {
         Ok(key)
     }
 
-    ///
+    /// Decode key with the good algoritm
     pub fn decoding_key_from_str(algo: Algorithm, secret: &str) -> ApiResult<DecodingKey> {
         let key = match algo {
             Algorithm::HS256 | Algorithm::HS384 | Algorithm::HS512 => DecodingKey::from_secret(secret.as_bytes()),
