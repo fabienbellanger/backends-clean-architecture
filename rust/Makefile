@@ -50,9 +50,10 @@ serve:
 watch:
 	cd infrastructure && $(CARGO) watch -x "run -- serve"
 
-## upgrade: Upgrade workspace crates
+## upgrade: Upgrade workspace packages and update the dependency versions recorded in the local lock file
 upgrade:
 	$(CARGO) upgrade --workspace
+	$(CARGO) update
 
 ## lint: Run clippy and rustfmt
 lint:
