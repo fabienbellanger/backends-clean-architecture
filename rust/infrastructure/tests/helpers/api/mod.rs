@@ -2,6 +2,7 @@ pub mod user;
 
 use self::user::create_and_authenticate;
 use super::mysql::TestMySQL;
+use axum::body::Body;
 use axum::Router;
 use axum::{http::StatusCode, Extension};
 use clean_architecture_infrastructure::api::axum_rest::{
@@ -16,7 +17,8 @@ use clean_architecture_infrastructure::api::axum_rest::{
 use clean_architecture_infrastructure::config::Config;
 use clean_architecture_infrastructure::email::{Email, EmailConfig};
 use clean_architecture_shared::{auth::Jwt, error::ApiErrorMessage};
-use hyper::{Body, Request};
+use http_body_util::BodyExt;
+use hyper::Request;
 use serde_json::Value;
 use std::collections::HashMap;
 use tower::{ServiceBuilder, ServiceExt};
@@ -50,9 +52,12 @@ impl TestResponse {
         let response = app.router.clone().oneshot(request.unwrap()).await.unwrap();
 
         let status_code = response.status();
-        let body = hyper::body::to_bytes(response.into_body())
+        let body = response
+            .into_body()
+            .collect()
             .await
-            .expect("failed to convert body into bytes");
+            .expect("failed to convert body into bytes")
+            .to_bytes();
         let body: Value = serde_json::from_slice(&body).unwrap_or(Value::Null);
 
         TestResponse {

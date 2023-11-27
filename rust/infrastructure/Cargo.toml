@@ -13,17 +13,17 @@ clean-architecture-domain = { workspace = true }
 clean-architecture-shared = { workspace = true }
 
 # Axum
-axum = { version = "0.6.20", features = ["headers"] }
+axum = { version = "0.7.1" }
 
 # Tower
 tower = { version = "0.4.13", features = ["timeout"] }
-tower-http = { version = "0.4.4", features = ["cors", "fs", "request-id", "util"] }
+tower-http = { version = "0.5.0", features = ["cors", "fs", "request-id", "util"] }
 
 # Hyper
-hyper = "0.14.27"
+hyper = "1.0.1"
 
 # sqlx
-sqlx = { version = "0.7.2", features = ["runtime-tokio-native-tls", "chrono", "mysql", "macros", "bigdecimal"] }
+sqlx = { version = "0.7.3", features = ["runtime-tokio-native-tls", "chrono", "mysql", "macros", "bigdecimal"] }
 
 # Log
 env_logger = "0.10.1"
@@ -42,7 +42,7 @@ futures = "0.3.29"
 http-auth-basic = "0.3.3"
 jsonwebtoken = "9.1.0"
 lazy_static = "1.4.0"
-lettre = "0.11.1"
+lettre = "0.11.2"
 metrics = "0.21.1"
 metrics-exporter-prometheus = "0.12.1"
 mime = "0.3.17"
@@ -56,3 +56,4 @@ thiserror = "1.0.50"
 tokio = { version = "1.34.0", features = ["full"] }
 uuid = "1.6.1"
 validator = { version = "0.16.1", features = ["derive"] }
+http-body-util = "0.1.0"

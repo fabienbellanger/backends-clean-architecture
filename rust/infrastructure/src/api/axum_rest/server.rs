@@ -15,10 +15,8 @@ use clean_architecture_shared::{
     api_error,
     error::{ApiError, ApiErrorCode, ApiResult},
 };
-use std::{
-    net::{AddrParseError, SocketAddr},
-    time::Duration,
-};
+use std::time::Duration;
+use tokio::net::TcpListener;
 use tokio::signal;
 use tower::ServiceBuilder;
 use tower_http::{services::ServeDir, ServiceBuilderExt};
@@ -33,24 +31,22 @@ pub async fn start_server() -> ApiResult<()> {
 
     // Start server
     let addr = format!("{}:{}", settings.server_url, settings.server_port);
+    let listener = TcpListener::bind(&addr).await.unwrap();
     info!("Starting server on {}...", &addr);
 
-    let server = axum::Server::bind(
-        &addr
-            .parse()
-            .map_err(|err: AddrParseError| api_error!(ApiErrorCode::InternalError, err))?,
-    )
-    .serve(app.into_make_service_with_connect_info::<SocketAddr>());
+    let server = axum::serve(listener, app);
 
     // Graceful shutdown only in production environment
-    if settings.environment != "production" {
-        server.await.map_err(|err| api_error!(ApiErrorCode::InternalError, err))
-    } else {
-        server
-            .with_graceful_shutdown(shutdown_signal())
-            .await
-            .map_err(|err| api_error!(ApiErrorCode::InternalError, err))
-    }
+    // TODO: https://github.com/tokio-rs/axum/blob/main/examples/graceful-shutdown/src/main.rs
+    server.await.map_err(|err| api_error!(ApiErrorCode::InternalError, err))
+    // if settings.environment != "production" {
+    //     server.await.map_err(|err| api_error!(ApiErrorCode::InternalError, err))
+    // } else {
+    //     server
+    //         .with_graceful_shutdown(shutdown_signal())
+    //         .await
+    //         .map_err(|err| api_error!(ApiErrorCode::InternalError, err))
+    // }
 }
 
 /// Initialize router
@@ -108,7 +104,7 @@ async fn get_app(settings: &Config) -> ApiResult<Router> {
     Ok(app)
 }
 
-async fn shutdown_signal() {
+async fn _shutdown_signal() {
     let ctrl_c = async {
         signal::ctrl_c().await.expect("failed to install Ctrl+C handler");
     };

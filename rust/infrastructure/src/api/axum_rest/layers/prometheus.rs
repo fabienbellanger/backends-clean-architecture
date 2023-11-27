@@ -1,6 +1,7 @@
 //! Prometheus metrics layer
 
 use crate::APP_NAME;
+use axum::body::Body;
 use axum::{extract::MatchedPath, middleware::Next, response::IntoResponse};
 use clean_architecture_shared::api_error;
 use clean_architecture_shared::error::{ApiError, ApiErrorCode, ApiResult};
@@ -27,7 +28,7 @@ impl PrometheusMetric {
     }
 
     /// Layer tracking requests
-    pub async fn get_layer<B>(req: Request<B>, next: Next<B>) -> impl IntoResponse {
+    pub async fn get_layer(req: Request<Body>, next: Next) -> impl IntoResponse {
         let start = Instant::now();
         let path = if let Some(matched_path) = req.extensions().get::<MatchedPath>() {
             matched_path.as_str().to_owned()

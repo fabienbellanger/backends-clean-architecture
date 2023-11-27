@@ -7,17 +7,16 @@ pub(crate) mod prometheus;
 pub mod states;
 
 use crate::config::Config;
-use axum::body::Full;
-use axum::headers::HeaderName;
+use axum::body::Body;
 use axum::http::header::{ACCEPT, AUTHORIZATION, CONTENT_TYPE, ORIGIN};
 use axum::http::response::Parts;
-use axum::http::{HeaderValue, Method, Request, StatusCode};
+use axum::http::{HeaderName, HeaderValue, Method, Request, StatusCode};
 use axum::middleware::Next;
 use axum::response::{IntoResponse, Response};
 use bytes::Bytes;
 use clean_architecture_shared::api_error;
 use clean_architecture_shared::error::{ApiError, ApiErrorCode, ApiErrorMessage};
-use hyper::body::to_bytes;
+use http_body_util::BodyExt;
 use std::str::from_utf8;
 use tower_http::cors::{AllowOrigin, Any, CorsLayer};
 use tower_http::request_id::{MakeRequestId, RequestId};
@@ -104,7 +103,7 @@ pub fn cors(config: &Config) -> CorsLayer {
 }
 
 /// Layer which override some HTTP errors by using `AppError`
-pub async fn override_http_errors<B>(req: Request<B>, next: Next<B>) -> impl IntoResponse {
+pub async fn override_http_errors(req: Request<Body>, next: Next) -> impl IntoResponse {
     let response = next.run(req).await;
 
     // If it is an image, audio or video, we return response
@@ -120,12 +119,12 @@ pub async fn override_http_errors<B>(req: Request<B>, next: Next<B>) -> impl Int
     }
 
     let (parts, body) = response.into_parts();
-    match to_bytes(body).await {
-        Ok(body_bytes) => match String::from_utf8(body_bytes.to_vec()) {
+    match body.collect().await {
+        Ok(body_bytes) => match String::from_utf8(body_bytes.to_bytes().to_vec()) {
             Ok(body) => match parts.status {
                 StatusCode::METHOD_NOT_ALLOWED => api_error!(ApiErrorCode::MethodNotAllowed).into_response(),
                 StatusCode::UNPROCESSABLE_ENTITY => api_error!(ApiErrorCode::UnprocessableEntity, body).into_response(),
-                _ => Response::from_parts(parts, axum::body::boxed(Full::from(body))),
+                _ => Response::from_parts(parts, Body::from(body)),
             },
             Err(err) => api_error!(ApiErrorCode::InternalError, err.to_string()).into_response(),
         },
