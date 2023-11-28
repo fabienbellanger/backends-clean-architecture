@@ -1,4 +1,4 @@
-use crate::helpers::api::TestAppBuilder;
+use crate::helpers::api::axum_rest::TestAppBuilder;
 use axum::http::StatusCode;
 use axum::{body::Body, http::Request};
 use tower::ServiceExt;

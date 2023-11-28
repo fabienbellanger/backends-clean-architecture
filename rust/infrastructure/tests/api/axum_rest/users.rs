@@ -1,4 +1,4 @@
-use crate::helpers::api::{
+use crate::helpers::api::axum_rest::{
     user::{create_user_request, delete, get_all, get_one, login_request},
     TestApp, TestAppBuilder,
 };

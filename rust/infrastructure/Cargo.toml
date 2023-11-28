@@ -13,7 +13,7 @@ clean-architecture-domain = { workspace = true }
 clean-architecture-shared = { workspace = true }
 
 # Axum
-axum = { version = "0.7.1" }
+axum = "0.7.1"
 
 # Tower
 tower = { version = "0.4.13", features = ["timeout"] }
@@ -35,7 +35,7 @@ tracing-subscriber = { version = "0.3.18", features = ["registry", "env-filter",
 async-trait = "0.1.74"
 bytes = "1.5.0"
 chrono = { version = "0.4.31", features = ["clock", "std", "serde"], default-features = false }
-clap = { version = "4.4.8", features = ["cargo", "derive"] }
+clap = { version = "4.4.10", features = ["cargo", "derive"] }
 config = "0.13.4"
 dotenvy = "0.15.7"
 futures = "0.3.29"

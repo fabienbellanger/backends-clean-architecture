@@ -1,2 +1,1 @@
-mod users;
-mod web;
+mod axum_rest;
