@@ -6,7 +6,7 @@ use axum::{extract::MatchedPath, middleware::Next, response::IntoResponse};
 use clean_architecture_shared::api_error;
 use clean_architecture_shared::error::{ApiError, ApiErrorCode, ApiResult};
 use hyper::Request;
-use metrics::{histogram, increment_counter};
+use metrics::{counter, histogram};
 use metrics_exporter_prometheus::{Matcher, PrometheusBuilder, PrometheusHandle};
 use std::time::Instant;
 
@@ -48,8 +48,9 @@ impl PrometheusMetric {
             ("status", status),
         ];
 
-        increment_counter!("http_requests_total", &labels);
-        histogram!("http_requests_duration_seconds", latency, &labels);
+        counter!("http_requests_total", &labels);
+        let histogram = histogram!("http_requests_duration_seconds", &labels);
+        histogram.record(latency);
 
         response
     }
