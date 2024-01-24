@@ -1,8 +1,9 @@
 use crate::helpers::password_reset::FORGOTTEN_PASSWORD_TOKEN;
-use crate::helpers::refresh_token::TestRefreshTokenRepository;
+use crate::helpers::refresh_token::{TestRefreshTokenRepository, INVALID_REFRESH_TOKEN, REFRESH_TOKEN};
 use crate::helpers::user::*;
 use crate::helpers::{email::TestEmailService, password_reset::TestPasswordResetRepository};
 use chrono::{DateTime, Days, Utc};
+use clean_architecture_domain::ports::requests::refresh_token::RefreshTokenHttpRequest;
 use clean_architecture_domain::ports::requests::user::{
     DeleteUserRequest, ForgottenPasswordRequest, UpdateUserPasswordRequest,
 };
@@ -224,4 +225,28 @@ async fn test_update_password_no_user() {
             }
         );
     }
+}
+
+#[tokio::test]
+async fn test_refresh_token() {
+    let use_case = init_use_case();
+    let mut jwt = Jwt::default();
+    jwt.set_access_lifetime(20);
+    jwt.set_refresh_lifetime(2);
+    jwt.set_encoding_key(JWT_SECRET).unwrap();
+    jwt.set_decoding_key(JWT_SECRET).unwrap();
+    let request = RefreshTokenHttpRequest {
+        refresh_token: REFRESH_TOKEN.to_owned(),
+    };
+    let response = use_case.refresh_token(request, &jwt).await;
+
+    assert!(response.is_ok());
+
+    // With invalid refresh token
+    let request = RefreshTokenHttpRequest {
+        refresh_token: INVALID_REFRESH_TOKEN.to_owned(),
+    };
+    let response = use_case.refresh_token(request, &jwt).await;
+
+    assert!(response.is_err());
 }

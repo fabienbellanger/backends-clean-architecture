@@ -57,8 +57,8 @@ impl Default for Jwt {
     fn default() -> Self {
         Self {
             algorithm: Algorithm::HS512,
-            access_lifetime: 1,  // 1h
-            refresh_lifetime: 1, // 1 day
+            access_lifetime: 15, // 15 minutes
+            refresh_lifetime: 7, // 7 days
             encoding_key: None,
             decoding_key: None,
         }
@@ -138,14 +138,14 @@ impl Jwt {
         Ok(jwt)
     }
 
-    /// Update access token lifetime
-    pub fn set_access_lifetime(&mut self, hours: i64) {
-        self.access_lifetime = hours;
+    /// Update access token lifetime (in minute)
+    pub fn set_access_lifetime(&mut self, duration: i64) {
+        self.access_lifetime = duration;
     }
 
-    /// Update refresh token lifetime
-    pub fn set_refresh_lifetime(&mut self, days: i64) {
-        self.refresh_lifetime = days;
+    /// Update refresh token lifetime (in day)
+    pub fn set_refresh_lifetime(&mut self, duration: i64) {
+        self.refresh_lifetime = duration;
     }
 
     /// Encode key with the good algoritm
@@ -212,7 +212,7 @@ impl Jwt {
     pub fn generate(&self, user_id: String) -> ApiResult<(String, i64)> {
         let header = jsonwebtoken::Header::new(self.algorithm);
         let now = Utc::now().timestamp();
-        let access_expired_at = now + (self.access_lifetime * 3600);
+        let access_expired_at = now + (self.access_lifetime * 60);
 
         let payload = Claims {
             sub: user_id.clone(),

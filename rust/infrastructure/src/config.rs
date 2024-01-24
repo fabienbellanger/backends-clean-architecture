@@ -48,9 +48,9 @@ pub struct Config {
     pub jwt_private_key: Option<String>,
     /// JWT public key
     pub jwt_public_key: Option<String>,
-    /// JWT access token lifetime
+    /// JWT access token lifetime (in minute)
     pub jwt_access_lifetime: i64,
-    /// JWT refresh token lifetime
+    /// JWT refresh token lifetime (in day)
     pub jwt_refresh_lifetime: i64,
 
     /// CORS Allow Origin Headers (URLs delimited by a comma)
