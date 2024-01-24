@@ -34,11 +34,12 @@ pub fn init(environment: &str, path: &str, filename: &str) -> ApiResult<()> {
 
     if is_production {
         let file_appender = tracing_appender::rolling::daily(path, filename);
+        let (non_blocking, _guard) = tracing_appender::non_blocking(file_appender);
         let layer = tracing_subscriber::fmt::layer()
             .with_ansi(false)
             .event_format(format.json())
             .fmt_fields(JsonFields::new())
-            .with_writer(file_appender);
+            .with_writer(non_blocking);
 
         let subscriber = Registry::default().with(filter).with(layer);
 
