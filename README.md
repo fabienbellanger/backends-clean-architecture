@@ -1,6 +1,4 @@
-# backends clean architecture
-
-[![Build status](https://github.com/fabienbellanger/backends-clean-architecture/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/fabienbellanger/backends-clean-architecture/actions/workflows/CI.yml)
+# Backends clean architecture in Rust and Golang
 
 Backend clean architecture examples in Rust and Go
 

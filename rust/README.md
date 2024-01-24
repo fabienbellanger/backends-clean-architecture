@@ -1,5 +1,7 @@
 # Rust Clean Architecture
 
+[![Build status](https://github.com/fabienbellanger/backends-clean-architecture/actions/workflows/rust.yml/badge.svg?branch=main)](https://github.com/fabienbellanger/backends-clean-architecture/actions/workflows/rust.yml)
+
 ## Install
 
 ### Rust
