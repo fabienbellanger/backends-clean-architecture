@@ -25,7 +25,7 @@ impl PasswordResetMysqlRepository {
 
 #[async_trait]
 impl PasswordResetRepository for PasswordResetMysqlRepository {
-    #[instrument(skip(self))]
+    #[instrument(skip(self), name = "password_reset_repository_create_or_update")]
     async fn create_or_update(&self, request: PasswordResetRequest) -> ApiResult<()> {
         sqlx::query!(
             r#"
@@ -45,7 +45,7 @@ impl PasswordResetRepository for PasswordResetMysqlRepository {
         Ok(())
     }
 
-    #[instrument(skip(self))]
+    #[instrument(skip(self), name = "password_reset_repository_get_by_token")]
     async fn get_by_token(&self, request: GetByTokenRequest) -> ApiResult<Option<String>> {
         let result = sqlx::query!(
             r#"
@@ -67,7 +67,7 @@ impl PasswordResetRepository for PasswordResetMysqlRepository {
         }
     }
 
-    #[instrument(skip(self))]
+    #[instrument(skip(self), name = "password_reset_repository_delete")]
     async fn delete(&self, request: DeleteRequest) -> ApiResult<u64> {
         let result = sqlx::query!(
             r#"

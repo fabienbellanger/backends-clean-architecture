@@ -35,7 +35,7 @@ impl UserMysqlRepository {
 
 #[async_trait]
 impl UserRepository for UserMysqlRepository {
-    #[instrument(skip(self))]
+    #[instrument(skip(self), name = "user_repository_get_users")]
     async fn get_users(&self, paginate_sort: &PaginateSort) -> ApiResult<Vec<User>> {
         let mut query = String::from(
             "
@@ -63,7 +63,7 @@ impl UserRepository for UserMysqlRepository {
         Ok(users.into_iter().filter_map(|u| u.try_into().ok()).collect())
     }
 
-    #[instrument(skip(self))]
+    #[instrument(skip(self), name = "user_repository_get_user_by_id")]
     async fn get_user_by_id(&self, request: GetUserRequest) -> ApiResult<User> {
         let user = sqlx::query_as!(
             UserModel,
@@ -81,7 +81,7 @@ impl UserRepository for UserMysqlRepository {
         }
     }
 
-    #[instrument(skip(self))]
+    #[instrument(skip(self), name = "user_repository_get_user_by_email")]
     async fn get_user_by_email(&self, email: String) -> ApiResult<User> {
         let user = sqlx::query_as!(
             UserModel,
@@ -99,7 +99,7 @@ impl UserRepository for UserMysqlRepository {
         }
     }
 
-    #[instrument(skip(self))]
+    #[instrument(skip(self), name = "user_repository_login")]
     async fn login(&self, request: LoginRequest) -> ApiResult<Option<User>> {
         let hashed_password = format!("{:x}", Sha512::digest(request.password.as_bytes()));
         let user = sqlx::query_as!(
@@ -117,7 +117,7 @@ impl UserRepository for UserMysqlRepository {
         }
     }
 
-    #[instrument(skip(self))]
+    #[instrument(skip(self), name = "user_repository_create_user")]
     async fn create_user(&self, request: CreateUserRequest) -> ApiResult<User> {
         let hashed_password = format!("{:x}", Sha512::digest(request.password.as_bytes()));
         let user_id = uuid::Uuid::new_v4();
@@ -143,7 +143,7 @@ impl UserRepository for UserMysqlRepository {
         self.get_user_by_id(GetUserRequest { id: user_id }).await
     }
 
-    #[instrument(skip(self))]
+    #[instrument(skip(self), name = "user_repository_delete_user")]
     async fn delete_user(&self, request: DeleteUserRequest) -> ApiResult<u64> {
         let result = sqlx::query!(
             "UPDATE users SET deleted_at = ? WHERE id = ? AND deleted_at IS NULL",
@@ -156,7 +156,7 @@ impl UserRepository for UserMysqlRepository {
         Ok(result.rows_affected())
     }
 
-    #[instrument(skip(self))]
+    #[instrument(skip(self), name = "user_repository_get_total_users")]
     async fn get_total_users(&self) -> ApiResult<i64> {
         let result = sqlx::query!("SELECT COUNT(*) AS total FROM users WHERE deleted_at IS NULL")
             .fetch_one(self.db.pool.clone().as_ref())
@@ -165,7 +165,7 @@ impl UserRepository for UserMysqlRepository {
         Ok(result.total)
     }
 
-    #[instrument(skip(self))]
+    #[instrument(skip(self), name = "user_repository_update_password")]
     async fn update_password(&self, request: UpdateUserPasswordRepositoryRequest) -> ApiResult<()> {
         let hashed_password = format!("{:x}", Sha512::digest(request.password.as_bytes()));
 

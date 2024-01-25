@@ -27,7 +27,7 @@ impl RefreshTokenMysqlRepository {
 
 #[async_trait]
 impl RefreshTokenRepository for RefreshTokenMysqlRepository {
-    #[instrument(skip(self))]
+    #[instrument(skip(self), name = "refresh_token_repository_create")]
     async fn create(&self, request: RefreshTokenRequest) -> ApiResult<()> {
         sqlx::query!(
             r#"
@@ -45,7 +45,7 @@ impl RefreshTokenRepository for RefreshTokenMysqlRepository {
         Ok(())
     }
 
-    #[instrument(skip(self))]
+    #[instrument(skip(self), name = "refresh_token_repository_get")]
     async fn get(&self, request: RefreshTokenId) -> ApiResult<RefreshToken> {
         let result = sqlx::query!(
             r#"
@@ -71,7 +71,7 @@ impl RefreshTokenRepository for RefreshTokenMysqlRepository {
         }
     }
 
-    #[instrument(skip(self))]
+    #[instrument(skip(self), name = "refresh_token_repository_delete")]
     async fn delete(&self, request: RefreshTokenId) -> ApiResult<()> {
         let _result = sqlx::query!(
             r#"

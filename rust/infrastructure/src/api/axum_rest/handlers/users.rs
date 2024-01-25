@@ -29,7 +29,7 @@ pub struct UpdatePasswordRequest {
 }
 
 /// Login route: POST /api/v1/login
-#[instrument(skip(uc, state))]
+#[instrument(skip(uc, state), name = "login_handler")]
 pub async fn login(
     Extension(uc): Extension<AppUseCases>,
     State(state): State<SharedState>,
@@ -42,7 +42,7 @@ pub async fn login(
 }
 
 /// Refresh token route: POST /api/v1/refresh-token/:token
-#[instrument(skip(uc, state))]
+#[instrument(skip(uc, state), name = "refresh_token_handler")]
 pub async fn refresh_token(
     Path(refresh_token): Path<String>,
     Extension(uc): Extension<AppUseCases>,
@@ -58,7 +58,7 @@ pub async fn refresh_token(
 }
 
 /// Users list route: GET /api/v1/users
-#[instrument(skip(uc))]
+#[instrument(skip(uc), name = "get_users_handler")]
 pub async fn get_users(
     Query(pagination): Query<PaginateSortQuery>,
     Extension(uc): Extension<AppUseCases>,
@@ -71,7 +71,7 @@ pub async fn get_users(
 }
 
 /// User information route: GET /api/v1/users/:id
-#[instrument(skip(uc))]
+#[instrument(skip(uc), name = "get_user_handler")]
 pub async fn get_user(
     Path(id): Path<Uuid>,
     Extension(uc): Extension<AppUseCases>,
@@ -83,7 +83,7 @@ pub async fn get_user(
 }
 
 /// User creation route: POST /api/v1/users
-#[instrument(skip(uc))]
+#[instrument(skip(uc), name = "create_user_handler")]
 pub async fn create_user(
     Extension(uc): Extension<AppUseCases>,
     ExtractRequestId(request_id): ExtractRequestId,
@@ -95,7 +95,7 @@ pub async fn create_user(
 }
 
 /// Delete user route: DELETE /api/v1/users/:id
-#[instrument(skip(uc))]
+#[instrument(skip(uc), name = "delete_user_handler")]
 pub async fn delete_user(
     Path(id): Path<Uuid>,
     Extension(uc): Extension<AppUseCases>,
@@ -110,7 +110,7 @@ pub async fn delete_user(
 }
 
 /// Send forgotten password request: POST /api/v1/forgotten-password/:email
-#[instrument(skip(uc, state))]
+#[instrument(skip(uc, state), name = "forgotten_password_handler")]
 pub async fn forgotten_password(
     Path(email): Path<String>,
     Extension(uc): Extension<AppUseCases>,
@@ -129,7 +129,7 @@ pub async fn forgotten_password(
 }
 
 /// Update user password: PATCH /api/v1/update-password/:token
-#[instrument(skip(uc))]
+#[instrument(skip(uc), name = "update_password_handler")]
 pub async fn update_password(
     Path(token): Path<Uuid>,
     Extension(uc): Extension<AppUseCases>,
