@@ -10,7 +10,7 @@ readme = "../README.md"
 
 [dependencies]
 axum = "0.7.4"
-chrono = { version = "0.4.32", features = ["clock", "std", "serde"], default-features = false }
+chrono = { version = "0.4.33", features = ["clock", "std", "serde"], default-features = false }
 dotenvy = "0.15.7"
 jsonwebtoken = "9.2.0"
 log = "0.4.20"
