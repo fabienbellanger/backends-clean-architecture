@@ -203,3 +203,7 @@ rm infrastructure/keys/private.ec.key
 ## TODO
 
 - [ ] Build in different targets (Linux on Mac)
+- [ ] Add OpenTelemetry metrics 
+  - [https://medium.com/netwo/distributed-tracing-in-rust-b8eb2af3aff4](Distributed Tracing in Rust)
+  - [https://signoz.io/blog/opentelemetry-vs-prometheus/](OpenTelemetry vs Prometheus)
+  - [https://www.youtube.com/watch?v=JNZoo_8XeaE](OpenTelemetry for Rust Developers)
