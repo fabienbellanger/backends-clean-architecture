@@ -34,8 +34,8 @@ func UserFromEntity(u *entities.User) User {
 		u.ID.String(),
 		u.Lastname,
 		u.Firstname,
-		u.Email,
-		u.Password,
+		u.Email.Value(),
+		u.Password.Value(),
 		u.CreatedAt,
 	}
 }

@@ -1,6 +1,7 @@
 package entities
 
 import (
+	vo "clean-architecture/pkg/domain/value_objects"
 	"strings"
 	"time"
 
@@ -22,8 +23,8 @@ type User struct {
 	ID        UserID
 	Lastname  string
 	Firstname string
-	Email     string
-	Password  string
+	Email     vo.Email
+	Password  vo.Password
 	CreatedAt time.Time
 }
 
@@ -33,8 +34,8 @@ func NewUser(id UserID, lastname, firstname, email, password string, createdAt t
 		ID:        id,
 		Lastname:  lastname,
 		Firstname: firstname,
-		Email:     email,
-		Password:  password,
+		Email:     vo.NewEmail(email),
+		Password:  vo.NewPassword(password),
 		CreatedAt: createdAt,
 	}
 }

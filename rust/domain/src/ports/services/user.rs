@@ -178,10 +178,10 @@ impl<U: UserRepository, P: PasswordResetRepository, T: RefreshTokenRepository> U
         let user = self.user_repository.get_user_by_email(request.email.clone()).await?;
 
         // Password reset
-        let password_reset = PasswordReset::new(user.id.to_string(), request.expiration_duration);
+        let password_reset = PasswordReset::new(user.id, request.expiration_duration);
 
         self.password_reset_repository
-            .create_or_update(password_reset.clone().try_into()?)
+            .create_or_update(password_reset.clone().into())
             .await?;
 
         Ok(password_reset)
