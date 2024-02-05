@@ -1,4 +1,4 @@
-package orm
+package gorm
 
 import (
 	"clean-architecture/pkg/domain/ports/repositories"

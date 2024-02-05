@@ -1,4 +1,4 @@
-package orm
+package gorm
 
 import (
 	"clean-architecture/pkg/adapters/repositories/gorm/models"
