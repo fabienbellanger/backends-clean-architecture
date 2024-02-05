@@ -1,7 +1,7 @@
 package orm
 
 import (
-	"clean-architecture/pkg/adapters/repositories/orm/models"
+	"clean-architecture/pkg/adapters/repositories/gorm/models"
 	"clean-architecture/pkg/domain/entities"
 	"clean-architecture/pkg/domain/ports/repositories"
 
@@ -29,6 +29,5 @@ func (uor *userOrmRepository) GetUser(id string) (entities.User, error) {
 		return entities.User{}, err
 	}
 
-	userEntity := user.UserToEntity()
-	return userEntity, nil
+	return user.UserToEntity(), nil
 }

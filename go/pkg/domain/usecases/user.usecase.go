@@ -6,13 +6,13 @@ import (
 	"clean-architecture/pkg/domain/ports/services"
 )
 
-type userUseCase struct {
-	userService services.UserService
-}
-
 type User interface {
 	Create(r *requests.UserCreateRequest) (*entities.User, error)
 	GetUser(r *requests.GetUserRequest) (*entities.User, error)
+}
+
+type userUseCase struct {
+	userService services.UserService
 }
 
 // NewUserUseCase returns a new CreateUser use case

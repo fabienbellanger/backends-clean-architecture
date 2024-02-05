@@ -4,7 +4,12 @@ import (
 	"github.com/spf13/viper"
 )
 
-type config struct {
+type Config struct {
+	// Server
+	URL  string
+	PORT string
+
+	// Database
 	DB_DRIVER   string
 	DB_HOST     string
 	DB_USERNAME string
@@ -13,7 +18,7 @@ type config struct {
 	DB_DATABASE string
 }
 
-var C config
+var C Config
 
 func InitConfig() error {
 	viper.SetConfigFile(".env")
@@ -22,8 +27,7 @@ func InitConfig() error {
 		return err
 	}
 
-	Config := &C
-	if err := viper.Unmarshal(&Config); err != nil {
+	if err := viper.Unmarshal(&C); err != nil {
 		return err
 	}
 

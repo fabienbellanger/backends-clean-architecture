@@ -6,6 +6,11 @@ import (
 	"clean-architecture/pkg/domain/ports/requests"
 )
 
+type UserService interface {
+	Create(r *requests.UserCreateRequest) (*entities.User, error)
+	GetUser(r *requests.GetUserRequest) (*entities.User, error)
+}
+
 type userService struct {
 	userRepository repositories.UserRepository
 }
@@ -13,11 +18,6 @@ type userService struct {
 // NewUserService returns a new user service
 func NewUserService(repo repositories.UserRepository) UserService {
 	return &userService{repo}
-}
-
-type UserService interface {
-	Create(r *requests.UserCreateRequest) (*entities.User, error)
-	GetUser(r *requests.GetUserRequest) (*entities.User, error)
 }
 
 func (us userService) Create(req *requests.UserCreateRequest) (*entities.User, error) {
