@@ -1,5 +1,7 @@
 //! User repository module
 
+use crate::entities::scope::Scope;
+use crate::entities::user::UserId;
 use crate::ports::requests::user::{CreateUserRequest, DeleteUserRequest, UpdateUserPasswordRepositoryRequest};
 use crate::{
     entities::user::User,
@@ -34,4 +36,7 @@ pub trait UserRepository {
 
     /// Update user password
     async fn update_password(&self, request: UpdateUserPasswordRepositoryRequest) -> ApiResult<()>;
+
+    /// Get user scopes
+    async fn get_scopes(&self, user_id: UserId) -> ApiResult<Vec<Scope>>;
 }

@@ -9,6 +9,22 @@ use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Validati
 use serde::{Deserialize, Serialize};
 use std::fmt::{Debug, Formatter};
 
+/// Auth scope
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AuthScope(String);
+
+impl AuthScope {
+    /// Create a new scope
+    pub fn new(id: String) -> Self {
+        Self(id)
+    }
+
+    /// Get the scope
+    pub fn value(&self) -> &str {
+        &self.0
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Claims {
     pub sub: String,
@@ -16,6 +32,7 @@ pub struct Claims {
     pub iat: i64,
     pub nbf: i64,
     pub user_id: String,
+    pub scopes: Vec<AuthScope>,
 }
 
 pub trait ClaimsExtractor<H> {
@@ -172,7 +189,7 @@ impl Jwt {
         Ok(key)
     }
 
-    /// Decode key with the good algoritm
+    /// Decode key with the good algorithm
     pub fn decoding_key_from_str(algo: Algorithm, secret: &str) -> ApiResult<DecodingKey> {
         let key = match algo {
             Algorithm::HS256 | Algorithm::HS384 | Algorithm::HS512 => DecodingKey::from_secret(secret.as_bytes()),
@@ -209,7 +226,7 @@ impl Jwt {
     }
 
     /// Generate JWT
-    pub fn generate(&self, user_id: String) -> ApiResult<(String, i64)> {
+    pub fn generate(&self, user_id: String, scopes: Vec<AuthScope>) -> ApiResult<(String, i64)> {
         let header = jsonwebtoken::Header::new(self.algorithm);
         let now = Utc::now().timestamp();
         let access_expired_at = now + (self.access_lifetime * 60);
@@ -220,6 +237,7 @@ impl Jwt {
             iat: now,
             nbf: now,
             user_id,
+            scopes,
         };
 
         match self.encoding_key.clone() {
@@ -237,7 +255,7 @@ impl Jwt {
             _ => Err(api_error!(
                 ApiErrorCode::InternalError,
                 "error during JWT encoding",
-                format!("error during JWT encoding: no encoding key")
+                "error during JWT encoding: no encoding key"
             )),
         }
     }
@@ -261,7 +279,7 @@ impl Jwt {
             _ => Err(api_error!(
                 ApiErrorCode::InternalError,
                 "error during JWT decoding",
-                format!("error during JWT decoding: no decoding key")
+                "error during JWT decoding: no decoding key"
             )),
         }
     }

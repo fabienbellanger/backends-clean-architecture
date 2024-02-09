@@ -18,7 +18,7 @@ use crate::ports::{
 };
 use chrono::{DateTime, NaiveDateTime, SecondsFormat, Utc};
 use clean_architecture_shared::api_error;
-use clean_architecture_shared::auth::Jwt;
+use clean_architecture_shared::auth::{AuthScope, Jwt};
 use clean_architecture_shared::error::{ApiError, ApiErrorCode, ApiResult};
 use clean_architecture_shared::query_parameter::PaginateSort;
 
@@ -47,8 +47,17 @@ impl<U: UserRepository, P: PasswordResetRepository, T: RefreshTokenRepository> U
         match user {
             None => Err(api_error!(ApiErrorCode::Unauthorized)),
             Some(user) => {
+                // Scopes
+                let scopes = self
+                    .user_repository
+                    .get_scopes(user.id)
+                    .await?
+                    .into_iter()
+                    .map(AuthScope::from)
+                    .collect::<Vec<AuthScope>>();
+
                 // JWT
-                let (access_token, access_expired_at) = jwt.generate(user.id.to_string())?;
+                let (access_token, access_expired_at) = jwt.generate(user.id.to_string(), scopes)?;
                 match NaiveDateTime::from_timestamp_opt(access_expired_at, 0) {
                     Some(access_expired_at) => {
                         let access_expired_at: DateTime<Utc> =
@@ -79,8 +88,7 @@ impl<U: UserRepository, P: PasswordResetRepository, T: RefreshTokenRepository> U
                         ApiErrorCode::InternalError,
                         "error during JWT generation",
                         format!(
-                            "error during JWT generation: invalid 'expired_at' field in JWT claims ({})",
-                            access_expired_at
+                            "error during JWT generation: invalid 'expired_at' field in JWT claims ({access_expired_at})"
                         )
                     )),
                 }
@@ -103,8 +111,17 @@ impl<U: UserRepository, P: PasswordResetRepository, T: RefreshTokenRepository> U
         match refresh_token.is_valid() {
             false => Err(api_error!(ApiErrorCode::Unauthorized)),
             true => {
+                // Scopes
+                let scopes = self
+                    .user_repository
+                    .get_scopes(refresh_token.user_id)
+                    .await?
+                    .into_iter()
+                    .map(AuthScope::from)
+                    .collect::<Vec<AuthScope>>();
+
                 // Generate new access and refresh token
-                let (access_token, access_expired_at) = jwt.generate(refresh_token.user_id.to_string())?;
+                let (access_token, access_expired_at) = jwt.generate(refresh_token.user_id.to_string(), scopes)?;
                 match NaiveDateTime::from_timestamp_opt(access_expired_at, 0) {
                     Some(access_expired_at) => {
                         let access_expired_at: DateTime<Utc> =

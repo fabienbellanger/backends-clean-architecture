@@ -1,9 +1,12 @@
 //! User MySQL repository module
 
+use crate::database::mysql::models::scope::ScopeModel;
 use crate::database::mysql::models::user::UserModel;
 use crate::database::mysql::Db;
 use async_trait::async_trait;
 use chrono::Utc;
+use clean_architecture_domain::entities::scope::Scope;
+use clean_architecture_domain::entities::user::UserId;
 use clean_architecture_domain::ports::requests::user::{
     CreateUserRequest, DeleteUserRequest, UpdateUserPasswordRepositoryRequest,
 };
@@ -183,5 +186,28 @@ impl UserRepository for UserMysqlRepository {
         .await?;
 
         Ok(())
+    }
+
+    #[instrument(skip(self), name = "user_repository_get_scopes")]
+    // TODO: Add tests
+    async fn get_scopes(&self, user_id: UserId) -> ApiResult<Vec<Scope>> {
+        let scopes = sqlx::query_as!(
+            ScopeModel,
+            r#"
+                    SELECT
+                        scopes.id,
+                        scopes.created_at,
+                        scopes.deleted_at
+                    FROM scopes 
+                        INNER JOIN users_scopes ON scopes.id = users_scopes.scope_id
+                    WHERE users_scopes.user_id = ?
+                        AND scopes.deleted_at IS NULL
+            "#,
+            user_id.to_string()
+        )
+        .fetch_all(self.db.pool.clone().as_ref())
+        .await?;
+
+        Ok(scopes.into_iter().map(|s| s.into()).collect())
     }
 }

@@ -1,5 +1,6 @@
 use async_trait::async_trait;
 use chrono::{DateTime, Utc};
+use clean_architecture_domain::entities::scope::Scope;
 use clean_architecture_domain::entities::user::User;
 use clean_architecture_domain::ports::repositories::user::UserRepository;
 use clean_architecture_domain::ports::requests::user::{
@@ -128,5 +129,9 @@ impl UserRepository for TestUserRepository {
 
     async fn update_password(&self, _request: UpdateUserPasswordRepositoryRequest) -> ApiResult<()> {
         Ok(())
+    }
+
+    async fn get_scopes(&self, _user_id: Uuid) -> ApiResult<Vec<Scope>> {
+        Ok(vec![])
     }
 }

@@ -1,0 +1,47 @@
+{
+  "db_name": "MySQL",
+  "query": "\n                    SELECT\n                        scopes.id,\n                        scopes.created_at,\n                        scopes.deleted_at\n                    FROM scopes \n                        INNER JOIN users_scopes ON scopes.id = users_scopes.scope_id\n                    WHERE users_scopes.user_id = ?\n                        AND scopes.deleted_at IS NULL\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": {
+          "type": "VarString",
+          "flags": "NOT_NULL | PRIMARY_KEY | NO_DEFAULT_VALUE",
+          "char_set": 224,
+          "max_size": 508
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "created_at",
+        "type_info": {
+          "type": "Datetime",
+          "flags": "NOT_NULL | BINARY | NO_DEFAULT_VALUE",
+          "char_set": 63,
+          "max_size": 23
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "deleted_at",
+        "type_info": {
+          "type": "Datetime",
+          "flags": "MULTIPLE_KEY | BINARY",
+          "char_set": 63,
+          "max_size": 23
+        }
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      false,
+      false,
+      true
+    ]
+  },
+  "hash": "49520901d03ef536e30bc49a8eddede278cdef0fd176b0ef58582234edcfd4b6"
+}

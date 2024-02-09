@@ -1,7 +1,7 @@
 //! Layers module
 
+pub(crate) mod auth;
 pub(crate) mod basic_auth;
-pub(crate) mod jwt;
 pub mod logger;
 pub(crate) mod prometheus;
 pub mod states;

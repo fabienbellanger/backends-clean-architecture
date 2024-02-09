@@ -76,6 +76,8 @@ paths:
             $ref: "#/components/responses/InternalServerError"
   /forgotten-password/{email}:
     post:
+      security:
+        - bearerAuth: []
       summary: ""
       description: Forgotten password request
       tags:
