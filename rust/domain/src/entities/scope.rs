@@ -3,6 +3,9 @@
 use chrono::{DateTime, Utc};
 use clean_architecture_shared::auth::AuthScope;
 
+/// Users scope
+pub const SCOPE_USERS: &str = "users";
+
 /// Scope ID
 pub type ScopeId = String;
 

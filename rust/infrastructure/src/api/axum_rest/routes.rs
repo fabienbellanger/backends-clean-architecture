@@ -8,6 +8,7 @@ use crate::auth;
 use crate::config::Config;
 use axum::routing::{delete, get, patch, post};
 use axum::Router;
+use clean_architecture_domain::entities::scope::SCOPE_USERS;
 use metrics_exporter_prometheus::PrometheusHandle;
 use std::future::ready;
 
@@ -52,7 +53,7 @@ pub fn api(state: SharedState) -> Router<SharedState> {
 
 /// Protected API routes
 fn api_protected(state: SharedState) -> Router<SharedState> {
-    Router::new().nest("/users", api_users().layer(auth!(state, "users")))
+    Router::new().nest("/users", api_users().layer(auth!(state, SCOPE_USERS)))
 }
 
 /// Users API routes
