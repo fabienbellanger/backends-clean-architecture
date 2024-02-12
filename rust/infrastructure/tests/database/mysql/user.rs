@@ -2,7 +2,7 @@ use crate::helpers::mysql::TestMySQL;
 use clean_architecture_domain::{
     ports::{
         repositories::user::UserRepository,
-        requests::user::{CreateUserRequest, GetUserRequest},
+        requests::user::{CreateUserRequest, UserIdRequest},
     },
     value_objects::email::Email,
 };
@@ -71,7 +71,7 @@ async fn test_get_user() {
     let user = repository.create_user(request.clone()).await.unwrap();
 
     // Retrieve this new user by id
-    let request = GetUserRequest { id: user.id };
+    let request = UserIdRequest { id: user.id };
     let result = repository.get_user_by_id(request.clone()).await;
 
     assert!(result.is_ok());

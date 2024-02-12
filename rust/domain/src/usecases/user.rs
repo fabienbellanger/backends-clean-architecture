@@ -11,7 +11,7 @@ use crate::ports::responses::refresh_token::RefreshTokenResponse;
 use crate::ports::services::email::EmailService;
 use crate::ports::{
     repositories::user::UserRepository,
-    requests::user::{GetUserRequest, LoginRequest},
+    requests::user::{LoginRequest, UserIdRequest},
     responses::user::{GetUserResponse, GetUsersResponse, LoginResponse},
     services::user::UserService,
 };
@@ -71,7 +71,7 @@ where
 
     /// Get a user
     #[instrument(skip(self), name = "user_use_case_get_user")]
-    pub async fn get_user(&self, request: GetUserRequest) -> ApiResult<GetUserResponse> {
+    pub async fn get_user(&self, request: UserIdRequest) -> ApiResult<GetUserResponse> {
         validate_request_data(&request)?;
 
         self.user_service.get_user(request).await
@@ -115,5 +115,13 @@ where
         validate_request_data(&request)?;
 
         self.user_service.update_user_password(request).await
+    }
+
+    /// Get active scopes of a user
+    #[instrument(skip(self), name = "user_use_case_get_scopes")]
+    pub async fn get_scopes(&self, request: UserIdRequest) -> ApiResult<Vec<String>> {
+        validate_request_data(&request)?;
+
+        self.user_service.get_scopes(request).await
     }
 }

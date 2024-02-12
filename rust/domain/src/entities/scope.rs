@@ -18,6 +18,17 @@ pub struct Scope {
     pub deleted_at: Option<DateTime<Utc>>,
 }
 
+impl Scope {
+    /// Create a new scope
+    pub fn new(id: String) -> Self {
+        Self {
+            id,
+            created_at: Utc::now(),
+            deleted_at: None,
+        }
+    }
+}
+
 impl From<Scope> for AuthScope {
     fn from(scope: Scope) -> Self {
         Self::new(scope.id.to_string())

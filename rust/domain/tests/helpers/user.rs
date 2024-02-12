@@ -1,10 +1,10 @@
 use async_trait::async_trait;
 use chrono::{DateTime, Utc};
 use clean_architecture_domain::entities::scope::Scope;
-use clean_architecture_domain::entities::user::User;
+use clean_architecture_domain::entities::user::{User, UserId};
 use clean_architecture_domain::ports::repositories::user::UserRepository;
 use clean_architecture_domain::ports::requests::user::{
-    CreateUserRequest, DeleteUserRequest, GetUserRequest, LoginRequest, UpdateUserPasswordRepositoryRequest,
+    CreateUserRequest, DeleteUserRequest, LoginRequest, UpdateUserPasswordRepositoryRequest, UserIdRequest,
 };
 use clean_architecture_domain::value_objects::email::Email;
 use clean_architecture_domain::value_objects::password::Password;
@@ -17,6 +17,7 @@ pub(crate) const JWT_SECRET: &str = "mySecretKey";
 pub(crate) const USER_ID: &str = "3288fb86-db99-471d-95bc-1451c7ec6f7b";
 pub(crate) const USER_EMAIL: &str = "test@test.com";
 pub(crate) const TOTAL_USERS: i64 = 10;
+pub(crate) const SCOPES: [&str; 2] = ["users:read", "scopes:write"];
 
 pub(crate) struct TestUserRepository {}
 
@@ -37,7 +38,7 @@ impl UserRepository for TestUserRepository {
         }])
     }
 
-    async fn get_user_by_id(&self, request: GetUserRequest) -> ApiResult<User> {
+    async fn get_user_by_id(&self, request: UserIdRequest) -> ApiResult<User> {
         let id = Uuid::parse_str(USER_ID).unwrap();
         if id == request.id {
             let date = DateTime::parse_from_rfc3339(DATE).unwrap().with_timezone(&Utc);
@@ -131,7 +132,12 @@ impl UserRepository for TestUserRepository {
         Ok(())
     }
 
-    async fn get_scopes(&self, _user_id: Uuid) -> ApiResult<Vec<Scope>> {
-        Ok(vec![])
+    async fn get_scopes(&self, id: UserId) -> ApiResult<Vec<Scope>> {
+        let user_id: Uuid = USER_ID.parse().unwrap();
+        if user_id == id {
+            Ok(SCOPES.iter().map(|s| Scope::new(s.to_string())).collect())
+        } else {
+            Ok(vec![])
+        }
     }
 }

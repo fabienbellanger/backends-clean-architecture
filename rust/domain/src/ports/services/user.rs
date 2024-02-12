@@ -2,6 +2,7 @@
 
 use crate::entities::password_reset::PasswordReset;
 use crate::entities::refresh_token::RefreshToken;
+use crate::entities::scope::ScopeId;
 use crate::ports::repositories::password_reset::PasswordResetRepository;
 use crate::ports::repositories::refresh_token::RefreshTokenRepository;
 use crate::ports::requests::password_reset::{DeleteRequest, GetByTokenRequest};
@@ -13,7 +14,7 @@ use crate::ports::requests::user::{
 use crate::ports::responses::refresh_token::RefreshTokenResponse;
 use crate::ports::{
     repositories::user::UserRepository,
-    requests::user::{GetUserRequest, LoginRequest},
+    requests::user::{LoginRequest, UserIdRequest},
     responses::user::{GetUserResponse, GetUsersResponse, LoginResponse},
 };
 use chrono::{DateTime, NaiveDateTime, SecondsFormat, Utc};
@@ -169,7 +170,7 @@ impl<U: UserRepository, P: PasswordResetRepository, T: RefreshTokenRepository> U
 
     /// Get a user
     #[instrument(skip(self), name = "user_service_get_user")]
-    pub async fn get_user(&self, request: GetUserRequest) -> ApiResult<GetUserResponse> {
+    pub async fn get_user(&self, request: UserIdRequest) -> ApiResult<GetUserResponse> {
         self.user_repository
             .get_user_by_id(request)
             .await
@@ -204,7 +205,7 @@ impl<U: UserRepository, P: PasswordResetRepository, T: RefreshTokenRepository> U
         Ok(password_reset)
     }
 
-    // Update user password
+    /// Update user password
     #[instrument(skip(self), name = "user_service_update_user_password")]
     pub async fn update_user_password(&self, request: UpdateUserPasswordRequest) -> ApiResult<()> {
         let result = self
@@ -231,5 +232,17 @@ impl<U: UserRepository, P: PasswordResetRepository, T: RefreshTokenRepository> U
             }
             None => Err(api_error!(ApiErrorCode::NotFound, "no user found")),
         }
+    }
+
+    /// Get active scopes of a user
+    #[instrument(skip(self), name = "user_service_get_scopes")]
+    pub async fn get_scopes(&self, request: UserIdRequest) -> ApiResult<Vec<ScopeId>> {
+        Ok(self
+            .user_repository
+            .get_scopes(request.id)
+            .await?
+            .into_iter()
+            .map(|scope| scope.id)
+            .collect())
     }
 }

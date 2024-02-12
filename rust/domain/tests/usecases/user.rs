@@ -9,7 +9,7 @@ use clean_architecture_domain::ports::requests::user::{
 };
 use clean_architecture_domain::{
     ports::{
-        requests::user::{CreateUserRequest, GetUserRequest, LoginRequest},
+        requests::user::{CreateUserRequest, LoginRequest, UserIdRequest},
         responses::user::{GetUserResponse, GetUsersResponse},
         services::user::UserService,
     },
@@ -33,7 +33,7 @@ fn init_use_case(
 #[tokio::test]
 async fn test_get_user_use_case() {
     let use_case = init_use_case();
-    let request = GetUserRequest {
+    let request = UserIdRequest {
         id: Uuid::parse_str(USER_ID).unwrap(),
     };
     let user = GetUserResponse {
@@ -249,4 +249,18 @@ async fn test_refresh_token() {
     let response = use_case.refresh_token(request, &jwt).await;
 
     assert!(response.is_err());
+}
+
+#[tokio::test]
+async fn test_user_get_scopes_success() {
+    let use_case = init_use_case();
+    let request = UserIdRequest {
+        id: Uuid::parse_str(USER_ID).unwrap(),
+    };
+    let response = use_case.get_scopes(request).await;
+    assert!(response.is_ok());
+
+    if let Ok(scopes) = response {
+        assert_eq!(scopes, SCOPES.to_vec());
+    }
 }

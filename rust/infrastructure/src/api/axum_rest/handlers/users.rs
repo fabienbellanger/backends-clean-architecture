@@ -6,10 +6,11 @@ use crate::api::axum_rest::usecases::AppUseCases;
 use axum::extract::{Query, State};
 use axum::http::StatusCode;
 use axum::{Extension, Json};
+use clean_architecture_domain::entities::scope::ScopeId;
 use clean_architecture_domain::ports::requests::refresh_token::RefreshTokenHttpRequest;
 use clean_architecture_domain::ports::requests::user::{
-    CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest, GetUserRequest, LoginRequest,
-    UpdateUserPasswordRequest,
+    CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest, LoginRequest, UpdateUserPasswordRequest,
+    UserIdRequest,
 };
 use clean_architecture_domain::ports::responses::password_reset::PasswordResetResponse;
 use clean_architecture_domain::ports::responses::refresh_token::RefreshTokenResponse;
@@ -77,7 +78,7 @@ pub async fn get_user(
     Extension(uc): Extension<AppUseCases>,
     ExtractRequestId(request_id): ExtractRequestId,
 ) -> ApiResult<Json<GetUserResponse>> {
-    let response = uc.user.get_user(GetUserRequest { id }).await?;
+    let response = uc.user.get_user(UserIdRequest { id }).await?;
 
     Ok(Json(response))
 }
@@ -144,4 +145,17 @@ pub async fn update_password(
         .await?;
 
     Ok(StatusCode::NO_CONTENT)
+}
+
+/// Get scopes: GET /api/v1/users/:id/scopes
+// TODO: Add tests
+#[instrument(skip(uc), name = "get_user_scopes_handler")]
+pub async fn get_scopes(
+    Path(id): Path<Uuid>,
+    Extension(uc): Extension<AppUseCases>,
+    ExtractRequestId(request_id): ExtractRequestId,
+) -> ApiResult<Json<Vec<ScopeId>>> {
+    let scopes = uc.user.get_scopes(UserIdRequest { id }).await?;
+
+    Ok(Json(scopes))
 }

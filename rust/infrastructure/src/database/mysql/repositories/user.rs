@@ -14,7 +14,7 @@ use clean_architecture_domain::{
     entities::user::User,
     ports::{
         repositories::user::UserRepository,
-        requests::user::{GetUserRequest, LoginRequest},
+        requests::user::{LoginRequest, UserIdRequest},
     },
 };
 use clean_architecture_shared::error::{ApiError, ApiResult};
@@ -67,7 +67,7 @@ impl UserRepository for UserMysqlRepository {
     }
 
     #[instrument(skip(self), name = "user_repository_get_user_by_id")]
-    async fn get_user_by_id(&self, request: GetUserRequest) -> ApiResult<User> {
+    async fn get_user_by_id(&self, request: UserIdRequest) -> ApiResult<User> {
         let user = sqlx::query_as!(
             UserModel,
             "SELECT * FROM users WHERE id = ? AND deleted_at IS NULL",
@@ -143,7 +143,7 @@ impl UserRepository for UserMysqlRepository {
         .await?;
 
         // Get user
-        self.get_user_by_id(GetUserRequest { id: user_id }).await
+        self.get_user_by_id(UserIdRequest { id: user_id }).await
     }
 
     #[instrument(skip(self), name = "user_repository_delete_user")]
@@ -189,19 +189,19 @@ impl UserRepository for UserMysqlRepository {
     }
 
     #[instrument(skip(self), name = "user_repository_get_scopes")]
-    // TODO: Add tests
+    // TODO: Add tests and optimize query, just ID is needed
     async fn get_scopes(&self, user_id: UserId) -> ApiResult<Vec<Scope>> {
         let scopes = sqlx::query_as!(
             ScopeModel,
             r#"
-                    SELECT
-                        scopes.id,
-                        scopes.created_at,
-                        scopes.deleted_at
-                    FROM scopes 
-                        INNER JOIN users_scopes ON scopes.id = users_scopes.scope_id
-                    WHERE users_scopes.user_id = ?
-                        AND scopes.deleted_at IS NULL
+                SELECT
+                    scopes.id,
+                    scopes.created_at,
+                    scopes.deleted_at
+                FROM scopes 
+                    INNER JOIN users_scopes ON scopes.id = users_scopes.scope_id
+                WHERE users_scopes.user_id = ?
+                    AND scopes.deleted_at IS NULL
             "#,
             user_id.to_string()
         )

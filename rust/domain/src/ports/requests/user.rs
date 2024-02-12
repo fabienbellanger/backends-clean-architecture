@@ -13,7 +13,7 @@ pub struct LoginRequest {
 }
 
 #[derive(Debug, Validate, Deserialize, Clone)]
-pub struct GetUserRequest {
+pub struct UserIdRequest {
     pub id: Uuid,
 }
 

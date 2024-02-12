@@ -5,7 +5,7 @@ use crate::entities::user::UserId;
 use crate::ports::requests::user::{CreateUserRequest, DeleteUserRequest, UpdateUserPasswordRepositoryRequest};
 use crate::{
     entities::user::User,
-    ports::requests::user::{GetUserRequest, LoginRequest},
+    ports::requests::user::{LoginRequest, UserIdRequest},
 };
 use async_trait::async_trait;
 use clean_architecture_shared::error::ApiResult;
@@ -17,7 +17,7 @@ pub trait UserRepository {
     async fn get_users(&self, paginate_sort: &PaginateSort) -> ApiResult<Vec<User>>;
 
     /// Get a user by ID
-    async fn get_user_by_id(&self, request: GetUserRequest) -> ApiResult<User>;
+    async fn get_user_by_id(&self, request: UserIdRequest) -> ApiResult<User>;
 
     /// Get a user by email
     async fn get_user_by_email(&self, email: String) -> ApiResult<User>;

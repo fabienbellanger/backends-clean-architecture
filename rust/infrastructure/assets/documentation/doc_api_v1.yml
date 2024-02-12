@@ -271,6 +271,37 @@ paths:
             $ref: "#/components/responses/NotFound"
         '500':
             $ref: "#/components/responses/InternalServerError"
+  /users/{id}/scopes:
+    get:
+      summary: ""
+      description: Get user scopes
+      tags:
+        - "Users"
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: User ID
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUserScopesResponse'
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
   /scopes:
     get:
       summary: ""
@@ -586,5 +617,7 @@ components:
       type: array
       items:
         $ref: "#/components/schemas/ScopeResponse"
-      required:
-        - data
+    GetUserScopesResponse:
+      type: array
+      items:
+        type: string
