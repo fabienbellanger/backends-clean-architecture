@@ -12,5 +12,5 @@ pub async fn get_scopes_request(app: &TestApp, token: &str) -> TestResponse {
 
 /// Scope deletion request helper
 pub async fn delete_scope_request(app: &TestApp, token: &str, id: &str) -> TestResponse {
-    TestResponse::new(app, "/api/v1/scopes/{id}", "DELETE", None, Some(token)).await
+    TestResponse::new(app, &format!("/api/v1/scopes/{id}"), "DELETE", None, Some(token)).await
 }
