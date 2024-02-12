@@ -1,4 +1,4 @@
-//! User requests modules
+//! User requests
 
 use serde::Deserialize;
 use uuid::Uuid;

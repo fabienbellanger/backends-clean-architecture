@@ -1,4 +1,4 @@
-//! User MySQL repository module
+//! User MySQL repository
 
 use crate::database::mysql::models::scope::ScopeModel;
 use crate::database::mysql::models::user::UserModel;

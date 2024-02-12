@@ -21,8 +21,8 @@ use clean_architecture_shared::error::ApiResult;
 use clean_architecture_shared::query_parameter::PaginateSort;
 use clean_architecture_shared::validation::validate_request_data;
 
-#[derive(Clone)]
 /// Create new user use case
+#[derive(Clone)]
 pub struct UserUseCase<U, P, T, E>
 where
     U: UserRepository,

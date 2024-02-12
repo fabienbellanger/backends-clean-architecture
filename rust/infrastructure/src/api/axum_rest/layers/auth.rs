@@ -95,6 +95,10 @@ where
 /// ```
 #[macro_export]
 macro_rules! auth {
+    ($state:expr) => {
+        JwtLayer { state: $state, scopes: vec![] }
+    };
+
     ($state:expr, $($scope:expr),*) => {
         JwtLayer { state: $state, scopes: vec![$(($scope)),*] }
     };

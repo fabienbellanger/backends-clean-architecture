@@ -1,3 +1,4 @@
+pub mod scope;
 pub mod user;
 
 use self::user::create_and_authenticate;

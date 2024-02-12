@@ -1,5 +1,6 @@
 //! Handlers module
 
+pub(crate) mod scopes;
 pub(crate) mod users;
 pub(crate) mod web;
 

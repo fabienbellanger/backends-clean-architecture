@@ -8,7 +8,7 @@ use crate::auth;
 use crate::config::Config;
 use axum::routing::{delete, get, patch, post};
 use axum::Router;
-use clean_architecture_domain::entities::scope::SCOPE_USERS;
+use clean_architecture_domain::entities::scope::{SCOPE_ADMIN, SCOPE_USERS};
 use metrics_exporter_prometheus::PrometheusHandle;
 use std::future::ready;
 
@@ -53,7 +53,9 @@ pub fn api(state: SharedState) -> Router<SharedState> {
 
 /// Protected API routes
 fn api_protected(state: SharedState) -> Router<SharedState> {
-    Router::new().nest("/users", api_users().layer(auth!(state, SCOPE_USERS)))
+    Router::new()
+        .nest("/scopes", api_scopes().layer(auth!(state.clone(), SCOPE_ADMIN)))
+        .nest("/users", api_users().layer(auth!(state, SCOPE_USERS)))
 }
 
 /// Users API routes
@@ -63,4 +65,12 @@ fn api_users() -> Router<SharedState> {
         .route("/", get(handlers::users::get_users))
         .route("/:id", get(handlers::users::get_user))
         .route("/:id", delete(handlers::users::delete_user))
+}
+
+/// Scopes API routes
+fn api_scopes() -> Router<SharedState> {
+    Router::new()
+        .route("/", post(handlers::scopes::create))
+        .route("/", get(handlers::scopes::get_all))
+        .route("/:id", delete(handlers::scopes::delete))
 }

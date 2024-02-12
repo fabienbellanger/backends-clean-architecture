@@ -1,4 +1,4 @@
-//! Users handler module
+//! Users handlers
 
 use crate::api::axum_rest::extractors::{ExtractRequestId, Path};
 use crate::api::axum_rest::layers::states::SharedState;

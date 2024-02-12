@@ -1,4 +1,4 @@
-//! User services module
+//! User services
 
 use crate::entities::password_reset::PasswordReset;
 use crate::entities::refresh_token::RefreshToken;
