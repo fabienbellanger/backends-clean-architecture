@@ -284,7 +284,7 @@ async fn test_api_user_get_scopes() {
 
     // Get scopes
     let response = get_scopes(&app, &token, &user.id).await;
-    assert_eq!(response.status_code, StatusCode::CREATED);
+    assert_eq!(response.status_code, StatusCode::OK);
 
     let scopes: Vec<ScopeId> = serde_json::from_str(&response.body.to_string()).expect("error when deserializing body");
     assert_eq!(scopes, vec![SCOPE_USERS]);

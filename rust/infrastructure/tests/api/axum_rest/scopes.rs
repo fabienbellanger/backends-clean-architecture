@@ -18,7 +18,7 @@ async fn test_api_scope_creation_success() {
     )
     .await;
 
-    assert_eq!(response.status_code, StatusCode::OK);
+    assert_eq!(response.status_code, StatusCode::CREATED);
 }
 
 #[tokio::test]
@@ -43,19 +43,6 @@ async fn test_api_scope_creation_invalid_id() {
 async fn test_api_get_scopes() {
     let app: TestApp = TestAppBuilder::new().await.build();
     let (_response, token) = app.make_authentication().await;
-
-    // Create 2 scopes
-    for i in 1..3 {
-        create_scope_request(
-            &app,
-            serde_json::json!({
-                "id": format!("scope{i}:write")
-            })
-            .to_string(),
-            &token,
-        )
-        .await;
-    }
 
     let response = get_scopes_request(&app, &token).await;
     assert_eq!(response.status_code, StatusCode::OK);

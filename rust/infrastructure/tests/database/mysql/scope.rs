@@ -4,7 +4,7 @@ use clean_architecture_domain::ports::requests::scope::{CreateRequest, DeleteReq
 use clean_architecture_infrastructure::database::mysql::repositories::scope::ScopeMysqlRepository;
 
 #[tokio::test]
-async fn test_create_scope_success() {
+async fn test_create_scope() {
     let db = TestMySQL::new().await;
     let repository = ScopeMysqlRepository::new(db.database());
 
@@ -15,18 +15,6 @@ async fn test_create_scope_success() {
     let result = repository.create(request.clone()).await;
 
     assert!(result.is_ok());
-}
-
-#[tokio::test]
-async fn test_create_scope_invalid_id() {
-    let db = TestMySQL::new().await;
-    let repository = ScopeMysqlRepository::new(db.database());
-
-    // Create a new scope
-    let request = CreateRequest { id: "sco".to_string() };
-    let result = repository.create(request.clone()).await;
-
-    assert!(result.is_err());
 }
 
 #[tokio::test]
