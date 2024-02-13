@@ -302,6 +302,71 @@ paths:
           $ref: "#/components/responses/NotFound"
         '500':
           $ref: "#/components/responses/InternalServerError"
+    post:
+      summary: ""
+      description: Add scope to user
+      tags:
+        - "Users"
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: User ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScopeIdRequest'
+      responses:
+        '201':
+          description: Created
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+  /users/{user_id}/scopes/{scope_id}:
+    delete:
+      summary: ""
+      description: Remove a scope from user
+      tags:
+        - "Users"
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - in: path
+          name: user_id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: User ID
+        - in: path
+          name: scope_id
+          schema:
+            type: string
+          required: true
+          description: Scope ID
+      responses:
+        '204':
+          description: No Content
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '401':
+          $ref: "#/components/responses/Unauthorized"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
   /scopes:
     get:
       summary: ""
@@ -621,3 +686,11 @@ components:
       type: array
       items:
         type: string
+    ScopeIdRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          minProperties: 4
+      required:
+        - id

@@ -5,6 +5,7 @@ use clean_architecture_domain::entities::user::{User, UserId};
 use clean_architecture_domain::ports::repositories::user::UserRepository;
 use clean_architecture_domain::ports::requests::user::{
     CreateUserRequest, DeleteUserRequest, LoginRequest, UpdateUserPasswordRepositoryRequest, UserIdRequest,
+    UserScopeRequest,
 };
 use clean_architecture_domain::value_objects::email::Email;
 use clean_architecture_domain::value_objects::password::Password;
@@ -15,8 +16,10 @@ use uuid::Uuid;
 pub(crate) const DATE: &str = "2023-04-01T12:10:00+00:00";
 pub(crate) const JWT_SECRET: &str = "mySecretKey";
 pub(crate) const USER_ID: &str = "3288fb86-db99-471d-95bc-1451c7ec6f7b";
+pub(crate) const OTHER_USER_ID: &str = "3288fb86-db99-471d-95bc-1451c7ec6f7c";
 pub(crate) const USER_EMAIL: &str = "test@test.com";
 pub(crate) const TOTAL_USERS: i64 = 10;
+pub(crate) const SCOPE_ID: &str = "users:read";
 pub(crate) const SCOPES: [&str; 2] = ["users:read", "scopes:write"];
 
 pub(crate) struct TestUserRepository {}
@@ -138,6 +141,28 @@ impl UserRepository for TestUserRepository {
             Ok(SCOPES.iter().map(|s| Scope::new(s.to_string())).collect())
         } else {
             Ok(vec![])
+        }
+    }
+
+    async fn add_scope(&self, request: UserScopeRequest) -> ApiResult<u64> {
+        let user_id: Uuid = USER_ID.parse().unwrap();
+        if user_id == request.user_id {
+            Ok(1)
+        } else {
+            Err(ApiError::NotFound {
+                message: "no user found".to_owned(),
+            })
+        }
+    }
+
+    async fn remove_scope(&self, request: UserScopeRequest) -> ApiResult<u64> {
+        let user_id: Uuid = USER_ID.parse().unwrap();
+        if user_id == request.user_id {
+            Ok(1)
+        } else {
+            Err(ApiError::NotFound {
+                message: "no user found".to_owned(),
+            })
         }
     }
 }

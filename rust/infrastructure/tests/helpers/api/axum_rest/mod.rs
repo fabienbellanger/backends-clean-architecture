@@ -2,6 +2,7 @@ pub mod scope;
 pub mod user;
 
 use self::user::create_and_authenticate;
+use crate::helpers::api::axum_rest::scope::create_scopes;
 use crate::helpers::mysql::TestMySQL;
 use axum::body::Body;
 use axum::Router;
@@ -85,6 +86,7 @@ pub struct TestApp {
 impl TestApp {
     /// Create a new user and return a tuple with login response and token
     pub async fn make_authentication(&self) -> (TestResponse, String) {
+        create_scopes(&self).await;
         create_and_authenticate(self).await
     }
 }

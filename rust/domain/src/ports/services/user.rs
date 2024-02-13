@@ -9,7 +9,7 @@ use crate::ports::requests::password_reset::{DeleteRequest, GetByTokenRequest};
 use crate::ports::requests::refresh_token::{RefreshTokenHttpRequest, RefreshTokenId};
 use crate::ports::requests::user::{
     CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest, UpdateUserPasswordRepositoryRequest,
-    UpdateUserPasswordRequest,
+    UpdateUserPasswordRequest, UserScopeRequest,
 };
 use crate::ports::responses::refresh_token::RefreshTokenResponse;
 use crate::ports::{
@@ -244,5 +244,17 @@ impl<U: UserRepository, P: PasswordResetRepository, T: RefreshTokenRepository> U
             .into_iter()
             .map(|scope| scope.id)
             .collect())
+    }
+
+    /// Add a scope to a user
+    #[instrument(skip(self), name = "user_service_add_scope")]
+    pub async fn add_scope(&self, request: UserScopeRequest) -> ApiResult<u64> {
+        self.user_repository.add_scope(request).await
+    }
+
+    /// Remove a scope to a user
+    #[instrument(skip(self), name = "user_service_remove_scope")]
+    pub async fn remove_scope(&self, request: UserScopeRequest) -> ApiResult<u64> {
+        self.user_repository.remove_scope(request).await
     }
 }

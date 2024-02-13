@@ -5,7 +5,7 @@ use crate::helpers::{email::TestEmailService, password_reset::TestPasswordResetR
 use chrono::{DateTime, Days, Utc};
 use clean_architecture_domain::ports::requests::refresh_token::RefreshTokenHttpRequest;
 use clean_architecture_domain::ports::requests::user::{
-    DeleteUserRequest, ForgottenPasswordRequest, UpdateUserPasswordRequest,
+    DeleteUserRequest, ForgottenPasswordRequest, UpdateUserPasswordRequest, UserScopeRequest,
 };
 use clean_architecture_domain::{
     ports::{
@@ -263,4 +263,48 @@ async fn test_user_get_scopes_success() {
     if let Ok(scopes) = response {
         assert_eq!(scopes, SCOPES.to_vec());
     }
+}
+
+#[tokio::test]
+async fn test_user_add_scope_success() {
+    let use_case = init_use_case();
+    let request = UserScopeRequest {
+        user_id: Uuid::parse_str(USER_ID).unwrap(),
+        scope_id: SCOPE_ID.to_owned(),
+    };
+    let response = use_case.add_scope(request).await;
+    assert!(response.is_ok());
+}
+
+#[tokio::test]
+async fn test_user_add_scope_invalid_user() {
+    let use_case = init_use_case();
+    let request = UserScopeRequest {
+        user_id: Uuid::parse_str(OTHER_USER_ID).unwrap(),
+        scope_id: SCOPE_ID.to_owned(),
+    };
+    let response = use_case.add_scope(request).await;
+    assert!(response.is_err());
+}
+
+#[tokio::test]
+async fn test_user_remove_scope_success() {
+    let use_case = init_use_case();
+    let request = UserScopeRequest {
+        user_id: Uuid::parse_str(USER_ID).unwrap(),
+        scope_id: SCOPE_ID.to_owned(),
+    };
+    let response = use_case.remove_scope(request).await;
+    assert!(response.is_ok());
+}
+
+#[tokio::test]
+async fn test_user_remove_scope_invalid_user() {
+    let use_case = init_use_case();
+    let request = UserScopeRequest {
+        user_id: Uuid::parse_str(OTHER_USER_ID).unwrap(),
+        scope_id: SCOPE_ID.to_owned(),
+    };
+    let response = use_case.remove_scope(request).await;
+    assert!(response.is_err());
 }

@@ -1,7 +1,8 @@
 //! User requests
 
+use crate::entities::scope::ScopeId;
+use crate::entities::user::UserId;
 use serde::Deserialize;
-use uuid::Uuid;
 use validator::Validate;
 
 #[derive(Debug, Validate, Deserialize, Clone)]
@@ -14,7 +15,7 @@ pub struct LoginRequest {
 
 #[derive(Debug, Validate, Deserialize, Clone)]
 pub struct UserIdRequest {
-    pub id: Uuid,
+    pub id: UserId,
 }
 
 #[derive(Debug, Validate, Deserialize, Clone)]
@@ -29,7 +30,7 @@ pub struct CreateUserRequest {
 
 #[derive(Debug, Validate, Deserialize, Clone)]
 pub struct DeleteUserRequest {
-    pub id: Uuid,
+    pub id: UserId,
 }
 
 #[derive(Debug, Validate, Deserialize, Clone)]
@@ -51,4 +52,10 @@ pub struct UpdateUserPasswordRepositoryRequest {
     pub id: String,
     #[validate(length(min = 8))]
     pub password: String,
+}
+
+#[derive(Debug, Validate, Deserialize, Clone)]
+pub struct UserScopeRequest {
+    pub user_id: UserId,
+    pub scope_id: ScopeId,
 }

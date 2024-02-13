@@ -2,7 +2,9 @@
 
 use crate::entities::scope::Scope;
 use crate::entities::user::UserId;
-use crate::ports::requests::user::{CreateUserRequest, DeleteUserRequest, UpdateUserPasswordRepositoryRequest};
+use crate::ports::requests::user::{
+    CreateUserRequest, DeleteUserRequest, UpdateUserPasswordRepositoryRequest, UserScopeRequest,
+};
 use crate::{
     entities::user::User,
     ports::requests::user::{LoginRequest, UserIdRequest},
@@ -39,4 +41,10 @@ pub trait UserRepository {
 
     /// Get user scopes
     async fn get_scopes(&self, user_id: UserId) -> ApiResult<Vec<Scope>>;
+
+    /// Add a scope to a user
+    async fn add_scope(&self, request: UserScopeRequest) -> ApiResult<u64>;
+
+    /// Remove a scope to a user
+    async fn remove_scope(&self, request: UserScopeRequest) -> ApiResult<u64>;
 }

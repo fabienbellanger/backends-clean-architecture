@@ -8,7 +8,7 @@ use chrono::Utc;
 use clean_architecture_domain::entities::scope::Scope;
 use clean_architecture_domain::entities::user::UserId;
 use clean_architecture_domain::ports::requests::user::{
-    CreateUserRequest, DeleteUserRequest, UpdateUserPasswordRepositoryRequest,
+    CreateUserRequest, DeleteUserRequest, UpdateUserPasswordRepositoryRequest, UserScopeRequest,
 };
 use clean_architecture_domain::{
     entities::user::User,
@@ -189,7 +189,7 @@ impl UserRepository for UserMysqlRepository {
     }
 
     #[instrument(skip(self), name = "user_repository_get_scopes")]
-    // TODO: Add tests and optimize query, just ID is needed
+    // TODO: Optimize query, just ID is needed
     async fn get_scopes(&self, user_id: UserId) -> ApiResult<Vec<Scope>> {
         let scopes = sqlx::query_as!(
             ScopeModel,
@@ -209,5 +209,31 @@ impl UserRepository for UserMysqlRepository {
         .await?;
 
         Ok(scopes.into_iter().map(|s| s.into()).collect())
+    }
+
+    #[instrument(skip(self), name = "user_repository_add_scope")]
+    async fn add_scope(&self, request: UserScopeRequest) -> ApiResult<u64> {
+        let result = sqlx::query!(
+            "INSERT IGNORE INTO users_scopes (user_id, scope_id) VALUES (?, ?)",
+            request.user_id.to_string(),
+            request.scope_id.to_string()
+        )
+        .execute(self.db.pool.clone().as_ref())
+        .await?;
+
+        Ok(result.rows_affected())
+    }
+
+    #[instrument(skip(self), name = "user_repository_remove_scope")]
+    async fn remove_scope(&self, request: UserScopeRequest) -> ApiResult<u64> {
+        let result = sqlx::query!(
+            "DELETE FROM users_scopes WHERE user_id = ? AND scope_id = ?",
+            request.user_id.to_string(),
+            request.scope_id.to_string()
+        )
+        .execute(self.db.pool.clone().as_ref())
+        .await?;
+
+        Ok(result.rows_affected())
     }
 }

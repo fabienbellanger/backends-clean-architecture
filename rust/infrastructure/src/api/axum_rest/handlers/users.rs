@@ -10,7 +10,7 @@ use clean_architecture_domain::entities::scope::ScopeId;
 use clean_architecture_domain::ports::requests::refresh_token::RefreshTokenHttpRequest;
 use clean_architecture_domain::ports::requests::user::{
     CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest, LoginRequest, UpdateUserPasswordRequest,
-    UserIdRequest,
+    UserIdRequest, UserScopeRequest,
 };
 use clean_architecture_domain::ports::responses::password_reset::PasswordResetResponse;
 use clean_architecture_domain::ports::responses::refresh_token::RefreshTokenResponse;
@@ -27,6 +27,13 @@ use validator::Validate;
 pub struct UpdatePasswordRequest {
     #[validate(length(min = 8))]
     pub password: String,
+}
+
+/// Scope ID request
+#[derive(Debug, Validate, Deserialize, Clone)]
+pub struct ScopeIdRequest {
+    #[validate(length(min = 4))]
+    pub id: String,
 }
 
 /// Login route: POST /api/v1/login
@@ -148,7 +155,6 @@ pub async fn update_password(
 }
 
 /// Get scopes: GET /api/v1/users/:id/scopes
-// TODO: Add tests
 #[instrument(skip(uc), name = "get_user_scopes_handler")]
 pub async fn get_scopes(
     Path(id): Path<Uuid>,
@@ -158,4 +164,53 @@ pub async fn get_scopes(
     let scopes = uc.user.get_scopes(UserIdRequest { id }).await?;
 
     Ok(Json(scopes))
+}
+
+/// Add scope: POST /api/v1/users/:id/scopes
+#[instrument(skip(uc), name = "user_add_scope_handler")]
+pub async fn add_scope(
+    Path(id): Path<Uuid>,
+    Extension(uc): Extension<AppUseCases>,
+    ExtractRequestId(request_id): ExtractRequestId,
+    Json(body): Json<ScopeIdRequest>,
+) -> ApiResult<StatusCode> {
+    let result = uc
+        .user
+        .add_scope(UserScopeRequest {
+            user_id: id,
+            scope_id: body.id,
+        })
+        .await?;
+
+    match result {
+        1 => Ok(StatusCode::CREATED),
+        _ => Err(api_error!(
+            ApiErrorCode::NotFound,
+            "user or scope does not exist or already added to user"
+        )),
+    }
+}
+
+/// Remove scope: DELETE /api/v1/users/:user_id/scopes/:scope_id
+#[instrument(skip(uc), name = "user_remove_scope_handler")]
+pub async fn remove_scope(
+    Path(path): Path<(Uuid, ScopeId)>,
+    Extension(uc): Extension<AppUseCases>,
+    ExtractRequestId(request_id): ExtractRequestId,
+) -> ApiResult<StatusCode> {
+    let result = uc
+        .user
+        .remove_scope(UserScopeRequest {
+            user_id: path.0,
+            scope_id: path.1,
+        })
+        .await?;
+
+    match result {
+        1 => Ok(StatusCode::NO_CONTENT),
+        _ => Err(api_error!(
+            ApiErrorCode::NotFound,
+            "user or scope does not exist or already removed from user"
+        )),
+    }
 }

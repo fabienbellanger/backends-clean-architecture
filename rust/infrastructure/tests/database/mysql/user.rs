@@ -1,4 +1,7 @@
 use crate::helpers::mysql::TestMySQL;
+use clean_architecture_domain::ports::repositories::scope::ScopeRepository;
+use clean_architecture_domain::ports::requests::scope::CreateRequest;
+use clean_architecture_domain::ports::requests::user::UserScopeRequest;
 use clean_architecture_domain::{
     ports::{
         repositories::user::UserRepository,
@@ -6,6 +9,7 @@ use clean_architecture_domain::{
     },
     value_objects::email::Email,
 };
+use clean_architecture_infrastructure::database::mysql::repositories::scope::ScopeMysqlRepository;
 use clean_architecture_infrastructure::database::mysql::repositories::user::UserMysqlRepository;
 
 #[tokio::test]
@@ -75,4 +79,108 @@ async fn test_get_user() {
     let result = repository.get_user_by_id(request.clone()).await;
 
     assert!(result.is_ok());
+}
+
+#[tokio::test]
+async fn test_add_scope() {
+    let db = TestMySQL::new().await;
+    let repository = UserMysqlRepository::new(db.database());
+
+    // Create a new user
+    let request = CreateUserRequest {
+        lastname: "Doe".to_string(),
+        firstname: "John".to_string(),
+        email: "john.doe@test.com".to_string(),
+        password: "00000000".to_string(),
+    };
+    let user_id = repository.create_user(request.clone()).await.unwrap().id;
+
+    // Create a new scope
+    let scope_id = "test:read".to_string();
+    let scope_repository = ScopeMysqlRepository::new(db.database());
+    scope_repository
+        .create(CreateRequest { id: scope_id.clone() })
+        .await
+        .unwrap();
+
+    // Add scope to user
+    let result = repository.add_scope(UserScopeRequest { user_id, scope_id }).await;
+    assert!(result.is_ok());
+}
+
+#[tokio::test]
+async fn test_remove_scope() {
+    let db = TestMySQL::new().await;
+    let repository = UserMysqlRepository::new(db.database());
+
+    // Create a new user
+    let request = CreateUserRequest {
+        lastname: "Doe".to_string(),
+        firstname: "John".to_string(),
+        email: "john.doe@test.com".to_string(),
+        password: "00000000".to_string(),
+    };
+    let user_id = repository.create_user(request.clone()).await.unwrap().id;
+
+    // Create a new scope
+    let scope_id = "test:read".to_string();
+    let scope_repository = ScopeMysqlRepository::new(db.database());
+    scope_repository
+        .create(CreateRequest { id: scope_id.clone() })
+        .await
+        .unwrap();
+
+    // Add scope to user
+    repository
+        .add_scope(UserScopeRequest {
+            user_id,
+            scope_id: scope_id.clone(),
+        })
+        .await
+        .unwrap();
+
+    // Remove scope from user
+    let result = repository.remove_scope(UserScopeRequest { user_id, scope_id }).await;
+    assert!(result.is_ok());
+}
+
+#[tokio::test]
+async fn test_get_scopes() {
+    let db = TestMySQL::new().await;
+    let repository = UserMysqlRepository::new(db.database());
+
+    // Create a new user
+    let request = CreateUserRequest {
+        lastname: "Doe".to_string(),
+        firstname: "John".to_string(),
+        email: "john.doe@test.com".to_string(),
+        password: "00000000".to_string(),
+    };
+    let user_id = repository.create_user(request.clone()).await.unwrap().id;
+
+    // Create a new scope
+    let scope_id = "test:read".to_string();
+    let scope_repository = ScopeMysqlRepository::new(db.database());
+    scope_repository
+        .create(CreateRequest { id: scope_id.clone() })
+        .await
+        .unwrap();
+
+    // Add scope to user
+    repository
+        .add_scope(UserScopeRequest {
+            user_id,
+            scope_id: scope_id.clone(),
+        })
+        .await
+        .unwrap();
+
+    // Gets scopes
+    let result = repository.get_scopes(user_id).await;
+    assert!(result.is_ok());
+
+    if let Ok(scopes) = result {
+        assert_eq!(scopes.len(), 1);
+        assert_eq!(scopes[0].id, scope_id);
+    }
 }

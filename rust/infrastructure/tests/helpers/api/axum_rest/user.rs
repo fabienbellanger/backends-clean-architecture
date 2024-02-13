@@ -1,4 +1,6 @@
 use super::{TestApp, TestResponse};
+use clean_architecture_domain::entities::scope::{SCOPE_ADMIN, SCOPE_USERS};
+use clean_architecture_domain::ports::requests::user::UserScopeRequest;
 use clean_architecture_domain::{
     entities::user::User,
     ports::{repositories::user::UserRepository, requests::user::CreateUserRequest, responses::user::LoginResponse},
@@ -20,6 +22,22 @@ pub async fn create_user(app: &TestApp) -> User {
     };
     let mut user = repository.create_user(request.clone()).await.unwrap();
     user.password = Password::new(&password).unwrap();
+
+    // Add scopes
+    repository
+        .add_scope(UserScopeRequest {
+            user_id: user.id,
+            scope_id: SCOPE_ADMIN.to_string(),
+        })
+        .await
+        .unwrap();
+    repository
+        .add_scope(UserScopeRequest {
+            user_id: user.id,
+            scope_id: SCOPE_USERS.to_string(),
+        })
+        .await
+        .unwrap();
 
     user
 }
@@ -66,4 +84,33 @@ pub async fn get_one(app: &TestApp, token: &str, id: &str) -> TestResponse {
 /// Delete a user
 pub async fn delete(app: &TestApp, token: &str, id: &str) -> TestResponse {
     TestResponse::new(app, &format!("/api/v1/users/{id}"), "DELETE", None, Some(token)).await
+}
+
+/// Get user scopes
+pub async fn get_scopes(app: &TestApp, token: &str, id: &str) -> TestResponse {
+    TestResponse::new(app, &format!("/api/v1/users/{id}/scopes"), "GET", None, Some(token)).await
+}
+
+/// Add scope to user
+pub async fn add_scope(app: &TestApp, token: &str, id: &str, body: String) -> TestResponse {
+    TestResponse::new(
+        app,
+        &format!("/api/v1/users/{id}/scopes"),
+        "POST",
+        Some(body),
+        Some(token),
+    )
+    .await
+}
+
+/// Remove scope from user
+pub async fn remove_scope(app: &TestApp, token: &str, user_id: &str, scope_id: &str) -> TestResponse {
+    TestResponse::new(
+        app,
+        &format!("/api/v1/users/{user_id}/scopes/{scope_id}"),
+        "DELETE",
+        None,
+        Some(token),
+    )
+    .await
 }
