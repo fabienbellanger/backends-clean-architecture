@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "INSERT IGNORE INTO users_scopes (user_id, scope_id) VALUES (?, ?)",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": []
+  },
+  "hash": "7c36c0cb42facf3da0998ce50e0d413a734ca30cb1172386fa2539f62f3214b3"
+}

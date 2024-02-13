@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "\n                UPDATE scopes\n                SET deleted_at = ?\n                WHERE id = ?\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": []
+  },
+  "hash": "47ba8241ec98f3e624428fe96db8ff9acb11d7bd8c5800729c04878acfa0f225"
+}
