@@ -17,13 +17,13 @@ impl<S: ScopeRepository> ScopeService<S> {
     }
 
     /// Create a new scope
-    #[instrument(skip(self), name = "scope_service_create")]
+    #[instrument(skip_all, name = "scope_service_create")]
     pub async fn create(&self, req: CreateRequest) -> ApiResult<()> {
         self.scope_repository.create(req).await
     }
 
     /// Get a list of scopes
-    #[instrument(skip(self), name = "scope_service_get_scopes")]
+    #[instrument(skip_all, name = "scope_service_get_scopes")]
     pub async fn get_scopes(&self) -> ApiResult<Vec<ScopeResponse>> {
         self.scope_repository
             .get_scopes()
@@ -32,7 +32,7 @@ impl<S: ScopeRepository> ScopeService<S> {
     }
 
     /// Delete a scope
-    #[instrument(skip(self), name = "scope_service_delete")]
+    #[instrument(skip_all, name = "scope_service_delete")]
     pub async fn delete(&self, req: DeleteRequest) -> ApiResult<u64> {
         self.scope_repository.delete(req).await
     }

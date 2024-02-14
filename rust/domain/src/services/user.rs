@@ -41,7 +41,7 @@ impl<U: UserRepository, P: PasswordResetRepository, T: RefreshTokenRepository> U
     }
 
     /// Login
-    #[instrument(skip(self), name = "user_service_login")]
+    #[instrument(skip_all, name = "user_service_login")]
     pub async fn login(&self, request: LoginRequest, jwt: &Jwt) -> ApiResult<LoginResponse> {
         let user = self.user_repository.login(request).await?;
 
@@ -98,7 +98,7 @@ impl<U: UserRepository, P: PasswordResetRepository, T: RefreshTokenRepository> U
     }
 
     /// Get all users
-    #[instrument(skip(self), name = "user_service_get_users")]
+    #[instrument(skip_all, name = "user_service_get_users")]
     pub async fn refresh_token(&self, request: RefreshTokenHttpRequest, jwt: &Jwt) -> ApiResult<RefreshTokenResponse> {
         let refresh_token_id = RefreshTokenId {
             refresh_token: request.refresh_token,
@@ -160,7 +160,7 @@ impl<U: UserRepository, P: PasswordResetRepository, T: RefreshTokenRepository> U
     }
 
     /// Get all users
-    #[instrument(skip(self), name = "user_service_get_users")]
+    #[instrument(skip_all, name = "user_service_get_users")]
     pub async fn get_users(&self, paginate_sort: &PaginateSort) -> ApiResult<GetUsersResponse> {
         let total = self.user_repository.get_total_users().await?;
         let users = self.user_repository.get_users(paginate_sort).await?;
@@ -169,7 +169,7 @@ impl<U: UserRepository, P: PasswordResetRepository, T: RefreshTokenRepository> U
     }
 
     /// Get a user
-    #[instrument(skip(self), name = "user_service_get_user")]
+    #[instrument(skip_all, name = "user_service_get_user")]
     pub async fn get_user(&self, request: UserIdRequest) -> ApiResult<GetUserResponse> {
         self.user_repository
             .get_user_by_id(request)
@@ -178,20 +178,20 @@ impl<U: UserRepository, P: PasswordResetRepository, T: RefreshTokenRepository> U
     }
 
     /// Create a user
-    #[instrument(skip(self), name = "user_service_create_user")]
+    #[instrument(skip_all, name = "user_service_create_user")]
     pub async fn create_user(&self, request: CreateUserRequest) -> ApiResult<GetUserResponse> {
         self.user_repository.create_user(request).await.map(|user| user.into())
     }
 
     /// Delete a user
-    #[instrument(skip(self), name = "user_service_delete_user")]
+    #[instrument(skip_all, name = "user_service_delete_user")]
     pub async fn delete_user(&self, request: DeleteUserRequest) -> ApiResult<u64> {
         // TODO: Check if user to delete is different of user who make the deletion
         self.user_repository.delete_user(request).await
     }
 
     /// Forgotten password request
-    #[instrument(skip(self), name = "user_service_forgotten_password")]
+    #[instrument(skip_all, name = "user_service_forgotten_password")]
     pub async fn forgotten_password(&self, request: ForgottenPasswordRequest) -> ApiResult<PasswordReset> {
         let user = self.user_repository.get_user_by_email(request.email.clone()).await?;
 
@@ -206,7 +206,7 @@ impl<U: UserRepository, P: PasswordResetRepository, T: RefreshTokenRepository> U
     }
 
     /// Update user password
-    #[instrument(skip(self), name = "user_service_update_user_password")]
+    #[instrument(skip_all, name = "user_service_update_user_password")]
     pub async fn update_user_password(&self, request: UpdateUserPasswordRequest) -> ApiResult<()> {
         let result = self
             .password_reset_repository
@@ -235,7 +235,7 @@ impl<U: UserRepository, P: PasswordResetRepository, T: RefreshTokenRepository> U
     }
 
     /// Get active scopes of a user
-    #[instrument(skip(self), name = "user_service_get_scopes")]
+    #[instrument(skip_all, name = "user_service_get_scopes")]
     pub async fn get_scopes(&self, request: UserIdRequest) -> ApiResult<Vec<ScopeId>> {
         Ok(self
             .user_repository
@@ -247,13 +247,13 @@ impl<U: UserRepository, P: PasswordResetRepository, T: RefreshTokenRepository> U
     }
 
     /// Add a scope to a user
-    #[instrument(skip(self), name = "user_service_add_scope")]
+    #[instrument(skip_all, name = "user_service_add_scope")]
     pub async fn add_scope(&self, request: UserScopeRequest) -> ApiResult<u64> {
         self.user_repository.add_scope(request).await
     }
 
     /// Remove a scope to a user
-    #[instrument(skip(self), name = "user_service_remove_scope")]
+    #[instrument(skip_all, name = "user_service_remove_scope")]
     pub async fn remove_scope(&self, request: UserScopeRequest) -> ApiResult<u64> {
         self.user_repository.remove_scope(request).await
     }
