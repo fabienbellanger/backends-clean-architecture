@@ -65,9 +65,13 @@ fn api_users() -> Router<SharedState> {
         .route("/", get(handlers::users::get_users))
         .route("/:id", get(handlers::users::get_user))
         .route("/:id", delete(handlers::users::delete_user))
-        .route("/:id/scopes", get(handlers::users::get_scopes))
-        .route("/:id/scopes", post(handlers::users::add_scope))
-        .route("/:user_id/scopes/:scope_id", delete(handlers::users::remove_scope))
+        .nest(
+            "/:id/scopes",
+            Router::new()
+                .route("/", get(handlers::users::get_scopes))
+                .route("/", post(handlers::users::add_scope))
+                .route("/:scope_id", delete(handlers::users::remove_scope)),
+        )
 }
 
 /// Scopes API routes

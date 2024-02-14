@@ -4,8 +4,8 @@ use crate::api::axum_rest::extractors::{ExtractRequestId, Path};
 use crate::api::axum_rest::usecases::AppUseCases;
 use axum::http::StatusCode;
 use axum::{Extension, Json};
-use clean_architecture_domain::ports::requests::scope::{CreateRequest, DeleteRequest};
-use clean_architecture_domain::ports::responses::scope::ScopeResponse;
+use clean_architecture_domain::requests::scope::{CreateRequest, DeleteRequest};
+use clean_architecture_domain::responses::scope::ScopeResponse;
 use clean_architecture_shared::api_error;
 use clean_architecture_shared::error::{ApiError, ApiErrorCode, ApiResult};
 

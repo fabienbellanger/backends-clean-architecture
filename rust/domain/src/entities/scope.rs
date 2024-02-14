@@ -5,6 +5,7 @@ use clean_architecture_shared::auth::AuthScope;
 
 /// Users scope
 pub const SCOPE_USERS: &str = "users";
+/// Admin scope
 pub const SCOPE_ADMIN: &str = "admin";
 
 /// Scope ID

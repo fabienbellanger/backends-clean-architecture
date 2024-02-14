@@ -1,4 +1,4 @@
-//! States module
+//! States
 
 use crate::config::Config;
 use clean_architecture_shared::{auth::Jwt, error::ApiResult};

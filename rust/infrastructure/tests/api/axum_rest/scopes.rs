@@ -1,7 +1,7 @@
 use crate::helpers::api::axum_rest::scope::{create_scope_request, delete_scope_request, get_scopes_request};
 use crate::helpers::api::axum_rest::{TestApp, TestAppBuilder};
 use axum::http::StatusCode;
-use clean_architecture_domain::ports::responses::scope::ScopeResponse;
+use clean_architecture_domain::responses::scope::ScopeResponse;
 
 #[tokio::test]
 async fn test_api_scope_creation_success() {

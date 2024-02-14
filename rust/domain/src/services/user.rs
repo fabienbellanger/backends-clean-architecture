@@ -3,16 +3,16 @@
 use crate::entities::password_reset::PasswordReset;
 use crate::entities::refresh_token::RefreshToken;
 use crate::entities::scope::ScopeId;
-use crate::ports::repositories::password_reset::PasswordResetRepository;
-use crate::ports::repositories::refresh_token::RefreshTokenRepository;
-use crate::ports::requests::password_reset::{DeleteRequest, GetByTokenRequest};
-use crate::ports::requests::refresh_token::{RefreshTokenHttpRequest, RefreshTokenId};
-use crate::ports::requests::user::{
+use crate::repositories::password_reset::PasswordResetRepository;
+use crate::repositories::refresh_token::RefreshTokenRepository;
+use crate::requests::password_reset::{DeleteRequest, GetByTokenRequest};
+use crate::requests::refresh_token::{RefreshTokenHttpRequest, RefreshTokenId};
+use crate::requests::user::{
     CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest, UpdateUserPasswordRepositoryRequest,
     UpdateUserPasswordRequest, UserScopeRequest,
 };
-use crate::ports::responses::refresh_token::RefreshTokenResponse;
-use crate::ports::{
+use crate::responses::refresh_token::RefreshTokenResponse;
+use crate::{
     repositories::user::UserRepository,
     requests::user::{LoginRequest, UserIdRequest},
     responses::user::{GetUserResponse, GetUsersResponse, LoginResponse},

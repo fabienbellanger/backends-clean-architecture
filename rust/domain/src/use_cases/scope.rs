@@ -1,9 +1,9 @@
 //! Scope use case
 
-use crate::ports::repositories::scope::ScopeRepository;
-use crate::ports::requests::scope::{CreateRequest, DeleteRequest};
-use crate::ports::responses::scope::ScopeResponse;
-use crate::ports::services::scope::ScopeService;
+use crate::repositories::scope::ScopeRepository;
+use crate::requests::scope::{CreateRequest, DeleteRequest};
+use crate::responses::scope::ScopeResponse;
+use crate::services::scope::ScopeService;
 use clean_architecture_shared::error::ApiResult;
 use clean_architecture_shared::validation::validate_request_data;
 

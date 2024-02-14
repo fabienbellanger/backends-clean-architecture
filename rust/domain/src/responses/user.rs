@@ -1,7 +1,7 @@
-//! User responses module
+//! User responses
 
 use crate::entities::user::User;
-use crate::ports::responses::pagination::PaginateResponse;
+use crate::responses::pagination::PaginateResponse;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -30,7 +30,7 @@ impl From<User> for GetUserResponse {
     /// Convert a `User` into `GetUserResponse`
     /// ```
     /// use clean_architecture_domain::entities::user::User;
-    /// use clean_architecture_domain::ports::responses::user::GetUserResponse;
+    /// use clean_architecture_domain::responses::user::GetUserResponse;
     /// use clean_architecture_domain::value_objects::email::Email;
     /// use clean_architecture_domain::value_objects::password::Password;
     /// use chrono::{DateTime, Utc};
@@ -78,8 +78,8 @@ impl From<(Vec<User>, i64)> for GetUsersResponse {
     /// Convert a `(Vec<User>, i64)` into `GetUsersResponse`
     /// ```
     /// use clean_architecture_domain::entities::user::User;
-    /// use clean_architecture_domain::ports::responses::user::{GetUserResponse, GetUsersResponse};
-    /// use clean_architecture_domain::ports::responses::pagination::PaginateResponse;
+    /// use clean_architecture_domain::responses::user::{GetUserResponse, GetUsersResponse};
+    /// use clean_architecture_domain::responses::pagination::PaginateResponse;
     /// use clean_architecture_domain::value_objects::email::Email;
     /// use clean_architecture_domain::value_objects::password::Password;
     /// use chrono::{DateTime, Utc};

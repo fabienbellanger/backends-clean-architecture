@@ -1,4 +1,4 @@
-//! HTTP request validation module
+//! HTTP request validation
 
 use super::error::{ApiError, ApiErrorCode, ApiResult};
 use crate::api_error;

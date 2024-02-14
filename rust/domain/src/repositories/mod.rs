@@ -1,4 +1,4 @@
-//! Requests module
+//! Repositories
 
 pub mod password_reset;
 pub mod refresh_token;

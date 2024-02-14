@@ -4,7 +4,7 @@ use async_trait::async_trait;
 use chrono::{Duration, Utc};
 use clean_architecture_domain::{
     entities::refresh_token::RefreshToken,
-    ports::{
+    {
         repositories::refresh_token::RefreshTokenRepository,
         requests::refresh_token::{RefreshTokenId, RefreshTokenRequest},
     },

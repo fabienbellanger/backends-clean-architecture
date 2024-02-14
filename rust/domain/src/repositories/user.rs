@@ -1,13 +1,13 @@
-//! User repository module
+//! User repository
 
 use crate::entities::scope::Scope;
 use crate::entities::user::UserId;
-use crate::ports::requests::user::{
+use crate::requests::user::{
     CreateUserRequest, DeleteUserRequest, UpdateUserPasswordRepositoryRequest, UserScopeRequest,
 };
 use crate::{
     entities::user::User,
-    ports::requests::user::{LoginRequest, UserIdRequest},
+    requests::user::{LoginRequest, UserIdRequest},
 };
 use async_trait::async_trait;
 use clean_architecture_shared::error::ApiResult;

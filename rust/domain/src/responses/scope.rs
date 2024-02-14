@@ -14,7 +14,7 @@ impl From<Scope> for ScopeResponse {
     ///
     /// ```
     /// use clean_architecture_domain::entities::scope::Scope;
-    /// use clean_architecture_domain::ports::responses::scope::ScopeResponse;
+    /// use clean_architecture_domain::responses::scope::ScopeResponse;
     /// use chrono::{DateTime, Utc};
     /// use uuid::Uuid;
     ///

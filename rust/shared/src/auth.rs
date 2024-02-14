@@ -1,4 +1,4 @@
-//! Authentification module
+//! Authentification
 
 use crate::api_error;
 use crate::error::{ApiError, ApiErrorCode, ApiResult};

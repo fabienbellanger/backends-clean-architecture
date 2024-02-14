@@ -1,7 +1,7 @@
 //! Scope repository
 
 use crate::entities::scope::Scope;
-use crate::ports::requests::scope::{CreateRequest, DeleteRequest};
+use crate::requests::scope::{CreateRequest, DeleteRequest};
 use async_trait::async_trait;
 use clean_architecture_shared::error::ApiResult;
 

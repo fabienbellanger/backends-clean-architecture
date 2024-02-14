@@ -2,8 +2,8 @@ use async_trait::async_trait;
 use chrono::{DateTime, Utc};
 use clean_architecture_domain::entities::scope::Scope;
 use clean_architecture_domain::entities::user::{User, UserId};
-use clean_architecture_domain::ports::repositories::user::UserRepository;
-use clean_architecture_domain::ports::requests::user::{
+use clean_architecture_domain::repositories::user::UserRepository;
+use clean_architecture_domain::requests::user::{
     CreateUserRequest, DeleteUserRequest, LoginRequest, UpdateUserPasswordRepositoryRequest, UserIdRequest,
     UserScopeRequest,
 };

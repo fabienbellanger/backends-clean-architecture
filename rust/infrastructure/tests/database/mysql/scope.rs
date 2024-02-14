@@ -1,6 +1,6 @@
 use crate::helpers::mysql::TestMySQL;
-use clean_architecture_domain::ports::repositories::scope::ScopeRepository;
-use clean_architecture_domain::ports::requests::scope::{CreateRequest, DeleteRequest};
+use clean_architecture_domain::repositories::scope::ScopeRepository;
+use clean_architecture_domain::requests::scope::{CreateRequest, DeleteRequest};
 use clean_architecture_infrastructure::database::mysql::repositories::scope::ScopeMysqlRepository;
 
 #[tokio::test]

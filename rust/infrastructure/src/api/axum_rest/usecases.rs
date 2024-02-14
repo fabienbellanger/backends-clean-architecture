@@ -1,13 +1,13 @@
-//! Use cases module
+//! Use cases
 
 use crate::database::mysql::repositories::password_reset::PasswordResetMysqlRepository;
 use crate::database::mysql::repositories::refresh_token::RefreshTokenMysqlRepository;
 use crate::database::mysql::repositories::scope::ScopeMysqlRepository;
 use crate::database::mysql::{repositories::user::UserMysqlRepository, Db};
 use crate::email::Email;
-use clean_architecture_domain::ports::services::scope::ScopeService;
-use clean_architecture_domain::usecases::scope::ScopeUseCase;
-use clean_architecture_domain::{ports::services::user::UserService, usecases::user::UserUseCase};
+use clean_architecture_domain::services::scope::ScopeService;
+use clean_architecture_domain::use_cases::scope::ScopeUseCase;
+use clean_architecture_domain::{services::user::UserService, use_cases::user::UserUseCase};
 use clean_architecture_shared::error::ApiResult;
 
 #[derive(Clone)]

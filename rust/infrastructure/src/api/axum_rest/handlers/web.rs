@@ -1,4 +1,4 @@
-//! Web handler module
+//! Web handler
 
 use crate::api::axum_rest::TEMPLATES;
 use axum::response::Html;

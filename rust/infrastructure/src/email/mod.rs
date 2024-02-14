@@ -1,12 +1,12 @@
-//! Email module
+//! Email
 
 mod forgotten_password;
 
 use crate::config::Config;
 use crate::email::forgotten_password::ForgottenPassword;
 use crate::APP_NAME;
-use clean_architecture_domain::ports::requests::user::ForgottenPasswordRequest;
-use clean_architecture_domain::ports::services::email::EmailService;
+use clean_architecture_domain::requests::user::ForgottenPasswordRequest;
+use clean_architecture_domain::services::email::EmailService;
 use clean_architecture_shared::api_error;
 use clean_architecture_shared::error::{ApiError, ApiErrorCode, ApiResult};
 use lettre::message::{header, MultiPart, SinglePart};

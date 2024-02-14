@@ -1,4 +1,4 @@
-//! Password Reset requests modules
+//! Password Reset requests
 
 use crate::entities::password_reset::PasswordReset;
 use crate::entities::user::UserId;

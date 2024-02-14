@@ -1,7 +1,7 @@
 use crate::helpers::api::axum_rest::{TestApp, TestResponse};
 use clean_architecture_domain::entities::scope::{SCOPE_ADMIN, SCOPE_USERS};
-use clean_architecture_domain::ports::repositories::scope::ScopeRepository;
-use clean_architecture_domain::ports::requests::scope::CreateRequest;
+use clean_architecture_domain::repositories::scope::ScopeRepository;
+use clean_architecture_domain::requests::scope::CreateRequest;
 use clean_architecture_infrastructure::database::mysql::repositories::scope::ScopeMysqlRepository;
 
 /// Create default scopes

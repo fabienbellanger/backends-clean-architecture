@@ -1,6 +1,6 @@
 //! Email service
 
-use crate::ports::requests::user::ForgottenPasswordRequest;
+use crate::requests::user::ForgottenPasswordRequest;
 use clean_architecture_shared::error::ApiResult;
 
 pub trait EmailService {

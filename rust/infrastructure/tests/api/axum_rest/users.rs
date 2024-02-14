@@ -5,7 +5,7 @@ use crate::helpers::api::axum_rest::{
 };
 use axum::http::StatusCode;
 use clean_architecture_domain::entities::scope::{ScopeId, SCOPE_USERS};
-use clean_architecture_domain::ports::responses::user::{GetUserResponse, GetUsersResponse};
+use clean_architecture_domain::responses::user::{GetUserResponse, GetUsersResponse};
 
 #[tokio::test]
 async fn test_api_login_unauthorized_user() {

@@ -1,8 +1,8 @@
 //! Scope services
 
-use crate::ports::repositories::scope::ScopeRepository;
-use crate::ports::requests::scope::{CreateRequest, DeleteRequest};
-use crate::ports::responses::scope::ScopeResponse;
+use crate::repositories::scope::ScopeRepository;
+use crate::requests::scope::{CreateRequest, DeleteRequest};
+use crate::responses::scope::ScopeResponse;
 use clean_architecture_shared::error::ApiResult;
 
 #[derive(Clone)]

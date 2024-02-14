@@ -1,15 +1,15 @@
 //! User use cases
 
-use crate::ports::repositories::password_reset::PasswordResetRepository;
-use crate::ports::repositories::refresh_token::RefreshTokenRepository;
-use crate::ports::requests::refresh_token::RefreshTokenHttpRequest;
-use crate::ports::requests::user::{
+use crate::repositories::password_reset::PasswordResetRepository;
+use crate::repositories::refresh_token::RefreshTokenRepository;
+use crate::requests::refresh_token::RefreshTokenHttpRequest;
+use crate::requests::user::{
     CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest, UpdateUserPasswordRequest, UserScopeRequest,
 };
-use crate::ports::responses::password_reset::PasswordResetResponse;
-use crate::ports::responses::refresh_token::RefreshTokenResponse;
-use crate::ports::services::email::EmailService;
-use crate::ports::{
+use crate::responses::password_reset::PasswordResetResponse;
+use crate::responses::refresh_token::RefreshTokenResponse;
+use crate::services::email::EmailService;
+use crate::{
     repositories::user::UserRepository,
     requests::user::{LoginRequest, UserIdRequest},
     responses::user::{GetUserResponse, GetUsersResponse, LoginResponse},

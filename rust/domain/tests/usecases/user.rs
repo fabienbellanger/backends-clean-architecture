@@ -3,17 +3,17 @@ use crate::helpers::refresh_token::{TestRefreshTokenRepository, INVALID_REFRESH_
 use crate::helpers::user::*;
 use crate::helpers::{email::TestEmailService, password_reset::TestPasswordResetRepository};
 use chrono::{DateTime, Days, Utc};
-use clean_architecture_domain::ports::requests::refresh_token::RefreshTokenHttpRequest;
-use clean_architecture_domain::ports::requests::user::{
+use clean_architecture_domain::requests::refresh_token::RefreshTokenHttpRequest;
+use clean_architecture_domain::requests::user::{
     DeleteUserRequest, ForgottenPasswordRequest, UpdateUserPasswordRequest, UserScopeRequest,
 };
 use clean_architecture_domain::{
-    ports::{
+    use_cases::user::*,
+    {
         requests::user::{CreateUserRequest, LoginRequest, UserIdRequest},
         responses::user::{GetUserResponse, GetUsersResponse},
         services::user::UserService,
     },
-    usecases::user::*,
 };
 use clean_architecture_shared::error::ApiError;
 use clean_architecture_shared::{auth::Jwt, query_parameter::PaginateSort};

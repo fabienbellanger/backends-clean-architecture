@@ -1,4 +1,4 @@
-//! User module
+//! User
 
 use crate::database::mysql::repositories::refresh_token::RefreshTokenMysqlRepository;
 use crate::{
@@ -13,8 +13,8 @@ use crate::{
     email::{Email, EmailConfig},
 };
 use clean_architecture_domain::{
-    ports::{requests::user::CreateUserRequest, services::user::UserService},
-    usecases::user::UserUseCase,
+    use_cases::user::UserUseCase,
+    {requests::user::CreateUserRequest, services::user::UserService},
 };
 use clean_architecture_shared::error::{CliError, CliResult};
 

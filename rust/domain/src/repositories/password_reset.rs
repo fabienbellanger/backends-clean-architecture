@@ -1,6 +1,6 @@
-//! Password Reset repository module
+//! Password Reset repository
 
-use crate::ports::requests::password_reset::{DeleteRequest, GetByTokenRequest, PasswordResetRequest};
+use crate::requests::password_reset::{DeleteRequest, GetByTokenRequest, PasswordResetRequest};
 use async_trait::async_trait;
 use clean_architecture_shared::error::ApiResult;
 

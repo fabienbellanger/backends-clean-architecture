@@ -1,6 +1,6 @@
 use super::user::USER_ID;
 use async_trait::async_trait;
-use clean_architecture_domain::ports::{
+use clean_architecture_domain::{
     repositories::password_reset::PasswordResetRepository,
     requests::password_reset::{DeleteRequest, GetByTokenRequest, PasswordResetRequest},
 };

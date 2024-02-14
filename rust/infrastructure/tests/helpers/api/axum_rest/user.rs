@@ -1,10 +1,9 @@
 use super::{TestApp, TestResponse};
 use clean_architecture_domain::entities::scope::{SCOPE_ADMIN, SCOPE_USERS};
-use clean_architecture_domain::ports::requests::user::UserScopeRequest;
+use clean_architecture_domain::requests::user::UserScopeRequest;
 use clean_architecture_domain::{
-    entities::user::User,
-    ports::{repositories::user::UserRepository, requests::user::CreateUserRequest, responses::user::LoginResponse},
-    value_objects::password::Password,
+    entities::user::User, repositories::user::UserRepository, requests::user::CreateUserRequest,
+    responses::user::LoginResponse, value_objects::password::Password,
 };
 use clean_architecture_infrastructure::database::mysql::repositories::user::UserMysqlRepository;
 

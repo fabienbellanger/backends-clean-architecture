@@ -1,4 +1,4 @@
-//! Pagination response module
+//! Pagination response
 
 use serde::{Deserialize, Serialize};
 use std::fmt::Debug;

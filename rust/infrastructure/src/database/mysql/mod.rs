@@ -1,4 +1,4 @@
-//! MySQL module
+//! MySQL
 
 pub mod models;
 pub mod repositories;

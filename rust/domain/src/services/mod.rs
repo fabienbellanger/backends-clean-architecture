@@ -1,4 +1,4 @@
-//! Services module
+//! Services
 
 pub mod email;
 pub mod scope;

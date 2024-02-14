@@ -7,14 +7,14 @@ use axum::extract::{Query, State};
 use axum::http::StatusCode;
 use axum::{Extension, Json};
 use clean_architecture_domain::entities::scope::ScopeId;
-use clean_architecture_domain::ports::requests::refresh_token::RefreshTokenHttpRequest;
-use clean_architecture_domain::ports::requests::user::{
+use clean_architecture_domain::requests::refresh_token::RefreshTokenHttpRequest;
+use clean_architecture_domain::requests::user::{
     CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest, LoginRequest, UpdateUserPasswordRequest,
     UserIdRequest, UserScopeRequest,
 };
-use clean_architecture_domain::ports::responses::password_reset::PasswordResetResponse;
-use clean_architecture_domain::ports::responses::refresh_token::RefreshTokenResponse;
-use clean_architecture_domain::ports::responses::user::{GetUserResponse, GetUsersResponse, LoginResponse};
+use clean_architecture_domain::responses::password_reset::PasswordResetResponse;
+use clean_architecture_domain::responses::refresh_token::RefreshTokenResponse;
+use clean_architecture_domain::responses::user::{GetUserResponse, GetUsersResponse, LoginResponse};
 use clean_architecture_shared::api_error;
 use clean_architecture_shared::error::{ApiError, ApiErrorCode, ApiResult};
 use clean_architecture_shared::query_parameter::{PaginateSort, PaginateSortQuery};
@@ -191,7 +191,7 @@ pub async fn add_scope(
     }
 }
 
-/// Remove scope: DELETE /api/v1/users/:user_id/scopes/:scope_id
+/// Remove scope: DELETE /api/v1/users/:id/scopes/:scope_id
 #[instrument(skip(uc), name = "user_remove_scope_handler")]
 pub async fn remove_scope(
     Path(path): Path<(Uuid, ScopeId)>,

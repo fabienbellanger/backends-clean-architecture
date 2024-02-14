@@ -1,8 +1,8 @@
 use async_trait::async_trait;
 use chrono::{DateTime, Utc};
 use clean_architecture_domain::entities::scope::Scope;
-use clean_architecture_domain::ports::repositories::scope::ScopeRepository;
-use clean_architecture_domain::ports::requests::scope::{CreateRequest, DeleteRequest};
+use clean_architecture_domain::repositories::scope::ScopeRepository;
+use clean_architecture_domain::requests::scope::{CreateRequest, DeleteRequest};
 use clean_architecture_shared::error::{ApiError, ApiResult};
 
 pub(crate) const DATE: &str = "2023-04-01T12:10:00+00:00";

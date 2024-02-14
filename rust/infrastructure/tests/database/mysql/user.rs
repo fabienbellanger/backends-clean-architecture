@@ -1,13 +1,13 @@
 use crate::helpers::mysql::TestMySQL;
-use clean_architecture_domain::ports::repositories::scope::ScopeRepository;
-use clean_architecture_domain::ports::requests::scope::CreateRequest;
-use clean_architecture_domain::ports::requests::user::UserScopeRequest;
+use clean_architecture_domain::repositories::scope::ScopeRepository;
+use clean_architecture_domain::requests::scope::CreateRequest;
+use clean_architecture_domain::requests::user::UserScopeRequest;
 use clean_architecture_domain::{
-    ports::{
+    value_objects::email::Email,
+    {
         repositories::user::UserRepository,
         requests::user::{CreateUserRequest, UserIdRequest},
     },
-    value_objects::email::Email,
 };
 use clean_architecture_infrastructure::database::mysql::repositories::scope::ScopeMysqlRepository;
 use clean_architecture_infrastructure::database::mysql::repositories::user::UserMysqlRepository;

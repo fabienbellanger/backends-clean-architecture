@@ -1,4 +1,4 @@
-//! CLI module
+//! CLI
 
 mod user;
 

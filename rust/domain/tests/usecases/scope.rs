@@ -1,9 +1,9 @@
 use crate::helpers::scope::{TestScopeRepository, SCOPE_ID};
 use crate::helpers::user::DATE;
-use clean_architecture_domain::ports::requests::scope::{CreateRequest, DeleteRequest};
-use clean_architecture_domain::ports::responses::scope::ScopeResponse;
-use clean_architecture_domain::ports::services::scope::ScopeService;
-use clean_architecture_domain::usecases::scope::ScopeUseCase;
+use clean_architecture_domain::requests::scope::{CreateRequest, DeleteRequest};
+use clean_architecture_domain::responses::scope::ScopeResponse;
+use clean_architecture_domain::services::scope::ScopeService;
+use clean_architecture_domain::use_cases::scope::ScopeUseCase;
 
 fn init_use_case() -> ScopeUseCase<TestScopeRepository> {
     let scope_repository = TestScopeRepository {};

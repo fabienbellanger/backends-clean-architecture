@@ -1,4 +1,4 @@
-//! MySQL repositories module
+//! MySQL repositories
 
 pub mod password_reset;
 pub mod refresh_token;

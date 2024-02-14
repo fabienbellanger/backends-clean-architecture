@@ -1,4 +1,4 @@
-//! Error entity module
+//! Error entity
 
 use axum::{
     http::StatusCode,

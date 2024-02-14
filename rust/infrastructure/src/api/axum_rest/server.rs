@@ -1,4 +1,4 @@
-//! Server module
+//! Server
 
 use super::layers::{
     prometheus::PrometheusMetric,

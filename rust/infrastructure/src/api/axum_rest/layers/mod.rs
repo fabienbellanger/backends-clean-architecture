@@ -1,4 +1,4 @@
-//! Layers module
+//! Layers
 
 pub(crate) mod auth;
 pub(crate) mod basic_auth;

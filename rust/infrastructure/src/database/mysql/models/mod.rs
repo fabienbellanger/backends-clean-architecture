@@ -1,4 +1,4 @@
-//! Models module
+//! Models
 
 pub mod refresh_token;
 pub mod scope;

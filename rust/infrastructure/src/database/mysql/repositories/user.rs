@@ -7,12 +7,12 @@ use async_trait::async_trait;
 use chrono::Utc;
 use clean_architecture_domain::entities::scope::Scope;
 use clean_architecture_domain::entities::user::UserId;
-use clean_architecture_domain::ports::requests::user::{
+use clean_architecture_domain::requests::user::{
     CreateUserRequest, DeleteUserRequest, UpdateUserPasswordRepositoryRequest, UserScopeRequest,
 };
 use clean_architecture_domain::{
     entities::user::User,
-    ports::{
+    {
         repositories::user::UserRepository,
         requests::user::{LoginRequest, UserIdRequest},
     },

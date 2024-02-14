@@ -2,7 +2,7 @@
 
 use crate::{
     entities::refresh_token::RefreshToken,
-    ports::requests::refresh_token::{RefreshTokenId, RefreshTokenRequest},
+    requests::refresh_token::{RefreshTokenId, RefreshTokenRequest},
 };
 use async_trait::async_trait;
 use clean_architecture_shared::error::ApiResult;
