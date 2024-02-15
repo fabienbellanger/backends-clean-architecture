@@ -121,7 +121,13 @@ impl UserRepository for TestUserRepository {
     async fn delete_user(&self, request: DeleteUserRequest) -> ApiResult<u64> {
         let user_id: Uuid = USER_ID.parse().unwrap();
         if user_id == request.id {
-            Ok(1)
+            if request.id != request.authenticated_user_id {
+                Ok(1)
+            } else {
+                Err(ApiError::InternalError {
+                    message: "user cannot delete itself".to_owned(),
+                })
+            }
         } else {
             Ok(0)
         }

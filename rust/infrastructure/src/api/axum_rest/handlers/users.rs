@@ -1,6 +1,6 @@
 //! Users handlers
 
-use crate::api::axum_rest::extractors::{ExtractRequestId, Path};
+use crate::api::axum_rest::extractors::{ExtractJWT, ExtractRequestId, Path};
 use crate::api::axum_rest::layers::states::SharedState;
 use crate::api::axum_rest::usecases::AppUseCases;
 use axum::extract::{Query, State};
@@ -103,13 +103,27 @@ pub async fn create_user(
 }
 
 /// Delete user route: DELETE /api/v1/users/:id
-#[instrument(skip(uc), name = "delete_user_handler")]
+#[instrument(skip(uc, state, token), name = "delete_user_handler")]
 pub async fn delete_user(
     Path(id): Path<Uuid>,
     Extension(uc): Extension<AppUseCases>,
     ExtractRequestId(request_id): ExtractRequestId,
+    State(state): State<SharedState>,
+    ExtractJWT(token): ExtractJWT,
 ) -> ApiResult<StatusCode> {
-    let result = uc.user.delete_user(DeleteUserRequest { id }).await?;
+    let user_id = state
+        .jwt
+        .user_id(token)
+        .ok_or(api_error!(ApiErrorCode::Unauthorized, "invalid token"))?;
+    let user_id = Uuid::parse_str(&user_id).map_err(|_| api_error!(ApiErrorCode::Unauthorized, "invalid token"))?;
+
+    let result = uc
+        .user
+        .delete_user(DeleteUserRequest {
+            id,
+            authenticated_user_id: user_id,
+        })
+        .await?;
 
     match result {
         1 => Ok(StatusCode::NO_CONTENT),

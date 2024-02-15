@@ -158,11 +158,32 @@ async fn test_delete_user() {
     let use_case = init_use_case();
     let request = DeleteUserRequest {
         id: USER_ID.parse().unwrap(),
+        authenticated_user_id: OTHER_USER_ID.parse().unwrap(),
     };
     assert_eq!(use_case.delete_user(request).await.unwrap(), 1);
 
-    // Not found user ID
-    let request = DeleteUserRequest { id: Uuid::new_v4() };
+    // Try to delete authenticated user
+    let request = DeleteUserRequest {
+        id: USER_ID.parse().unwrap(),
+        authenticated_user_id: USER_ID.parse().unwrap(),
+    };
+    let response = use_case.delete_user(request).await;
+    assert!(response.is_err());
+
+    if let Err(err) = response {
+        assert_eq!(
+            err,
+            ApiError::InternalError {
+                message: "user cannot delete itself".to_owned(),
+            }
+        );
+    }
+
+    // Not found user ID or user already deleted
+    let request = DeleteUserRequest {
+        id: Uuid::new_v4(),
+        authenticated_user_id: OTHER_USER_ID.parse().unwrap(),
+    };
     assert_eq!(use_case.delete_user(request).await.unwrap(), 0);
 }
 

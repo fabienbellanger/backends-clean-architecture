@@ -186,7 +186,10 @@ impl<U: UserRepository, P: PasswordResetRepository, T: RefreshTokenRepository> U
     /// Delete a user
     #[instrument(skip_all, name = "user_service_delete_user")]
     pub async fn delete_user(&self, request: DeleteUserRequest) -> ApiResult<u64> {
-        // TODO: Check if user to delete is different of user who make the deletion
+        if request.id == request.authenticated_user_id {
+            return Err(api_error!(ApiErrorCode::InternalError, "user cannot delete itself"));
+        }
+
         self.user_repository.delete_user(request).await
     }
 

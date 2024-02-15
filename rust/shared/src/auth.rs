@@ -53,6 +53,7 @@ impl ClaimsExtractor<HeaderMap> for Claims {
     }
 }
 
+/// JWT configuration
 pub struct Jwt {
     /// The algorithm supported for signing/verifying JWT
     algorithm: Algorithm,
@@ -165,7 +166,7 @@ impl Jwt {
         self.refresh_lifetime = duration;
     }
 
-    /// Encode key with the good algoritm
+    /// Encode key with the good algorithm
     pub fn encoding_key_from_str(algo: Algorithm, secret: &str) -> ApiResult<EncodingKey> {
         let key = match algo {
             Algorithm::HS256 | Algorithm::HS384 | Algorithm::HS512 => EncodingKey::from_secret(secret.as_bytes()),
@@ -281,6 +282,14 @@ impl Jwt {
                 "error during JWT decoding",
                 "error during JWT decoding: no decoding key"
             )),
+        }
+    }
+
+    /// Get user id from token
+    pub fn user_id(&self, token: Option<String>) -> Option<String> {
+        match token {
+            Some(token) => self.parse(&token).ok().map(|c| c.user_id),
+            None => None,
         }
     }
 }

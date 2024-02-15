@@ -31,6 +31,7 @@ pub struct CreateUserRequest {
 #[derive(Debug, Validate, Deserialize, Clone)]
 pub struct DeleteUserRequest {
     pub id: UserId,
+    pub authenticated_user_id: UserId,
 }
 
 #[derive(Debug, Validate, Deserialize, Clone)]

@@ -2,7 +2,7 @@
 
 use axum::extract::path::ErrorKind;
 use axum::extract::rejection::PathRejection;
-use axum::http::{header::HeaderValue, request::Parts, StatusCode};
+use axum::http::{header, header::HeaderValue, request::Parts, StatusCode};
 use axum::{async_trait, extract::FromRequestParts};
 use clean_architecture_shared::api_error;
 use clean_architecture_shared::error::{ApiError, ApiErrorCode};
@@ -22,6 +22,32 @@ where
         match parts.headers.get("x-request-id") {
             Some(id) => Ok(ExtractRequestId(id.clone())),
             _ => Ok(ExtractRequestId(HeaderValue::from_static(""))),
+        }
+    }
+}
+
+/// JWT extractor from HTTP headers
+pub struct ExtractJWT(pub Option<String>);
+
+#[async_trait]
+impl<S> FromRequestParts<S> for ExtractJWT
+where
+    S: Send + Sync,
+{
+    type Rejection = ();
+
+    async fn from_request_parts(parts: &mut Parts, _state: &S) -> Result<Self, Self::Rejection> {
+        match parts.headers.get(header::AUTHORIZATION) {
+            Some(token) => {
+                let token = token
+                    .to_str()
+                    .unwrap_or_default()
+                    .to_string()
+                    .strip_prefix("Bearer ")
+                    .map(|s| s.to_string());
+                Ok(Self(token))
+            }
+            _ => Ok(Self(None)),
         }
     }
 }
