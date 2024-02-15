@@ -4,7 +4,7 @@ pub mod layers;
 pub mod logger;
 pub mod routes;
 pub mod server;
-pub mod usecases;
+pub mod use_cases;
 
 extern crate chrono;
 extern crate serde;

@@ -1,5 +1,4 @@
-use std::ops::Add;
-
+use crate::helpers::user::USER_ID;
 use async_trait::async_trait;
 use chrono::{Duration, Utc};
 use clean_architecture_domain::{
@@ -10,9 +9,8 @@ use clean_architecture_domain::{
     },
 };
 use clean_architecture_shared::error::{ApiError, ApiResult};
+use std::ops::Add;
 use uuid::Uuid;
-
-use crate::helpers::user::USER_ID;
 
 pub(crate) const REFRESH_TOKEN: &str = "3288fb86-db99-471d-95bc-1451c7ec6f7c";
 pub(crate) const NEW_REFRESH_TOKEN: &str = "3288fb86-db99-471d-95bc-1451c7ec6f71";

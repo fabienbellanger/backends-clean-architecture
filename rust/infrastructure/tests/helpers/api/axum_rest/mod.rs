@@ -14,7 +14,7 @@ use clean_architecture_infrastructure::api::axum_rest::{
         MakeRequestUuid,
     },
     logger, routes,
-    usecases::AppUseCases,
+    use_cases::AppUseCases,
 };
 use clean_architecture_infrastructure::config::Config;
 use clean_architecture_infrastructure::email::{Email, EmailConfig};

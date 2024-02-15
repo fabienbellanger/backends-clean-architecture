@@ -1,7 +1,7 @@
 //! Scopes handlers
 
 use crate::api::axum_rest::extractors::{ExtractRequestId, Path};
-use crate::api::axum_rest::usecases::AppUseCases;
+use crate::api::axum_rest::use_cases::AppUseCases;
 use axum::http::StatusCode;
 use axum::{Extension, Json};
 use clean_architecture_domain::requests::scope::{CreateRequest, DeleteRequest};

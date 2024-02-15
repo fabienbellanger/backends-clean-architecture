@@ -267,11 +267,7 @@ impl Jwt {
         match self.decoding_key.clone() {
             Some(decoding_key) => {
                 let token = decode::<Claims>(token, &decoding_key, &validation).map_err(|err| match err.kind() {
-                    ExpiredSignature => api_error!(
-                        ApiErrorCode::InternalError,
-                        "error during JWT decoding",
-                        format!("error during JWT decoding: {err}")
-                    ),
+                    ExpiredSignature => api_error!(ApiErrorCode::Unauthorized),
                     _ => api_error!(ApiErrorCode::InternalError),
                 })?;
 

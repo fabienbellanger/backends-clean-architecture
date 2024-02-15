@@ -12,16 +12,16 @@ pub(crate) struct TestScopeRepository {}
 
 #[async_trait]
 impl ScopeRepository for TestScopeRepository {
+    async fn create(&self, _request: CreateRequest) -> ApiResult<()> {
+        Ok(())
+    }
+
     async fn get_scopes(&self) -> ApiResult<Vec<Scope>> {
         Ok(vec![Scope {
             id: SCOPE_ID.to_string(),
             created_at: DateTime::parse_from_rfc3339(DATE).unwrap().with_timezone(&Utc),
             deleted_at: None,
         }])
-    }
-
-    async fn create(&self, _request: CreateRequest) -> ApiResult<()> {
-        Ok(())
     }
 
     async fn delete(&self, request: DeleteRequest) -> ApiResult<u64> {

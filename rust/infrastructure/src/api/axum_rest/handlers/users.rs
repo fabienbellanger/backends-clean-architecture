@@ -2,7 +2,7 @@
 
 use crate::api::axum_rest::extractors::{ExtractJWT, ExtractRequestId, Path};
 use crate::api::axum_rest::layers::states::SharedState;
-use crate::api::axum_rest::usecases::AppUseCases;
+use crate::api::axum_rest::use_cases::AppUseCases;
 use axum::extract::{Query, State};
 use axum::http::StatusCode;
 use axum::{Extension, Json};

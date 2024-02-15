@@ -5,7 +5,7 @@ use super::layers::{
     states::{SharedState, State},
     MakeRequestUuid,
 };
-use super::usecases::AppUseCases;
+use super::use_cases::AppUseCases;
 use super::{handlers, layers, logger, routes};
 use crate::config::Config;
 use crate::database::{mysql::Db, GenericDb};
@@ -38,14 +38,14 @@ pub async fn start_server() -> ApiResult<()> {
 
     // Graceful shutdown only in production environment
     // TODO: https://github.com/tokio-rs/axum/blob/main/examples/graceful-shutdown/src/main.rs
-    server.await.map_err(|err| api_error!(ApiErrorCode::InternalError, err))
+    // server.await.map_err(|err| api_error!(ApiErrorCode::InternalError, err))
     // if settings.environment != "production" {
     //     server.await.map_err(|err| api_error!(ApiErrorCode::InternalError, err))
     // } else {
-    //     server
-    //         .with_graceful_shutdown(shutdown_signal())
-    //         .await
-    //         .map_err(|err| api_error!(ApiErrorCode::InternalError, err))
+    server
+        .with_graceful_shutdown(shutdown_signal())
+        .await
+        .map_err(|err| api_error!(ApiErrorCode::InternalError, err))
     // }
 }
 
@@ -104,7 +104,7 @@ async fn get_app(settings: &Config) -> ApiResult<Router> {
     Ok(app)
 }
 
-async fn _shutdown_signal() {
+async fn shutdown_signal() {
     let ctrl_c = async {
         signal::ctrl_c().await.expect("failed to install Ctrl+C handler");
     };
