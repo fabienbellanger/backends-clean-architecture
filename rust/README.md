@@ -202,7 +202,6 @@ rm infrastructure/keys/private.ec.key
 
 ## TODO
 
-- [ ] Add scopes to JWT
 - [ ] Build in different targets (Linux on Mac)
 - [ ] Add OpenTelemetry metrics 
   - [https://medium.com/netwo/distributed-tracing-in-rust-b8eb2af3aff4](Distributed Tracing in Rust)

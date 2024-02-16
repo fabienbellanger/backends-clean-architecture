@@ -110,7 +110,6 @@ impl PaginateSort {
     }
 
     /// SQL code for sorts (ORDER BY)
-    // TODO: Does not manage tables name!
     pub fn get_sorts_sql(&self, valid_fields: Option<&[&str]>) -> String {
         let mut s = String::new();
         let mut i = 0;

@@ -37,16 +37,14 @@ pub async fn start_server() -> ApiResult<()> {
     let server = axum::serve(listener, app);
 
     // Graceful shutdown only in production environment
-    // TODO: https://github.com/tokio-rs/axum/blob/main/examples/graceful-shutdown/src/main.rs
-    // server.await.map_err(|err| api_error!(ApiErrorCode::InternalError, err))
-    // if settings.environment != "production" {
-    //     server.await.map_err(|err| api_error!(ApiErrorCode::InternalError, err))
-    // } else {
-    server
-        .with_graceful_shutdown(shutdown_signal())
-        .await
-        .map_err(|err| api_error!(ApiErrorCode::InternalError, err))
-    // }
+    if settings.environment != "production" {
+        server.await.map_err(|err| api_error!(ApiErrorCode::InternalError, err))
+    } else {
+        server
+            .with_graceful_shutdown(shutdown_signal())
+            .await
+            .map_err(|err| api_error!(ApiErrorCode::InternalError, err))
+    }
 }
 
 /// Initialize router

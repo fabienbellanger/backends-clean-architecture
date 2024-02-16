@@ -189,7 +189,6 @@ impl UserRepository for UserMysqlRepository {
     }
 
     #[instrument(skip(self), name = "user_repository_get_scopes")]
-    // TODO: Optimize query, just ID is needed
     async fn get_scopes(&self, user_id: UserId) -> ApiResult<Vec<Scope>> {
         let scopes = sqlx::query_as!(
             ScopeModel,
