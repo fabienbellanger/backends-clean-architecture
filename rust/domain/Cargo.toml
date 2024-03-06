@@ -16,7 +16,7 @@ chrono = { version = "0.4.34", features = ["clock", "std", "serde"], default-fea
 serde = { version = "1.0.197", features = ["derive"] }
 thiserror = "1.0.57"
 uuid = { version = "1.7.0", features = ["v4", "serde"] }
-validator = { version = "0.16.1", features = ["derive"] }
+validator = { version = "0.17.0", features = ["derive"] }
 tracing = "0.1.40"
 tokio = { version = "1.36.0", features = ["rt", "macros"] }
 

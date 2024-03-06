@@ -3,6 +3,7 @@
 use super::Message;
 use clean_architecture_shared::api_error;
 use clean_architecture_shared::error::{ApiError, ApiErrorCode, ApiResult};
+use validator::ValidateUrl;
 
 #[derive(Debug, Clone)]
 pub struct ForgottenPassword {
@@ -17,7 +18,7 @@ impl ForgottenPassword {
     /// Return link and subject
     fn get_link_subject(&self) -> ApiResult<(String, String)> {
         let link = format!("{}/{}", self.base_url, self.token);
-        let subject = match validator::validate_url(&link) {
+        let subject = match ValidateUrl::validate_url(&link) {
             true => format!("{} - Forgotten password", self.app_name),
             false => Err(api_error!(
                 ApiErrorCode::InternalError,

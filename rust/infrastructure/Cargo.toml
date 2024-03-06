@@ -26,7 +26,7 @@ hyper = "1.2.0"
 sqlx = { version = "0.7.3", features = ["runtime-tokio-native-tls", "chrono", "mysql", "macros", "bigdecimal"] }
 
 # Log
-log = "0.4.20"
+log = "0.4.21"
 tracing = "0.1.40"
 tracing-appender = "0.2.3"
 tracing-subscriber = { version = "0.3.18", features = ["registry", "env-filter", "fmt", "json"] }
@@ -54,5 +54,5 @@ tera = "1.19.1"
 thiserror = "1.0.57"
 tokio = { version = "1.36.0", features = ["full"] }
 uuid = "1.7.0"
-validator = { version = "0.16.1", features = ["derive"] }
+validator = { version = "0.17.0", features = ["derive"] }
 http-body-util = "0.1.0"

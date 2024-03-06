@@ -138,7 +138,7 @@ WantedBy=multi-user.target
 #### Commands list
 
 | Command                                    | Description        |
-| ------------------------------------------ | ------------------ |
+|--------------------------------------------|--------------------|
 | `systemctl start <service name>.service`   | To launch          |
 | `systemctl enable <service name>.service`  | To enable on boot  |
 | `systemctl disable <service name>.service` | To disable on boot |
@@ -203,7 +203,7 @@ rm infrastructure/keys/private.ec.key
 ## TODO
 
 - [ ] Build in different targets (Linux on Mac)
-- [ ] Add OpenTelemetry metrics 
-  - [https://medium.com/netwo/distributed-tracing-in-rust-b8eb2af3aff4](Distributed Tracing in Rust)
-  - [https://signoz.io/blog/opentelemetry-vs-prometheus/](OpenTelemetry vs Prometheus)
-  - [https://www.youtube.com/watch?v=JNZoo_8XeaE](OpenTelemetry for Rust Developers)
+- [ ] Add OpenTelemetry metrics
+    - [Distributed Tracing in Rust](https://medium.com/netwo/distributed-tracing-in-rust-b8eb2af3aff4)
+    - [OpenTelemetry vs Prometheus](https://signoz.io/blog/opentelemetry-vs-prometheus/)
+    - [OpenTelemetry for Rust Developers](https://www.youtube.com/watch?v=JNZoo_8XeaE)
