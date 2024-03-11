@@ -33,8 +33,8 @@ tracing-subscriber = { version = "0.3.18", features = ["registry", "env-filter",
 
 async-trait = "0.1.77"
 bytes = "1.5.0"
-chrono = { version = "0.4.34", features = ["clock", "std", "serde"], default-features = false }
-clap = { version = "4.5.1", features = ["cargo", "derive"] }
+chrono = { version = "0.4.35", features = ["clock", "std", "serde"], default-features = false }
+clap = { version = "4.5.2", features = ["cargo", "derive"] }
 config = "0.14.0"
 dotenvy = "0.15.7"
 futures = "0.3.30"
@@ -55,4 +55,4 @@ thiserror = "1.0.57"
 tokio = { version = "1.36.0", features = ["full"] }
 uuid = "1.7.0"
 validator = { version = "0.17.0", features = ["derive"] }
-http-body-util = "0.1.0"
+http-body-util = "0.1.1"
