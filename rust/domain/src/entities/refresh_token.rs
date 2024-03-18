@@ -18,12 +18,16 @@ impl RefreshToken {
     /// Create a new refresh token
     pub fn new(user_id: UserId, access_token: &str, expiration_duration: i64) -> Self {
         let now = Utc::now();
+        let expired_at = match Duration::try_days(expiration_duration) {
+            Some(duration) => now.add(duration),
+            None => now,
+        };
 
         Self {
             refresh_token: Uuid::new_v4(),
             user_id,
             access_token: access_token.to_string(),
-            expired_at: now.add(Duration::days(expiration_duration)),
+            expired_at,
         }
     }
 

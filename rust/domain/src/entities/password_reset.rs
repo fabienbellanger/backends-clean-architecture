@@ -18,11 +18,15 @@ impl PasswordReset {
     /// Create a new password recovery
     pub fn new(user_id: UserId, expiration_duration: i64) -> Self {
         let now = Utc::now();
+        let expired_at = match Duration::try_hours(expiration_duration) {
+            Some(duration) => now.add(duration),
+            None => now,
+        };
 
         Self {
             user_id,
             token: Uuid::new_v4().to_string(),
-            expired_at: now.add(Duration::hours(expiration_duration)),
+            expired_at,
         }
     }
 }

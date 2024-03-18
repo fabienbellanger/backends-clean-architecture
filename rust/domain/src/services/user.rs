@@ -17,7 +17,7 @@ use crate::{
     requests::user::{LoginRequest, UserIdRequest},
     responses::user::{GetUserResponse, GetUsersResponse, LoginResponse},
 };
-use chrono::{DateTime, NaiveDateTime, SecondsFormat, Utc};
+use chrono::{DateTime, SecondsFormat};
 use clean_architecture_shared::api_error;
 use clean_architecture_shared::auth::{AuthScope, Jwt};
 use clean_architecture_shared::error::{ApiError, ApiErrorCode, ApiResult};
@@ -59,11 +59,8 @@ impl<U: UserRepository, P: PasswordResetRepository, T: RefreshTokenRepository> U
 
                 // JWT
                 let (access_token, access_expired_at) = jwt.generate(user.id.to_string(), scopes)?;
-                match NaiveDateTime::from_timestamp_opt(access_expired_at, 0) {
+                match DateTime::from_timestamp(access_expired_at, 0) {
                     Some(access_expired_at) => {
-                        let access_expired_at: DateTime<Utc> =
-                            DateTime::from_naive_utc_and_offset(access_expired_at, Utc);
-
                         // Generate refresh token
                         let refresh_token = RefreshToken::new(user.id, &access_token, jwt.refresh_lifetime);
 
@@ -123,11 +120,8 @@ impl<U: UserRepository, P: PasswordResetRepository, T: RefreshTokenRepository> U
 
                 // Generate new access and refresh token
                 let (access_token, access_expired_at) = jwt.generate(refresh_token.user_id.to_string(), scopes)?;
-                match NaiveDateTime::from_timestamp_opt(access_expired_at, 0) {
+                match DateTime::from_timestamp(access_expired_at, 0) {
                     Some(access_expired_at) => {
-                        let access_expired_at: DateTime<Utc> =
-                            DateTime::from_naive_utc_and_offset(access_expired_at, Utc);
-
                         // Generate refresh token
                         let refresh_token =
                             RefreshToken::new(refresh_token.user_id, &access_token, jwt.refresh_lifetime);

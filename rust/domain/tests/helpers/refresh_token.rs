@@ -30,7 +30,7 @@ impl RefreshTokenRepository for TestRefreshTokenRepository {
                 refresh_token: Uuid::try_from(NEW_REFRESH_TOKEN).unwrap(),
                 user_id: Uuid::parse_str(USER_ID).unwrap(),
                 access_token: "access_token".to_owned(),
-                expired_at: Utc::now().add(Duration::days(1)),
+                expired_at: Utc::now().add(Duration::try_days(1).unwrap()),
             })
         } else {
             Err(ApiError::Unauthorized)
