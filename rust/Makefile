@@ -2,6 +2,7 @@
 	serve \
 	watch \
 	upgrade \
+	upgrade-force \
 	lint \
 	lint-audit \
 	audit-fix \
@@ -52,7 +53,12 @@ watch:
 
 ## upgrade: Upgrade workspace packages and update the dependency versions recorded in the local lock file
 upgrade:
-	$(CARGO) upgrade --workspace
+	$(CARGO) upgrade
+	$(CARGO) update
+
+## upgrade-force: Upgrade workspace packages and update the dependency versions recorded in the local lock file
+upgrade-force:
+	$(CARGO) upgrade --incompatible
 	$(CARGO) update
 
 ## lint: Run clippy and rustfmt

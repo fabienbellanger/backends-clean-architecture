@@ -11,14 +11,14 @@ readme = "../README.md"
 [dependencies]
 clean-architecture-shared = { workspace = true }
 
-async-trait = "0.1.78"
-chrono = { version = "0.4.35", features = ["clock", "std", "serde"], default-features = false }
+async-trait = "0.1.80"
+chrono = { version = "0.4.38", features = ["clock", "std", "serde"], default-features = false }
 serde = { version = "1.0.197", features = ["derive"] }
 thiserror = "1.0.58"
-uuid = { version = "1.7.0", features = ["v4", "serde"] }
-validator = { version = "0.17.0", features = ["derive"] }
+uuid = { version = "1.8.0", features = ["v4", "serde"] }
+validator = { version = "0.18.1", features = ["derive"] }
 tracing = "0.1.40"
-tokio = { version = "1.36.0", features = ["rt", "macros"] }
+tokio = { version = "1.37.0", features = ["rt", "macros"] }
 
 [dev-dependencies]
 fake = { version = "2.9.2", features = ["chrono"] }

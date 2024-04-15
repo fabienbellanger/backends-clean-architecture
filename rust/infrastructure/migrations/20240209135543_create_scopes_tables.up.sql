@@ -26,3 +26,7 @@ ALTER TABLE `users_scopes`
     ADD CONSTRAINT `fk_users_scopes_scope_id`
         FOREIGN KEY (`scope_id`)
             REFERENCES `scopes` (`id`) ON DELETE CASCADE;
+
+INSERT INTO `scopes` (`id`, `created_at`) VALUES
+("admin", NOW()),
+("users", NOW());

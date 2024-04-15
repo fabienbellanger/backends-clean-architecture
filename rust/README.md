@@ -8,6 +8,12 @@
 
 To install `Rust`: [Getting started](https://www.rust-lang.org/learn/get-started)
 
+To use `cargo upgrade`, install:
+
+```bash
+$ cargo install cargo-edit
+```
+
 ### SQLx
 
 #### Install CLI
