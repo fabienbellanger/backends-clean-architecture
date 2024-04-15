@@ -64,6 +64,13 @@ or
 $ make serve
 ```
 
+### Scopes
+
+Scopes list:
+- `admin`
+- `users`
+
+
 ## Deployment
 
 ### Build project
