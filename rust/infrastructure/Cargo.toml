@@ -47,7 +47,7 @@ metrics-exporter-prometheus = "0.14.0"
 mime = "0.3.17"
 serde = { version = "1.0.197", features = ["derive"] }
 rand = "0.8.5"
-serde_json = "1.0.115"
+serde_json = "1.0.116"
 serde_urlencoded = "0.7.1"
 sha2 = "0.10.8"
 tera = "1.19.1"

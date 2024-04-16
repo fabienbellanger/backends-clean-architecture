@@ -16,7 +16,7 @@ pub type ScopeId = String;
 pub struct Scope {
     pub id: ScopeId,
     pub created_at: DateTime<Utc>,
-    pub deleted_at: Option<DateTime<Utc>>,
+        pub deleted_at: Option<DateTime<Utc>>,
 }
 
 impl Scope {
