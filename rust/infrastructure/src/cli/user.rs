@@ -19,7 +19,13 @@ use clean_architecture_domain::{
 use clean_architecture_shared::error::{CliError, CliResult};
 
 /// Create a new user
-pub async fn register(lastname: &str, firstname: &str, email: &str, password: &str) -> CliResult<()> {
+pub async fn register(
+    lastname: &str,
+    firstname: &str,
+    email: &str,
+    password: &str,
+    scopes: &Option<Vec<String>>,
+) -> CliResult<()> {
     println!("\nCreating new user...");
 
     // Load configuration
@@ -46,6 +52,7 @@ pub async fn register(lastname: &str, firstname: &str, email: &str, password: &s
             firstname: firstname.trim().to_string(),
             email: email.trim().to_string(),
             password: password.trim().to_string(),
+            scopes: scopes.clone(),
         })
         .await
         .map_err(|err| CliError::DatabaseError(err.to_string()))?;

@@ -69,6 +69,17 @@ enum Commands {
             help = "Password (at least 8 characters)"
         )]
         password: String,
+
+        /// User scopes (separated by commas)
+        #[clap(
+            required = false,
+            short = 's',
+            long,
+            value_delimiter = ',',
+            value_name = "Scopes",
+            help = "Scopes separated by commas"
+        )]
+        scopes: Option<Vec<String>>,
     },
 }
 
@@ -82,6 +93,7 @@ pub async fn start() -> CliResult<()> {
             firstname,
             email,
             password,
-        } => user::register(lastname, firstname, email, password).await,
+            scopes,
+        } => user::register(lastname, firstname, email, password, scopes).await,
     }
 }

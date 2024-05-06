@@ -26,6 +26,7 @@ pub struct CreateUserRequest {
     pub email: String,
     #[validate(length(min = 8))]
     pub password: String,
+    pub scopes: Option<Vec<String>>,
 }
 
 #[derive(Debug, Validate, Deserialize, Clone)]

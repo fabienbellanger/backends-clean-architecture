@@ -174,7 +174,21 @@ impl<U: UserRepository, P: PasswordResetRepository, T: RefreshTokenRepository> U
     /// Create a user
     #[instrument(skip_all, name = "user_service_create_user")]
     pub async fn create_user(&self, request: CreateUserRequest) -> ApiResult<GetUserResponse> {
-        self.user_repository.create_user(request).await.map(|user| user.into())
+        let user = self.user_repository.create_user(request.clone()).await?;
+
+        // Add scopes to user
+        if let Some(scopes) = request.scopes {
+            for scope in scopes {
+                self.user_repository
+                    .add_scope(UserScopeRequest {
+                        user_id: user.id,
+                        scope_id: ScopeId::from(scope),
+                    })
+                    .await?;
+            }
+        }
+
+        Ok(user.into())
     }
 
     /// Delete a user

@@ -80,6 +80,7 @@ async fn test_create_user_use_case() {
         firstname: "John".to_string(),
         email: "john.doe@test.com".to_string(),
         password: "00000000".to_string(),
+        scopes: None,
     };
     let user = GetUserResponse {
         id: USER_ID.to_string(),
@@ -103,6 +104,7 @@ async fn test_create_user_use_case_with_invalid_request() {
         firstname: "John".to_string(),
         email: "john.doe@test.com".to_string(),
         password: "0000000".to_string(),
+        scopes: None,
     };
     assert!(use_case.create_user(request).await.is_err());
 
@@ -112,6 +114,7 @@ async fn test_create_user_use_case_with_invalid_request() {
         firstname: "John".to_string(),
         email: "john.doe".to_string(),
         password: "00000000".to_string(),
+        scopes: None,
     };
     assert!(use_case.create_user(request).await.is_err());
 }
