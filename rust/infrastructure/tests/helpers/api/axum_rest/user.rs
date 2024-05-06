@@ -18,6 +18,7 @@ pub async fn create_user(app: &TestApp) -> User {
         firstname: "John".to_string(),
         email: "john.doe@test.com".to_string(),
         password: password.clone(),
+        scopes: None,
     };
     let mut user = repository.create_user(request.clone()).await.unwrap();
     user.password = Password::new(&password).unwrap();

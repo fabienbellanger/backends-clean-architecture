@@ -23,6 +23,7 @@ async fn test_create_user() {
         firstname: "John".to_string(),
         email: "john.doe@test.com".to_string(),
         password: "00000000".to_string(),
+        scopes: None,
     };
     let result = repository.create_user(request.clone()).await;
 
@@ -45,6 +46,7 @@ async fn test_create_user_with_email_already_exists() {
         firstname: "John".to_string(),
         email: "john.doe@test.com".to_string(),
         password: "00000000".to_string(),
+        scopes: None,
     };
     repository.create_user(request.clone()).await.unwrap();
 
@@ -54,6 +56,7 @@ async fn test_create_user_with_email_already_exists() {
         firstname: "Jessy".to_string(),
         email: "john.doe@test.com".to_string(),
         password: "00000000".to_string(),
+        scopes: None,
     };
     let result = repository.create_user(request.clone()).await;
 
@@ -71,6 +74,7 @@ async fn test_get_user() {
         firstname: "John".to_string(),
         email: "john.doe@test.com".to_string(),
         password: "00000000".to_string(),
+        scopes: None,
     };
     let user = repository.create_user(request.clone()).await.unwrap();
 
@@ -92,6 +96,7 @@ async fn test_add_scope() {
         firstname: "John".to_string(),
         email: "john.doe@test.com".to_string(),
         password: "00000000".to_string(),
+        scopes: None,
     };
     let user_id = repository.create_user(request.clone()).await.unwrap().id;
 
@@ -119,6 +124,7 @@ async fn test_remove_scope() {
         firstname: "John".to_string(),
         email: "john.doe@test.com".to_string(),
         password: "00000000".to_string(),
+        scopes: None,
     };
     let user_id = repository.create_user(request.clone()).await.unwrap().id;
 
@@ -155,6 +161,7 @@ async fn test_get_scopes() {
         firstname: "John".to_string(),
         email: "john.doe@test.com".to_string(),
         password: "00000000".to_string(),
+        scopes: None,
     };
     let user_id = repository.create_user(request.clone()).await.unwrap().id;
 
