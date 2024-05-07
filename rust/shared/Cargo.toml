@@ -9,16 +9,16 @@ readme = "../README.md"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-axum = "0.7.5"
-chrono = { version = "0.4.38", features = ["clock", "std", "serde"], default-features = false }
-dotenvy = "0.15.7"
-jsonwebtoken = "9.3.0"
-log = "0.4.21"
+axum = { workspace = true }
+chrono = { workspace = true }
+dotenvy = { workspace = true }
+jsonwebtoken = { workspace = true }
+log = { workspace = true }
 rand = "0.8.5"
-serde = { version = "1.0.200", features = ["derive"] }
-serde_json = "1.0.116"
-sqlx = { version = "0.7.4", features = ["runtime-tokio-native-tls", "chrono", "mysql", "macros", "bigdecimal", "migrate"] }
-thiserror = "1.0.59"
-tokio = { version = "1.37.0", features = ["full"] }
-tracing = "0.1.40"
-validator = { version = "0.18.1", features = ["derive"] }
+serde = { workspace = true }
+serde_json = { workspace = true }
+sqlx = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+validator = { workspace = true }
