@@ -41,5 +41,6 @@ dotenvy = "0.15.7"
 chrono = { version = "0.4.38", features = ["clock", "std", "serde"], default-features = false }
 jsonwebtoken = "9.3.0"
 tokio = { version = "1.37.0", features = ["full"] }
+rand = "0.8.5"
 uuid = { version = "1.8.0", features = ["v4", "serde"] }
 validator = { version = "0.18.1", features = ["derive"] }
