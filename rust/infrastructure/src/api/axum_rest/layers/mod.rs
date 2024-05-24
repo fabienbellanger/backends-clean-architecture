@@ -119,6 +119,19 @@ pub async fn override_http_errors(req: Request<Body>, next: Next) -> impl IntoRe
     }
 
     let (parts, body) = response.into_parts();
+    // TODO: Use this => let body_bytes = axum::body::to_bytes(body, 1024).await;
+    // match axum::body::to_bytes(body, 2_048_000).await {
+    //     Ok(body) => match String::from_utf8(body.to_vec()) {
+    //         Ok(body) => match parts.status {
+    //             StatusCode::METHOD_NOT_ALLOWED => api_error!(ApiErrorCode::MethodNotAllowed).into_response(),
+    //             StatusCode::UNPROCESSABLE_ENTITY => api_error!(ApiErrorCode::UnprocessableEntity, body).into_response(),
+    //             _ => Response::from_parts(parts, Body::from(body)),
+    //         },
+    //         Err(err) => api_error!(ApiErrorCode::InternalError, err.to_string()).into_response(),
+    //     },
+    //     Err(_) => api_error!(ApiErrorCode::ContentTooLarge).into_response(),
+    // }
+    // TODO: Body max size hardcoded!
     match body.collect().await {
         Ok(body_bytes) => match String::from_utf8(body_bytes.to_bytes().to_vec()) {
             Ok(body) => match parts.status {

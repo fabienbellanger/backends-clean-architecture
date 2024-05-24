@@ -19,12 +19,12 @@ clean-architecture-infrastructure = { path = "./infrastructure", version = "0.1.
 clean-architecture-shared = { path = "./shared", version = "0.1.0" }
 
 # Serde
-serde = { version = "1.0.200", features = ["derive"] }
-serde_json = "1.0.116"
+serde = { version = "1.0.202", features = ["derive"] }
+serde_json = "1.0.117"
 serde_urlencoded = "0.7.1"
 
 # Errors
-thiserror = "1.0.60"
+thiserror = "1.0.61"
 
 # Logs
 log = "0.4.21"
