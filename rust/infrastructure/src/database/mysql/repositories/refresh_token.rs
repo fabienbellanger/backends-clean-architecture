@@ -52,6 +52,7 @@ impl RefreshTokenRepository for RefreshTokenMysqlRepository {
                 SELECT refresh_token, user_id, access_token, expired_at
                 FROM refresh_tokens
                 WHERE refresh_token = ?
+                LIMIT 1
             "#,
             request.refresh_token,
         )

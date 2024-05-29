@@ -88,7 +88,7 @@ impl UserRepository for UserMysqlRepository {
     async fn get_user_by_email(&self, email: String) -> ApiResult<User> {
         let user = sqlx::query_as!(
             UserModel,
-            "SELECT * FROM users WHERE email = ? AND deleted_at IS NULL",
+            "SELECT * FROM users WHERE email = ? AND deleted_at IS NULL LIMIT 1",
             email
         )
         .fetch_optional(self.db.pool.clone().as_ref())
@@ -107,7 +107,7 @@ impl UserRepository for UserMysqlRepository {
         let hashed_password = format!("{:x}", Sha512::digest(request.password.as_bytes()));
         let user = sqlx::query_as!(
             UserModel,
-            "SELECT * FROM users WHERE email = ? AND password = ?",
+            "SELECT * FROM users WHERE email = ? AND password = ? LIMIT 1",
             request.email,
             hashed_password
         )

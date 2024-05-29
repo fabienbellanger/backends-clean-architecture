@@ -54,6 +54,7 @@ impl PasswordResetRepository for PasswordResetMysqlRepository {
                     INNER JOIN users u ON u.id = pr.user_id AND u.deleted_at IS NULL
                 WHERE pr.token = ?
                     AND pr.expired_at >= ?
+                LIMIT 1
             "#,
             request.token,
             Utc::now(),
