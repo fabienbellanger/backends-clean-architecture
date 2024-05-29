@@ -39,6 +39,8 @@ pub struct Config {
     pub server_port: String,
     /// Server requests timeout (in second)
     pub request_timeout: u64,
+    /// Server max body size (in KB)
+    pub request_body_max_size: usize,
 
     /// JWT algorithm
     pub jwt_algorithm: String,
@@ -79,7 +81,7 @@ pub struct Config {
     /// Forgotten password email from
     pub forgotten_password_email_from: String,
 
-    /// Prometheus metics enabled
+    /// Prometheus metrics enabled
     pub prometheus_metrics_enabled: bool,
 }
 

@@ -42,12 +42,16 @@ impl State {
 }
 
 pub struct ConfigState {
+    /// Body limit in MB
+    pub request_body_max_size: usize,
+    /// Forgotten password expiration duration in hour
     pub forgotten_password_expiration_duration: i64,
 }
 
 impl From<Config> for ConfigState {
     fn from(config: Config) -> Self {
         Self {
+            request_body_max_size: config.request_body_max_size.saturating_mul(1_024),
             forgotten_password_expiration_duration: config.forgotten_password_expiration_duration,
         }
     }

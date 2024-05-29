@@ -48,7 +48,8 @@ impl PrometheusMetric {
             ("status", status),
         ];
 
-        counter!("http_requests_total", &labels);
+        // TODO: Unused!
+        // counter!("http_requests_total", &labels);
         let histogram = histogram!("http_requests_duration_seconds", &labels);
         histogram.record(latency);
 

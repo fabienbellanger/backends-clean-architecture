@@ -57,6 +57,7 @@ pub enum ApiErrorCode {
     Unauthorized,
     TooManyRequests,
     MethodNotAllowed,
+    PayloadTooLarge,
 }
 
 #[derive(Debug, Error, PartialEq, Eq)]
@@ -84,6 +85,9 @@ pub enum ApiError {
 
     #[error("Method Not Allowed")]
     MethodNotAllowed,
+
+    #[error("Payload Too Large")]
+    PayloadTooLarge,
 }
 
 // Axum errors
@@ -98,6 +102,7 @@ impl IntoResponse for ApiError {
             ApiError::TooManyRequests { .. } => StatusCode::TOO_MANY_REQUESTS,
             ApiError::MethodNotAllowed { .. } => StatusCode::METHOD_NOT_ALLOWED,
             ApiError::UnprocessableEntity { .. } => StatusCode::UNPROCESSABLE_ENTITY,
+            ApiError::PayloadTooLarge { .. } => StatusCode::PAYLOAD_TOO_LARGE,
         };
 
         let body = Json(json!(ApiErrorMessage {
@@ -158,6 +163,7 @@ macro_rules! api_error {
             ApiErrorCode::Unauthorized => ApiError::Unauthorized,
             ApiErrorCode::TooManyRequests => ApiError::TooManyRequests,
             ApiErrorCode::MethodNotAllowed => ApiError::MethodNotAllowed,
+            ApiErrorCode::PayloadTooLarge => ApiError::PayloadTooLarge,
             ApiErrorCode::InternalError => ApiError::InternalError {
                 message: String::from("Internal Server Error"),
             },
@@ -179,6 +185,7 @@ macro_rules! api_error {
             ApiErrorCode::Unauthorized => ApiError::Unauthorized,
             ApiErrorCode::TooManyRequests => ApiError::TooManyRequests,
             ApiErrorCode::MethodNotAllowed => ApiError::MethodNotAllowed,
+            ApiErrorCode::PayloadTooLarge => ApiError::PayloadTooLarge,
             ApiErrorCode::InternalError => {
                 error!("{}", $message);
                 ApiError::InternalError {
@@ -203,6 +210,7 @@ macro_rules! api_error {
             ApiErrorCode::Unauthorized => ApiError::Unauthorized,
             ApiErrorCode::TooManyRequests => ApiError::TooManyRequests,
             ApiErrorCode::MethodNotAllowed => ApiError::MethodNotAllowed,
+            ApiErrorCode::PayloadTooLarge => ApiError::PayloadTooLarge,
             ApiErrorCode::InternalError => {
                 error!("{}", $details);
                 ApiError::InternalError {
