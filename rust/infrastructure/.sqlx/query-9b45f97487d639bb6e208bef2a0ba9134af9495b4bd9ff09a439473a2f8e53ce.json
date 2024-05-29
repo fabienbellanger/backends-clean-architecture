@@ -1,6 +1,6 @@
 {
   "db_name": "MySQL",
-  "query": "SELECT * FROM users WHERE email = ? AND deleted_at IS NULL",
+  "query": "SELECT * FROM users WHERE email = ? AND deleted_at IS NULL LIMIT 1",
   "describe": {
     "columns": [
       {
@@ -98,5 +98,5 @@
       true
     ]
   },
-  "hash": "d210c01bfa9798e7ce178f0ae12077cac8203e6607883a8dffed40f3e70977c5"
+  "hash": "9b45f97487d639bb6e208bef2a0ba9134af9495b4bd9ff09a439473a2f8e53ce"
 }
