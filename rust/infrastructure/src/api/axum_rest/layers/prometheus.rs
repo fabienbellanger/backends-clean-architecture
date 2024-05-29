@@ -1,4 +1,4 @@
-//! Prometheus metrics layer
+//! Prometheus' metrics layer
 
 use crate::APP_NAME;
 use axum::body::Body;
@@ -48,10 +48,8 @@ impl PrometheusMetric {
             ("status", status),
         ];
 
-        // TODO: Unused!
-        // counter!("http_requests_total", &labels);
-        let histogram = histogram!("http_requests_duration_seconds", &labels);
-        histogram.record(latency);
+        counter!("http_requests_total", &labels).increment(1);
+        histogram!("http_requests_duration_seconds", &labels).record(latency);
 
         response
     }
