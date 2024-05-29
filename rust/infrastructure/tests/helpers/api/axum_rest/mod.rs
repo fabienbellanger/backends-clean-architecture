@@ -119,6 +119,7 @@ impl TestAppBuilder {
 
         let state = State {
             config: ConfigState {
+                request_body_max_size: 1_024 * 1_024,
                 forgotten_password_expiration_duration: 24,
             },
             jwt: Jwt::new(
