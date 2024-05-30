@@ -1,6 +1,6 @@
 {
   "db_name": "MySQL",
-  "query": "\n                SELECT\n                    id,\n                    created_at,\n                    deleted_at\n                FROM scopes \n                WHERE scopes.deleted_at IS NULL\n            ",
+  "query": "\n                SELECT\n                    id,\n                    created_at\n                FROM scopes \n                WHERE scopes.deleted_at IS NULL\n            ",
   "describe": {
     "columns": [
       {
@@ -22,16 +22,6 @@
           "char_set": 63,
           "max_size": 23
         }
-      },
-      {
-        "ordinal": 2,
-        "name": "deleted_at",
-        "type_info": {
-          "type": "Datetime",
-          "flags": "MULTIPLE_KEY | BINARY",
-          "char_set": 63,
-          "max_size": 23
-        }
       }
     ],
     "parameters": {
@@ -39,9 +29,8 @@
     },
     "nullable": [
       false,
-      false,
-      true
+      false
     ]
   },
-  "hash": "dce2608c0dc413997f49bbeddc5b21e7ff4a140b9f926f555f81a79c1fd352d8"
+  "hash": "d6d958edaa03f07ed3a13054a33a3a75aa1d47b22e79f86f94a5f2c838ad81b3"
 }
