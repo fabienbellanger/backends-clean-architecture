@@ -1,5 +1,8 @@
 //! User use cases
 
+pub mod request;
+pub mod response;
+
 use crate::repositories::password_reset::PasswordResetRepository;
 use crate::repositories::refresh_token::RefreshTokenRepository;
 use crate::requests::refresh_token::RefreshTokenHttpRequest;

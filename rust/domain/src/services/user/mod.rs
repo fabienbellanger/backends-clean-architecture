@@ -1,5 +1,8 @@
 //! User services
 
+pub mod request;
+pub mod response;
+
 use crate::entities::password_reset::PasswordReset;
 use crate::entities::refresh_token::RefreshToken;
 use crate::entities::scope::ScopeId;
