@@ -1,19 +1,19 @@
 use crate::helpers::api::axum_rest::{TestApp, TestResponse};
 use clean_architecture_domain::entities::scope::{SCOPE_ADMIN, SCOPE_USERS};
+use clean_architecture_domain::repositories::scope::request::CreateScopeRepositoryRequest;
 use clean_architecture_domain::repositories::scope::ScopeRepository;
-use clean_architecture_domain::requests::scope::CreateRequest;
 use clean_architecture_infrastructure::database::mysql::repositories::scope::ScopeMysqlRepository;
 
 /// Create default scopes
 pub async fn create_scopes(app: &TestApp) {
     let repository = ScopeMysqlRepository::new(app.database.database());
 
-    let request = CreateRequest {
+    let request = CreateScopeRepositoryRequest {
         id: SCOPE_ADMIN.to_string(),
     };
     repository.create(request.clone()).await.unwrap();
 
-    let request = CreateRequest {
+    let request = CreateScopeRepositoryRequest {
         id: SCOPE_USERS.to_string(),
     };
     repository.create(request.clone()).await.unwrap();

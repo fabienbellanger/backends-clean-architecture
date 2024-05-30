@@ -1,6 +1,6 @@
 use crate::helpers::mysql::TestMySQL;
+use clean_architecture_domain::repositories::scope::request::CreateScopeRepositoryRequest;
 use clean_architecture_domain::repositories::scope::ScopeRepository;
-use clean_architecture_domain::requests::scope::CreateRequest;
 use clean_architecture_domain::requests::user::UserScopeRequest;
 use clean_architecture_domain::{
     value_objects::email::Email,
@@ -104,7 +104,7 @@ async fn test_add_scope() {
     let scope_id = "test:read".to_string();
     let scope_repository = ScopeMysqlRepository::new(db.database());
     scope_repository
-        .create(CreateRequest { id: scope_id.clone() })
+        .create(CreateScopeRepositoryRequest { id: scope_id.clone() })
         .await
         .unwrap();
 
@@ -132,7 +132,7 @@ async fn test_remove_scope() {
     let scope_id = "test:read".to_string();
     let scope_repository = ScopeMysqlRepository::new(db.database());
     scope_repository
-        .create(CreateRequest { id: scope_id.clone() })
+        .create(CreateScopeRepositoryRequest { id: scope_id.clone() })
         .await
         .unwrap();
 
@@ -169,7 +169,7 @@ async fn test_get_scopes() {
     let scope_id = "test:read".to_string();
     let scope_repository = ScopeMysqlRepository::new(db.database());
     scope_repository
-        .create(CreateRequest { id: scope_id.clone() })
+        .create(CreateScopeRepositoryRequest { id: scope_id.clone() })
         .await
         .unwrap();
 

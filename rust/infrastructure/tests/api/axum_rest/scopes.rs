@@ -1,7 +1,7 @@
 use crate::helpers::api::axum_rest::scope::{create_scope_request, delete_scope_request, get_scopes_request};
 use crate::helpers::api::axum_rest::{TestApp, TestAppBuilder};
 use axum::http::StatusCode;
-use clean_architecture_domain::responses::scope::ScopeResponse;
+use clean_architecture_infrastructure::api::axum_rest::dto::scopes::ScopeDTOResponse;
 
 #[tokio::test]
 async fn test_api_scope_creation_success() {
@@ -47,7 +47,7 @@ async fn test_api_get_scopes() {
     let response = get_scopes_request(&app, &token).await;
     assert_eq!(response.status_code, StatusCode::OK);
 
-    let scopes: Vec<ScopeResponse> =
+    let scopes: Vec<ScopeDTOResponse> =
         serde_json::from_str(&response.body.to_string()).expect("error when deserializing body");
     assert_eq!(scopes.len(), 2);
 }

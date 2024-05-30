@@ -1,11 +1,11 @@
 //! Scopes handlers
 
+use crate::api::axum_rest::dto::scopes::{CreateScopeDTORequest, ScopeDTOResponse};
 use crate::api::axum_rest::extractors::{ExtractRequestId, Path};
 use crate::api::axum_rest::use_cases::AppUseCases;
 use axum::http::StatusCode;
 use axum::{Extension, Json};
-use clean_architecture_domain::requests::scope::{CreateRequest, DeleteRequest};
-use clean_architecture_domain::responses::scope::ScopeResponse;
+use clean_architecture_domain::use_cases::scope::request::DeleteScopeUseCaseRequest;
 use clean_architecture_shared::api_error;
 use clean_architecture_shared::error::{ApiError, ApiErrorCode, ApiResult};
 
@@ -14,9 +14,9 @@ use clean_architecture_shared::error::{ApiError, ApiErrorCode, ApiResult};
 pub async fn create(
     Extension(uc): Extension<AppUseCases>,
     ExtractRequestId(request_id): ExtractRequestId,
-    Json(request): Json<CreateRequest>,
+    Json(request): Json<CreateScopeDTORequest>,
 ) -> ApiResult<StatusCode> {
-    uc.scope.create(request).await?;
+    uc.scope.create(request.into()).await?;
 
     Ok(StatusCode::CREATED)
 }
@@ -26,8 +26,15 @@ pub async fn create(
 pub async fn get_all(
     Extension(uc): Extension<AppUseCases>,
     ExtractRequestId(request_id): ExtractRequestId,
-) -> ApiResult<Json<Vec<ScopeResponse>>> {
-    let scopes = uc.scope.get_scopes().await?;
+) -> ApiResult<Json<Vec<ScopeDTOResponse>>> {
+    let scopes = uc
+        .scope
+        .get_scopes()
+        .await?
+        .scopes
+        .into_iter()
+        .map(|scope| scope.into())
+        .collect();
 
     Ok(Json(scopes))
 }
@@ -39,9 +46,9 @@ pub async fn delete(
     Extension(uc): Extension<AppUseCases>,
     ExtractRequestId(request_id): ExtractRequestId,
 ) -> ApiResult<StatusCode> {
-    let result = uc.scope.delete(DeleteRequest { id }).await?;
+    let result = uc.scope.delete(DeleteScopeUseCaseRequest { id }).await?;
 
-    match result {
+    match result.deleted {
         1 => Ok(StatusCode::NO_CONTENT),
         _ => Err(api_error!(ApiErrorCode::NotFound, "no scope or scope already deleted")),
     }
