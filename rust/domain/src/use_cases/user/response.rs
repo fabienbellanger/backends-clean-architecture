@@ -1,10 +1,13 @@
 //! User use cases responses
 
+use crate::entities::refresh_token::RefreshTokenId;
 use crate::entities::scope::ScopeId;
 use crate::services::user::response::{
-    AddUserScopeServiceResponse, GetUserScopesServiceResponse, RemoveUserScopeServiceResponse,
+    AddUserScopeServiceResponse, GetRefreshTokenServiceResponse, GetUserScopesServiceResponse,
+    RemoveUserScopeServiceResponse,
 };
-use serde::Deserialize;
+use chrono::{DateTime, Utc};
+use serde::{Deserialize, Serialize};
 
 /// Get user scopes use case response
 #[derive(Debug, Clone, Deserialize)]
@@ -41,5 +44,25 @@ pub struct RemoveUserScopeUseCaseResponse {
 impl From<RemoveUserScopeServiceResponse> for RemoveUserScopeUseCaseResponse {
     fn from(value: RemoveUserScopeServiceResponse) -> Self {
         Self { deleted: value.deleted }
+    }
+}
+
+/// Get refresh token use case response
+#[derive(Debug, PartialEq, Eq, Serialize)]
+pub struct GetRefreshTokenUseCaseResponse {
+    pub access_token: String,
+    pub access_token_expired_at: DateTime<Utc>,
+    pub refresh_token: RefreshTokenId,
+    pub refresh_token_expired_at: DateTime<Utc>,
+}
+
+impl From<GetRefreshTokenServiceResponse> for GetRefreshTokenUseCaseResponse {
+    fn from(value: GetRefreshTokenServiceResponse) -> Self {
+        Self {
+            access_token: value.access_token,
+            access_token_expired_at: value.access_token_expired_at,
+            refresh_token: value.refresh_token,
+            refresh_token_expired_at: value.refresh_token_expired_at,
+        }
     }
 }

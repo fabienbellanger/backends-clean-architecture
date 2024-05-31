@@ -54,6 +54,7 @@ impl ClaimsExtractor<HeaderMap> for Claims {
 }
 
 /// JWT configuration
+#[derive(Clone)]
 pub struct Jwt {
     /// The algorithm supported for signing/verifying JWT
     algorithm: Algorithm,

@@ -1,10 +1,13 @@
 //! User services requests
 
+use crate::entities::refresh_token::RefreshTokenId;
 use crate::entities::scope::ScopeId;
 use crate::entities::user::UserId;
 use crate::use_cases::user::request::{
-    AddUserScopeUseCaseRequest, GetUserScopesUseCaseRequest, RemoveUserScopeUseCaseRequest,
+    AddUserScopeUseCaseRequest, GetRefreshTokenUseCaseRequest, GetUserScopesUseCaseRequest,
+    RemoveUserScopeUseCaseRequest,
 };
+use clean_architecture_shared::auth::Jwt;
 use serde::Deserialize;
 
 /// Get user scopes service request
@@ -47,6 +50,22 @@ impl From<RemoveUserScopeUseCaseRequest> for RemoveUserScopeServiceRequest {
         Self {
             user_id: req.user_id,
             scope_id: req.scope_id,
+        }
+    }
+}
+
+/// Get refresh token service request
+#[derive(Debug, Clone)]
+pub struct GetRefreshTokenServiceRequest {
+    pub token: RefreshTokenId,
+    pub jwt: Jwt,
+}
+
+impl From<GetRefreshTokenUseCaseRequest> for GetRefreshTokenServiceRequest {
+    fn from(req: GetRefreshTokenUseCaseRequest) -> Self {
+        Self {
+            token: req.token,
+            jwt: req.jwt,
         }
     }
 }

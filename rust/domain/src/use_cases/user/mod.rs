@@ -5,18 +5,18 @@ pub mod response;
 
 use crate::repositories::password_reset::PasswordResetRepository;
 use crate::repositories::refresh_token::RefreshTokenRepository;
-use crate::requests::refresh_token::RefreshTokenHttpRequest;
 use crate::requests::user::{
     CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest, UpdateUserPasswordRequest,
 };
 use crate::responses::password_reset::PasswordResetResponse;
-use crate::responses::refresh_token::RefreshTokenResponse;
 use crate::services::email::EmailService;
 use crate::use_cases::user::request::{
-    AddUserScopeUseCaseRequest, GetUserScopesUseCaseRequest, RemoveUserScopeUseCaseRequest,
+    AddUserScopeUseCaseRequest, GetRefreshTokenUseCaseRequest, GetUserScopesUseCaseRequest,
+    RemoveUserScopeUseCaseRequest,
 };
 use crate::use_cases::user::response::{
-    AddUserScopeUseCaseResponse, GetUserScopesUseCaseResponse, RemoveUserScopeUseCaseResponse,
+    AddUserScopeUseCaseResponse, GetRefreshTokenUseCaseResponse, GetUserScopesUseCaseResponse,
+    RemoveUserScopeUseCaseResponse,
 };
 use crate::{
     repositories::user::UserRepository,
@@ -68,8 +68,13 @@ where
 
     /// Refresh token
     #[instrument(skip(self), name = "user_use_case_refresh_token")]
-    pub async fn refresh_token(&self, request: RefreshTokenHttpRequest, jwt: &Jwt) -> ApiResult<RefreshTokenResponse> {
-        self.user_service.refresh_token(request, jwt).await
+    pub async fn refresh_token(
+        &self,
+        request: GetRefreshTokenUseCaseRequest,
+    ) -> ApiResult<GetRefreshTokenUseCaseResponse> {
+        validate_request_data(&request)?;
+
+        Ok(self.user_service.refresh_token(request.into()).await?.into())
     }
 
     /// Get all users

@@ -1,7 +1,9 @@
 //! User use cases requests
 
+use crate::entities::refresh_token::RefreshTokenId;
 use crate::entities::scope::ScopeId;
 use crate::entities::user::UserId;
+use clean_architecture_shared::auth::Jwt;
 use serde::Deserialize;
 use validator::Validate;
 
@@ -23,4 +25,11 @@ pub struct AddUserScopeUseCaseRequest {
 pub struct RemoveUserScopeUseCaseRequest {
     pub user_id: UserId,
     pub scope_id: ScopeId,
+}
+
+/// Get refresh token use case request
+#[derive(Debug, Clone, Validate)]
+pub struct GetRefreshTokenUseCaseRequest {
+    pub token: RefreshTokenId,
+    pub jwt: Jwt,
 }

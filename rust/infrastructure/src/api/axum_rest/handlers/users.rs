@@ -6,18 +6,19 @@ use crate::api::axum_rest::use_cases::AppUseCases;
 use axum::extract::{Query, State};
 use axum::http::StatusCode;
 use axum::{Extension, Json};
+use clean_architecture_domain::entities::refresh_token::RefreshTokenId;
 use clean_architecture_domain::entities::scope::ScopeId;
-use clean_architecture_domain::requests::refresh_token::RefreshTokenHttpRequest;
 use clean_architecture_domain::requests::user::{
     CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest, LoginRequest, UpdateUserPasswordRequest,
     UserIdRequest,
 };
 use clean_architecture_domain::responses::password_reset::PasswordResetResponse;
-use clean_architecture_domain::responses::refresh_token::RefreshTokenResponse;
 use clean_architecture_domain::responses::user::{GetUserResponse, GetUsersResponse, LoginResponse};
 use clean_architecture_domain::use_cases::user::request::{
-    AddUserScopeUseCaseRequest, GetUserScopesUseCaseRequest, RemoveUserScopeUseCaseRequest,
+    AddUserScopeUseCaseRequest, GetRefreshTokenUseCaseRequest, GetUserScopesUseCaseRequest,
+    RemoveUserScopeUseCaseRequest,
 };
+use clean_architecture_domain::use_cases::user::response::GetRefreshTokenUseCaseResponse;
 use clean_architecture_shared::api_error;
 use clean_architecture_shared::error::{ApiError, ApiErrorCode, ApiResult};
 use clean_architecture_shared::query_parameter::{PaginateSort, PaginateSortQuery};
@@ -55,14 +56,17 @@ pub async fn login(
 /// Refresh token route: POST /api/v1/refresh-token/:token
 #[instrument(skip(uc, state), name = "refresh_token_handler")]
 pub async fn refresh_token(
-    Path(refresh_token): Path<String>,
+    Path(refresh_token): Path<RefreshTokenId>,
     Extension(uc): Extension<AppUseCases>,
     State(state): State<SharedState>,
     ExtractRequestId(request_id): ExtractRequestId,
-) -> ApiResult<Json<RefreshTokenResponse>> {
+) -> ApiResult<Json<GetRefreshTokenUseCaseResponse>> {
     let response = uc
         .user
-        .refresh_token(RefreshTokenHttpRequest { refresh_token }, &state.jwt)
+        .refresh_token(GetRefreshTokenUseCaseRequest {
+            token: refresh_token,
+            jwt: state.jwt.clone(),
+        })
         .await?;
 
     Ok(Json(response))

@@ -1,9 +1,11 @@
 //! User services responses
 
+use crate::entities::refresh_token::RefreshTokenId;
 use crate::entities::scope::ScopeId;
 use crate::repositories::user::response::{
     AddUserScopeRepositoryResponse, GetUserScopesRepositoryResponse, RemoveUserScopeRepositoryResponse,
 };
+use chrono::{DateTime, Utc};
 use serde::Deserialize;
 use validator::Validate;
 
@@ -47,4 +49,13 @@ impl From<RemoveUserScopeRepositoryResponse> for RemoveUserScopeServiceResponse 
             deleted: response.deleted,
         }
     }
+}
+
+/// Get refresh token service response
+#[derive(Debug, PartialEq, Eq)]
+pub struct GetRefreshTokenServiceResponse {
+    pub access_token: String,
+    pub access_token_expired_at: DateTime<Utc>,
+    pub refresh_token: RefreshTokenId,
+    pub refresh_token_expired_at: DateTime<Utc>,
 }

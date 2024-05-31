@@ -6,9 +6,11 @@ use serde::{Deserialize, Serialize};
 use std::ops::Add;
 use uuid::Uuid;
 
+pub type RefreshTokenId = Uuid;
+
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct RefreshToken {
-    pub refresh_token: Uuid,
+    pub refresh_token: RefreshTokenId,
     pub user_id: UserId,
     pub access_token: String,
     pub expired_at: DateTime<Utc>,

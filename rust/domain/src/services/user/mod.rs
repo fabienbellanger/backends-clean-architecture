@@ -7,20 +7,23 @@ use crate::entities::password_reset::PasswordReset;
 use crate::entities::refresh_token::RefreshToken;
 use crate::entities::scope::ScopeId;
 use crate::repositories::password_reset::PasswordResetRepository;
+use crate::repositories::refresh_token::request::{
+    CreateRefreshTokenRepositoryRequest, GetRefreshTokenRepositoryRequest, RemoveRefreshTokenRepositoryRequest,
+};
 use crate::repositories::refresh_token::RefreshTokenRepository;
 use crate::repositories::user::request::{AddUserScopeRepositoryRequest, GetUserScopesRepositoryRequest};
 use crate::requests::password_reset::{DeleteRequest, GetByTokenRequest};
-use crate::requests::refresh_token::{RefreshTokenHttpRequest, RefreshTokenId};
 use crate::requests::user::{
     CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest, UpdateUserPasswordRepositoryRequest,
     UpdateUserPasswordRequest,
 };
-use crate::responses::refresh_token::RefreshTokenResponse;
 use crate::services::user::request::{
-    AddUserScopeServiceRequest, GetUserScopesServiceRequest, RemoveUserScopeServiceRequest,
+    AddUserScopeServiceRequest, GetRefreshTokenServiceRequest, GetUserScopesServiceRequest,
+    RemoveUserScopeServiceRequest,
 };
 use crate::services::user::response::{
-    AddUserScopeServiceResponse, GetUserScopesServiceResponse, RemoveUserScopeServiceResponse,
+    AddUserScopeServiceResponse, GetRefreshTokenServiceResponse, GetUserScopesServiceResponse,
+    RemoveUserScopeServiceResponse,
 };
 use crate::{
     repositories::user::UserRepository,
@@ -77,7 +80,9 @@ impl<U: UserRepository, P: PasswordResetRepository, T: RefreshTokenRepository> U
 
                         // Save refresh token
                         self.refresh_token_repository
-                            .create(refresh_token.clone().into())
+                            .create(CreateRefreshTokenRepositoryRequest {
+                                token: refresh_token.clone(),
+                            })
                             .await?;
 
                         Ok(LoginResponse {
@@ -107,24 +112,28 @@ impl<U: UserRepository, P: PasswordResetRepository, T: RefreshTokenRepository> U
 
     /// Get all users
     #[instrument(skip_all, name = "user_service_get_users")]
-    pub async fn refresh_token(&self, request: RefreshTokenHttpRequest, jwt: &Jwt) -> ApiResult<RefreshTokenResponse> {
-        let refresh_token_id = RefreshTokenId {
-            refresh_token: request.refresh_token,
-        };
-
-        let refresh_token = self.refresh_token_repository.get(refresh_token_id.clone()).await?;
+    pub async fn refresh_token(
+        &self,
+        request: GetRefreshTokenServiceRequest,
+    ) -> ApiResult<GetRefreshTokenServiceResponse> {
+        let refresh_token = self
+            .refresh_token_repository
+            .get(GetRefreshTokenRepositoryRequest { token: request.token })
+            .await?;
 
         // Remove old refresh token
-        self.refresh_token_repository.delete(refresh_token_id).await?;
+        self.refresh_token_repository
+            .delete(RemoveRefreshTokenRepositoryRequest { token: request.token })
+            .await?;
 
-        match refresh_token.is_valid() {
+        match refresh_token.token.is_valid() {
             false => Err(api_error!(ApiErrorCode::Unauthorized)),
             true => {
                 // Scopes
                 let scopes = self
                     .user_repository
                     .get_scopes(GetUserScopesRepositoryRequest {
-                        user_id: refresh_token.user_id,
+                        user_id: refresh_token.token.user_id,
                     })
                     .await?
                     .scopes
@@ -133,25 +142,26 @@ impl<U: UserRepository, P: PasswordResetRepository, T: RefreshTokenRepository> U
                     .collect::<Vec<AuthScope>>();
 
                 // Generate new access and refresh token
-                let (access_token, access_expired_at) = jwt.generate(refresh_token.user_id.to_string(), scopes)?;
+                let (access_token, access_expired_at) =
+                    request.jwt.generate(refresh_token.token.user_id.to_string(), scopes)?;
                 match DateTime::from_timestamp(access_expired_at, 0) {
                     Some(access_expired_at) => {
                         // Generate refresh token
                         let refresh_token =
-                            RefreshToken::new(refresh_token.user_id, &access_token, jwt.refresh_lifetime);
+                            RefreshToken::new(refresh_token.token.user_id, &access_token, request.jwt.refresh_lifetime);
 
                         // Save refresh token
                         self.refresh_token_repository
-                            .create(refresh_token.clone().into())
+                            .create(CreateRefreshTokenRepositoryRequest {
+                                token: refresh_token.clone(),
+                            })
                             .await?;
 
-                        Ok(RefreshTokenResponse {
+                        Ok(GetRefreshTokenServiceResponse {
                             access_token,
-                            access_token_expired_at: access_expired_at.to_rfc3339_opts(SecondsFormat::Secs, true),
-                            refresh_token: refresh_token.refresh_token.to_string(),
-                            refresh_token_expired_at: refresh_token
-                                .expired_at
-                                .to_rfc3339_opts(SecondsFormat::Secs, true),
+                            access_token_expired_at: access_expired_at,
+                            refresh_token: refresh_token.refresh_token,
+                            refresh_token_expired_at: refresh_token.expired_at,
                         })
                     }
                     None => Err(api_error!(

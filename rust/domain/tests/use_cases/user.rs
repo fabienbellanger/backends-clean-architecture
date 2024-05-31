@@ -3,12 +3,12 @@ use crate::helpers::refresh_token::{TestRefreshTokenRepository, INVALID_REFRESH_
 use crate::helpers::user::*;
 use crate::helpers::{email::TestEmailService, password_reset::TestPasswordResetRepository};
 use chrono::{DateTime, Days, Utc};
-use clean_architecture_domain::requests::refresh_token::RefreshTokenHttpRequest;
 use clean_architecture_domain::requests::user::{
     DeleteUserRequest, ForgottenPasswordRequest, UpdateUserPasswordRequest,
 };
 use clean_architecture_domain::use_cases::user::request::{
-    AddUserScopeUseCaseRequest, GetUserScopesUseCaseRequest, RemoveUserScopeUseCaseRequest,
+    AddUserScopeUseCaseRequest, GetRefreshTokenUseCaseRequest, GetUserScopesUseCaseRequest,
+    RemoveUserScopeUseCaseRequest,
 };
 use clean_architecture_domain::{
     use_cases::user::*,
@@ -262,18 +262,20 @@ async fn test_refresh_token() {
     jwt.set_refresh_lifetime(2);
     jwt.set_encoding_key(JWT_SECRET).unwrap();
     jwt.set_decoding_key(JWT_SECRET).unwrap();
-    let request = RefreshTokenHttpRequest {
-        refresh_token: REFRESH_TOKEN.to_owned(),
+    let request = GetRefreshTokenUseCaseRequest {
+        token: Uuid::parse_str(REFRESH_TOKEN).unwrap(),
+        jwt: jwt.clone(),
     };
-    let response = use_case.refresh_token(request, &jwt).await;
+    let response = use_case.refresh_token(request).await;
 
     assert!(response.is_ok());
 
     // With invalid refresh token
-    let request = RefreshTokenHttpRequest {
-        refresh_token: INVALID_REFRESH_TOKEN.to_owned(),
+    let request = GetRefreshTokenUseCaseRequest {
+        token: Uuid::parse_str(INVALID_REFRESH_TOKEN).unwrap(),
+        jwt,
     };
-    let response = use_case.refresh_token(request, &jwt).await;
+    let response = use_case.refresh_token(request).await;
 
     assert!(response.is_err());
 }
