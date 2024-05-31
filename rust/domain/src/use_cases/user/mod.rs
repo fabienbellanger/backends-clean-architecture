@@ -7,11 +7,17 @@ use crate::repositories::password_reset::PasswordResetRepository;
 use crate::repositories::refresh_token::RefreshTokenRepository;
 use crate::requests::refresh_token::RefreshTokenHttpRequest;
 use crate::requests::user::{
-    CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest, UpdateUserPasswordRequest, UserScopeRequest,
+    CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest, UpdateUserPasswordRequest,
 };
 use crate::responses::password_reset::PasswordResetResponse;
 use crate::responses::refresh_token::RefreshTokenResponse;
 use crate::services::email::EmailService;
+use crate::use_cases::user::request::{
+    AddUserScopeUseCaseRequest, GetUserScopesUseCaseRequest, RemoveUserScopeUseCaseRequest,
+};
+use crate::use_cases::user::response::{
+    AddUserScopeUseCaseResponse, GetUserScopesUseCaseResponse, RemoveUserScopeUseCaseResponse,
+};
 use crate::{
     repositories::user::UserRepository,
     requests::user::{LoginRequest, UserIdRequest},
@@ -122,25 +128,28 @@ where
 
     /// Get active scopes of a user
     #[instrument(skip(self), name = "user_use_case_get_scopes")]
-    pub async fn get_scopes(&self, request: UserIdRequest) -> ApiResult<Vec<String>> {
+    pub async fn get_scopes(&self, request: GetUserScopesUseCaseRequest) -> ApiResult<GetUserScopesUseCaseResponse> {
         validate_request_data(&request)?;
 
-        self.user_service.get_scopes(request).await
+        Ok(self.user_service.get_scopes(request.into()).await?.into())
     }
 
     /// Add a scope to a user
     #[instrument(skip(self), name = "user_use_case_add_scope")]
-    pub async fn add_scope(&self, request: UserScopeRequest) -> ApiResult<u64> {
+    pub async fn add_scope(&self, request: AddUserScopeUseCaseRequest) -> ApiResult<AddUserScopeUseCaseResponse> {
         validate_request_data(&request)?;
 
-        self.user_service.add_scope(request).await
+        Ok(self.user_service.add_scope(request.into()).await?.into())
     }
 
     /// Remove a scope to a user
     #[instrument(skip(self), name = "user_use_case_remove_scope")]
-    pub async fn remove_scope(&self, request: UserScopeRequest) -> ApiResult<u64> {
+    pub async fn remove_scope(
+        &self,
+        request: RemoveUserScopeUseCaseRequest,
+    ) -> ApiResult<RemoveUserScopeUseCaseResponse> {
         validate_request_data(&request)?;
 
-        self.user_service.remove_scope(request).await
+        Ok(self.user_service.remove_scope(request.into()).await?.into())
     }
 }

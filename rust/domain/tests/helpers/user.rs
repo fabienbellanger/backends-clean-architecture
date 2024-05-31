@@ -1,11 +1,17 @@
 use async_trait::async_trait;
 use chrono::{DateTime, Utc};
 use clean_architecture_domain::entities::scope::Scope;
-use clean_architecture_domain::entities::user::{User, UserId};
+use clean_architecture_domain::entities::user::User;
+use clean_architecture_domain::repositories::user::request::{
+    AddUserScopeRepositoryRequest, GetUserScopesRepositoryRequest, RemoveUserScopeRepositoryRequest,
+};
+use clean_architecture_domain::repositories::user::response::{
+    AddUserScopeRepositoryResponse, GetUserScopesRepositoryResponse, RemoveUserScopeRepositoryResponse,
+    UserScopeRepositoryResponse,
+};
 use clean_architecture_domain::repositories::user::UserRepository;
 use clean_architecture_domain::requests::user::{
     CreateUserRequest, DeleteUserRequest, LoginRequest, UpdateUserPasswordRepositoryRequest, UserIdRequest,
-    UserScopeRequest,
 };
 use clean_architecture_domain::value_objects::email::Email;
 use clean_architecture_domain::value_objects::password::Password;
@@ -141,19 +147,26 @@ impl UserRepository for TestUserRepository {
         Ok(())
     }
 
-    async fn get_scopes(&self, id: UserId) -> ApiResult<Vec<Scope>> {
+    async fn get_scopes(&self, request: GetUserScopesRepositoryRequest) -> ApiResult<GetUserScopesRepositoryResponse> {
         let user_id: Uuid = USER_ID.parse().unwrap();
-        if user_id == id {
-            Ok(SCOPES.iter().map(|s| Scope::new(s.to_string())).collect())
+        if user_id == request.user_id {
+            Ok(GetUserScopesRepositoryResponse {
+                scopes: SCOPES
+                    .iter()
+                    .map(|s| UserScopeRepositoryResponse {
+                        id: Scope::new(s.to_string()).id,
+                    })
+                    .collect(),
+            })
         } else {
-            Ok(vec![])
+            Ok(GetUserScopesRepositoryResponse { scopes: vec![] })
         }
     }
 
-    async fn add_scope(&self, request: UserScopeRequest) -> ApiResult<u64> {
+    async fn add_scope(&self, request: AddUserScopeRepositoryRequest) -> ApiResult<AddUserScopeRepositoryResponse> {
         let user_id: Uuid = USER_ID.parse().unwrap();
         if user_id == request.user_id {
-            Ok(1)
+            Ok(AddUserScopeRepositoryResponse { created: 1 })
         } else {
             Err(ApiError::NotFound {
                 message: "no user found".to_owned(),
@@ -161,10 +174,13 @@ impl UserRepository for TestUserRepository {
         }
     }
 
-    async fn remove_scope(&self, request: UserScopeRequest) -> ApiResult<u64> {
+    async fn remove_scope(
+        &self,
+        request: RemoveUserScopeRepositoryRequest,
+    ) -> ApiResult<RemoveUserScopeRepositoryResponse> {
         let user_id: Uuid = USER_ID.parse().unwrap();
         if user_id == request.user_id {
-            Ok(1)
+            Ok(RemoveUserScopeRepositoryResponse { deleted: 1 })
         } else {
             Err(ApiError::NotFound {
                 message: "no user found".to_owned(),

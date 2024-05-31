@@ -1,7 +1,9 @@
 use crate::helpers::mysql::TestMySQL;
 use clean_architecture_domain::repositories::scope::request::CreateScopeRepositoryRequest;
 use clean_architecture_domain::repositories::scope::ScopeRepository;
-use clean_architecture_domain::requests::user::UserScopeRequest;
+use clean_architecture_domain::repositories::user::request::{
+    AddUserScopeRepositoryRequest, GetUserScopesRepositoryRequest, RemoveUserScopeRepositoryRequest,
+};
 use clean_architecture_domain::{
     value_objects::email::Email,
     {
@@ -109,7 +111,9 @@ async fn test_add_scope() {
         .unwrap();
 
     // Add scope to user
-    let result = repository.add_scope(UserScopeRequest { user_id, scope_id }).await;
+    let result = repository
+        .add_scope(AddUserScopeRepositoryRequest { user_id, scope_id })
+        .await;
     assert!(result.is_ok());
 }
 
@@ -138,7 +142,7 @@ async fn test_remove_scope() {
 
     // Add scope to user
     repository
-        .add_scope(UserScopeRequest {
+        .add_scope(AddUserScopeRepositoryRequest {
             user_id,
             scope_id: scope_id.clone(),
         })
@@ -146,7 +150,9 @@ async fn test_remove_scope() {
         .unwrap();
 
     // Remove scope from user
-    let result = repository.remove_scope(UserScopeRequest { user_id, scope_id }).await;
+    let result = repository
+        .remove_scope(RemoveUserScopeRepositoryRequest { user_id, scope_id })
+        .await;
     assert!(result.is_ok());
 }
 
@@ -175,7 +181,7 @@ async fn test_get_scopes() {
 
     // Add scope to user
     repository
-        .add_scope(UserScopeRequest {
+        .add_scope(AddUserScopeRepositoryRequest {
             user_id,
             scope_id: scope_id.clone(),
         })
@@ -183,11 +189,11 @@ async fn test_get_scopes() {
         .unwrap();
 
     // Gets scopes
-    let result = repository.get_scopes(user_id).await;
+    let result = repository.get_scopes(GetUserScopesRepositoryRequest { user_id }).await;
     assert!(result.is_ok());
 
-    if let Ok(scopes) = result {
-        assert_eq!(scopes.len(), 1);
-        assert_eq!(scopes[0].id, scope_id);
+    if let Ok(result) = result {
+        assert_eq!(result.scopes.len(), 1);
+        assert_eq!(result.scopes[0].id, scope_id);
     }
 }

@@ -1,7 +1,7 @@
 //! Scope use cases responses
 
 use crate::entities::scope::ScopeId;
-use crate::services::scope::response::DeleteScopeServiceResponse;
+use crate::services::scope::response::{DeleteScopeServiceResponse, GetScopesServiceResponse};
 use chrono::{DateTime, Utc};
 
 /// Create scope use case response
@@ -31,4 +31,19 @@ pub struct ScopeUseCaseResponse {
 #[derive(Debug, PartialEq, Eq)]
 pub struct GetScopesUseCaseResponse {
     pub scopes: Vec<ScopeUseCaseResponse>,
+}
+
+impl From<GetScopesServiceResponse> for GetScopesUseCaseResponse {
+    fn from(response: GetScopesServiceResponse) -> Self {
+        Self {
+            scopes: response
+                .scopes
+                .into_iter()
+                .map(|scope| ScopeUseCaseResponse {
+                    id: scope.id,
+                    created_at: scope.created_at,
+                })
+                .collect(),
+        }
+    }
 }

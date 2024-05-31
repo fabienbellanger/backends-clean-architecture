@@ -1,14 +1,18 @@
 //! User MySQL repository
 
-use crate::database::mysql::models::scope::ScopeModel;
 use crate::database::mysql::models::user::UserModel;
 use crate::database::mysql::Db;
 use async_trait::async_trait;
 use chrono::Utc;
-use clean_architecture_domain::entities::scope::Scope;
-use clean_architecture_domain::entities::user::UserId;
+use clean_architecture_domain::repositories::user::request::{
+    AddUserScopeRepositoryRequest, GetUserScopesRepositoryRequest, RemoveUserScopeRepositoryRequest,
+};
+use clean_architecture_domain::repositories::user::response::{
+    AddUserScopeRepositoryResponse, GetUserScopesRepositoryResponse, RemoveUserScopeRepositoryResponse,
+    UserScopeRepositoryResponse,
+};
 use clean_architecture_domain::requests::user::{
-    CreateUserRequest, DeleteUserRequest, UpdateUserPasswordRepositoryRequest, UserScopeRequest,
+    CreateUserRequest, DeleteUserRequest, UpdateUserPasswordRepositoryRequest,
 };
 use clean_architecture_domain::{
     entities::user::User,
@@ -189,29 +193,27 @@ impl UserRepository for UserMysqlRepository {
     }
 
     #[instrument(skip(self), name = "user_repository_get_scopes")]
-    async fn get_scopes(&self, user_id: UserId) -> ApiResult<Vec<Scope>> {
+    async fn get_scopes(&self, request: GetUserScopesRepositoryRequest) -> ApiResult<GetUserScopesRepositoryResponse> {
         let scopes = sqlx::query_as!(
-            ScopeModel,
+            UserScopeRepositoryResponse,
             r#"
                 SELECT
-                    scopes.id,
-                    scopes.created_at,
-                    scopes.deleted_at
+                    scopes.id
                 FROM scopes 
                     INNER JOIN users_scopes ON scopes.id = users_scopes.scope_id
                 WHERE users_scopes.user_id = ?
                     AND scopes.deleted_at IS NULL
             "#,
-            user_id.to_string()
+            request.user_id.to_string()
         )
         .fetch_all(self.db.pool.clone().as_ref())
         .await?;
 
-        Ok(scopes.into_iter().map(|s| s.into()).collect())
+        Ok(GetUserScopesRepositoryResponse { scopes })
     }
 
     #[instrument(skip(self), name = "user_repository_add_scope")]
-    async fn add_scope(&self, request: UserScopeRequest) -> ApiResult<u64> {
+    async fn add_scope(&self, request: AddUserScopeRepositoryRequest) -> ApiResult<AddUserScopeRepositoryResponse> {
         let result = sqlx::query!(
             "INSERT IGNORE INTO users_scopes (user_id, scope_id) VALUES (?, ?)",
             request.user_id.to_string(),
@@ -220,11 +222,16 @@ impl UserRepository for UserMysqlRepository {
         .execute(self.db.pool.clone().as_ref())
         .await?;
 
-        Ok(result.rows_affected())
+        Ok(AddUserScopeRepositoryResponse {
+            created: result.rows_affected(),
+        })
     }
 
     #[instrument(skip(self), name = "user_repository_remove_scope")]
-    async fn remove_scope(&self, request: UserScopeRequest) -> ApiResult<u64> {
+    async fn remove_scope(
+        &self,
+        request: RemoveUserScopeRepositoryRequest,
+    ) -> ApiResult<RemoveUserScopeRepositoryResponse> {
         let result = sqlx::query!(
             "DELETE FROM users_scopes WHERE user_id = ? AND scope_id = ?",
             request.user_id.to_string(),
@@ -233,6 +240,8 @@ impl UserRepository for UserMysqlRepository {
         .execute(self.db.pool.clone().as_ref())
         .await?;
 
-        Ok(result.rows_affected())
+        Ok(RemoveUserScopeRepositoryResponse {
+            deleted: result.rows_affected(),
+        })
     }
 }

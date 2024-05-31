@@ -1,10 +1,15 @@
 //! User repository
 
-use crate::entities::scope::Scope;
-use crate::entities::user::UserId;
-use crate::requests::user::{
-    CreateUserRequest, DeleteUserRequest, UpdateUserPasswordRepositoryRequest, UserScopeRequest,
+pub mod request;
+pub mod response;
+
+use crate::repositories::user::request::{
+    AddUserScopeRepositoryRequest, GetUserScopesRepositoryRequest, RemoveUserScopeRepositoryRequest,
 };
+use crate::repositories::user::response::{
+    AddUserScopeRepositoryResponse, GetUserScopesRepositoryResponse, RemoveUserScopeRepositoryResponse,
+};
+use crate::requests::user::{CreateUserRequest, DeleteUserRequest, UpdateUserPasswordRepositoryRequest};
 use crate::{
     entities::user::User,
     requests::user::{LoginRequest, UserIdRequest},
@@ -40,11 +45,14 @@ pub trait UserRepository {
     async fn update_password(&self, request: UpdateUserPasswordRepositoryRequest) -> ApiResult<()>;
 
     /// Get user scopes
-    async fn get_scopes(&self, user_id: UserId) -> ApiResult<Vec<Scope>>;
+    async fn get_scopes(&self, request: GetUserScopesRepositoryRequest) -> ApiResult<GetUserScopesRepositoryResponse>;
 
     /// Add a scope to a user
-    async fn add_scope(&self, request: UserScopeRequest) -> ApiResult<u64>;
+    async fn add_scope(&self, request: AddUserScopeRepositoryRequest) -> ApiResult<AddUserScopeRepositoryResponse>;
 
     /// Remove a scope to a user
-    async fn remove_scope(&self, request: UserScopeRequest) -> ApiResult<u64>;
+    async fn remove_scope(
+        &self,
+        request: RemoveUserScopeRepositoryRequest,
+    ) -> ApiResult<RemoveUserScopeRepositoryResponse>;
 }

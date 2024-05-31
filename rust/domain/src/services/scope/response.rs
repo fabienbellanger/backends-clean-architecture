@@ -1,8 +1,10 @@
 //! Scope services responses
 
 use crate::entities::scope::ScopeId;
-use crate::use_cases::scope::response::{DeleteScopeUseCaseResponse, GetScopesUseCaseResponse, ScopeUseCaseResponse};
-use chrono::{DateTime, Utc};
+use crate::repositories::scope::response::{
+    DeleteScopeRepositoryResponse, GetScopesRepositoryResponse, ScopeRepositoryResponse,
+};
+use chrono::{DateTime, TimeZone, Utc};
 use serde::{Deserialize, Serialize};
 
 /// Create scope service response
@@ -13,8 +15,8 @@ pub struct DeleteScopeServiceResponse {
     pub deleted: u64,
 }
 
-impl From<DeleteScopeUseCaseResponse> for DeleteScopeServiceResponse {
-    fn from(response: DeleteScopeUseCaseResponse) -> Self {
+impl From<DeleteScopeRepositoryResponse> for DeleteScopeServiceResponse {
+    fn from(response: DeleteScopeRepositoryResponse) -> Self {
         Self {
             deleted: response.deleted,
         }
@@ -27,11 +29,11 @@ pub struct ScopeServiceResponse {
     pub created_at: DateTime<Utc>,
 }
 
-impl From<ScopeServiceResponse> for ScopeUseCaseResponse {
-    fn from(response: ScopeServiceResponse) -> Self {
+impl From<ScopeRepositoryResponse> for ScopeServiceResponse {
+    fn from(response: ScopeRepositoryResponse) -> Self {
         Self {
             id: response.id,
-            created_at: response.created_at,
+            created_at: Utc.from_utc_datetime(&response.created_at),
         }
     }
 }
@@ -41,15 +43,15 @@ pub struct GetScopesServiceResponse {
     pub scopes: Vec<ScopeServiceResponse>,
 }
 
-impl From<GetScopesServiceResponse> for GetScopesUseCaseResponse {
-    fn from(response: GetScopesServiceResponse) -> Self {
+impl From<GetScopesRepositoryResponse> for GetScopesServiceResponse {
+    fn from(response: GetScopesRepositoryResponse) -> Self {
         Self {
             scopes: response
                 .scopes
                 .into_iter()
-                .map(|scope| ScopeUseCaseResponse {
+                .map(|scope| ScopeServiceResponse {
                     id: scope.id,
-                    created_at: scope.created_at,
+                    created_at: Utc.from_utc_datetime(&scope.created_at),
                 })
                 .collect(),
         }

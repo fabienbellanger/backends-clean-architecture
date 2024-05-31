@@ -5,7 +5,10 @@ use crate::helpers::{email::TestEmailService, password_reset::TestPasswordResetR
 use chrono::{DateTime, Days, Utc};
 use clean_architecture_domain::requests::refresh_token::RefreshTokenHttpRequest;
 use clean_architecture_domain::requests::user::{
-    DeleteUserRequest, ForgottenPasswordRequest, UpdateUserPasswordRequest, UserScopeRequest,
+    DeleteUserRequest, ForgottenPasswordRequest, UpdateUserPasswordRequest,
+};
+use clean_architecture_domain::use_cases::user::request::{
+    AddUserScopeUseCaseRequest, GetUserScopesUseCaseRequest, RemoveUserScopeUseCaseRequest,
 };
 use clean_architecture_domain::{
     use_cases::user::*,
@@ -278,21 +281,21 @@ async fn test_refresh_token() {
 #[tokio::test]
 async fn test_user_get_scopes_success() {
     let use_case = init_use_case();
-    let request = UserIdRequest {
-        id: Uuid::parse_str(USER_ID).unwrap(),
+    let request = GetUserScopesUseCaseRequest {
+        user_id: Uuid::parse_str(USER_ID).unwrap(),
     };
     let response = use_case.get_scopes(request).await;
     assert!(response.is_ok());
 
-    if let Ok(scopes) = response {
-        assert_eq!(scopes, SCOPES.to_vec());
+    if let Ok(response) = response {
+        assert_eq!(response.scopes, SCOPES.to_vec());
     }
 }
 
 #[tokio::test]
 async fn test_user_add_scope_success() {
     let use_case = init_use_case();
-    let request = UserScopeRequest {
+    let request = AddUserScopeUseCaseRequest {
         user_id: Uuid::parse_str(USER_ID).unwrap(),
         scope_id: SCOPE_ID.to_owned(),
     };
@@ -303,7 +306,7 @@ async fn test_user_add_scope_success() {
 #[tokio::test]
 async fn test_user_add_scope_invalid_user() {
     let use_case = init_use_case();
-    let request = UserScopeRequest {
+    let request = AddUserScopeUseCaseRequest {
         user_id: Uuid::parse_str(OTHER_USER_ID).unwrap(),
         scope_id: SCOPE_ID.to_owned(),
     };
@@ -314,7 +317,7 @@ async fn test_user_add_scope_invalid_user() {
 #[tokio::test]
 async fn test_user_remove_scope_success() {
     let use_case = init_use_case();
-    let request = UserScopeRequest {
+    let request = RemoveUserScopeUseCaseRequest {
         user_id: Uuid::parse_str(USER_ID).unwrap(),
         scope_id: SCOPE_ID.to_owned(),
     };
@@ -325,7 +328,7 @@ async fn test_user_remove_scope_success() {
 #[tokio::test]
 async fn test_user_remove_scope_invalid_user() {
     let use_case = init_use_case();
-    let request = UserScopeRequest {
+    let request = RemoveUserScopeUseCaseRequest {
         user_id: Uuid::parse_str(OTHER_USER_ID).unwrap(),
         scope_id: SCOPE_ID.to_owned(),
     };

@@ -1,6 +1,6 @@
 use super::{TestApp, TestResponse};
 use clean_architecture_domain::entities::scope::{SCOPE_ADMIN, SCOPE_USERS};
-use clean_architecture_domain::requests::user::UserScopeRequest;
+use clean_architecture_domain::repositories::user::request::AddUserScopeRepositoryRequest;
 use clean_architecture_domain::{
     entities::user::User, repositories::user::UserRepository, requests::user::CreateUserRequest,
     responses::user::LoginResponse, value_objects::password::Password,
@@ -25,14 +25,14 @@ pub async fn create_user(app: &TestApp) -> User {
 
     // Add scopes
     repository
-        .add_scope(UserScopeRequest {
+        .add_scope(AddUserScopeRepositoryRequest {
             user_id: user.id,
             scope_id: SCOPE_ADMIN.to_string(),
         })
         .await
         .unwrap();
     repository
-        .add_scope(UserScopeRequest {
+        .add_scope(AddUserScopeRepositoryRequest {
             user_id: user.id,
             scope_id: SCOPE_USERS.to_string(),
         })

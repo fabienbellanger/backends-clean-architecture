@@ -8,13 +8,20 @@ use crate::entities::refresh_token::RefreshToken;
 use crate::entities::scope::ScopeId;
 use crate::repositories::password_reset::PasswordResetRepository;
 use crate::repositories::refresh_token::RefreshTokenRepository;
+use crate::repositories::user::request::{AddUserScopeRepositoryRequest, GetUserScopesRepositoryRequest};
 use crate::requests::password_reset::{DeleteRequest, GetByTokenRequest};
 use crate::requests::refresh_token::{RefreshTokenHttpRequest, RefreshTokenId};
 use crate::requests::user::{
     CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest, UpdateUserPasswordRepositoryRequest,
-    UpdateUserPasswordRequest, UserScopeRequest,
+    UpdateUserPasswordRequest,
 };
 use crate::responses::refresh_token::RefreshTokenResponse;
+use crate::services::user::request::{
+    AddUserScopeServiceRequest, GetUserScopesServiceRequest, RemoveUserScopeServiceRequest,
+};
+use crate::services::user::response::{
+    AddUserScopeServiceResponse, GetUserScopesServiceResponse, RemoveUserScopeServiceResponse,
+};
 use crate::{
     repositories::user::UserRepository,
     requests::user::{LoginRequest, UserIdRequest},
@@ -54,10 +61,11 @@ impl<U: UserRepository, P: PasswordResetRepository, T: RefreshTokenRepository> U
                 // Scopes
                 let scopes = self
                     .user_repository
-                    .get_scopes(user.id)
+                    .get_scopes(GetUserScopesRepositoryRequest { user_id: user.id })
                     .await?
+                    .scopes
                     .into_iter()
-                    .map(AuthScope::from)
+                    .map(|s| AuthScope::new(s.id.to_string()))
                     .collect::<Vec<AuthScope>>();
 
                 // JWT
@@ -115,10 +123,13 @@ impl<U: UserRepository, P: PasswordResetRepository, T: RefreshTokenRepository> U
                 // Scopes
                 let scopes = self
                     .user_repository
-                    .get_scopes(refresh_token.user_id)
+                    .get_scopes(GetUserScopesRepositoryRequest {
+                        user_id: refresh_token.user_id,
+                    })
                     .await?
+                    .scopes
                     .into_iter()
-                    .map(AuthScope::from)
+                    .map(|s| AuthScope::new(s.id.to_string()))
                     .collect::<Vec<AuthScope>>();
 
                 // Generate new access and refresh token
@@ -183,7 +194,7 @@ impl<U: UserRepository, P: PasswordResetRepository, T: RefreshTokenRepository> U
         if let Some(scopes) = request.scopes {
             for scope in scopes {
                 self.user_repository
-                    .add_scope(UserScopeRequest {
+                    .add_scope(AddUserScopeRepositoryRequest {
                         user_id: user.id,
                         scope_id: ScopeId::from(scope),
                     })
@@ -250,25 +261,22 @@ impl<U: UserRepository, P: PasswordResetRepository, T: RefreshTokenRepository> U
 
     /// Get active scopes of a user
     #[instrument(skip_all, name = "user_service_get_scopes")]
-    pub async fn get_scopes(&self, request: UserIdRequest) -> ApiResult<Vec<ScopeId>> {
-        Ok(self
-            .user_repository
-            .get_scopes(request.id)
-            .await?
-            .into_iter()
-            .map(|scope| scope.id)
-            .collect())
+    pub async fn get_scopes(&self, request: GetUserScopesServiceRequest) -> ApiResult<GetUserScopesServiceResponse> {
+        Ok(self.user_repository.get_scopes(request.into()).await?.into())
     }
 
     /// Add a scope to a user
     #[instrument(skip_all, name = "user_service_add_scope")]
-    pub async fn add_scope(&self, request: UserScopeRequest) -> ApiResult<u64> {
-        self.user_repository.add_scope(request).await
+    pub async fn add_scope(&self, request: AddUserScopeServiceRequest) -> ApiResult<AddUserScopeServiceResponse> {
+        Ok(self.user_repository.add_scope(request.into()).await?.into())
     }
 
     /// Remove a scope to a user
     #[instrument(skip_all, name = "user_service_remove_scope")]
-    pub async fn remove_scope(&self, request: UserScopeRequest) -> ApiResult<u64> {
-        self.user_repository.remove_scope(request).await
+    pub async fn remove_scope(
+        &self,
+        request: RemoveUserScopeServiceRequest,
+    ) -> ApiResult<RemoveUserScopeServiceResponse> {
+        Ok(self.user_repository.remove_scope(request.into()).await?.into())
     }
 }

@@ -10,11 +10,14 @@ use clean_architecture_domain::entities::scope::ScopeId;
 use clean_architecture_domain::requests::refresh_token::RefreshTokenHttpRequest;
 use clean_architecture_domain::requests::user::{
     CreateUserRequest, DeleteUserRequest, ForgottenPasswordRequest, LoginRequest, UpdateUserPasswordRequest,
-    UserIdRequest, UserScopeRequest,
+    UserIdRequest,
 };
 use clean_architecture_domain::responses::password_reset::PasswordResetResponse;
 use clean_architecture_domain::responses::refresh_token::RefreshTokenResponse;
 use clean_architecture_domain::responses::user::{GetUserResponse, GetUsersResponse, LoginResponse};
+use clean_architecture_domain::use_cases::user::request::{
+    AddUserScopeUseCaseRequest, GetUserScopesUseCaseRequest, RemoveUserScopeUseCaseRequest,
+};
 use clean_architecture_shared::api_error;
 use clean_architecture_shared::error::{ApiError, ApiErrorCode, ApiResult};
 use clean_architecture_shared::query_parameter::{PaginateSort, PaginateSortQuery};
@@ -171,13 +174,13 @@ pub async fn update_password(
 /// Get scopes: GET /api/v1/users/:id/scopes
 #[instrument(skip(uc), name = "get_user_scopes_handler")]
 pub async fn get_scopes(
-    Path(id): Path<Uuid>,
+    Path(user_id): Path<Uuid>,
     Extension(uc): Extension<AppUseCases>,
     ExtractRequestId(request_id): ExtractRequestId,
 ) -> ApiResult<Json<Vec<ScopeId>>> {
-    let scopes = uc.user.get_scopes(UserIdRequest { id }).await?;
+    let response = uc.user.get_scopes(GetUserScopesUseCaseRequest { user_id }).await?;
 
-    Ok(Json(scopes))
+    Ok(Json(response.scopes))
 }
 
 /// Add scope: POST /api/v1/users/:id/scopes
@@ -190,13 +193,13 @@ pub async fn add_scope(
 ) -> ApiResult<StatusCode> {
     let result = uc
         .user
-        .add_scope(UserScopeRequest {
+        .add_scope(AddUserScopeUseCaseRequest {
             user_id: id,
             scope_id: body.id,
         })
         .await?;
 
-    match result {
+    match result.created {
         1 => Ok(StatusCode::CREATED),
         _ => Err(api_error!(
             ApiErrorCode::NotFound,
@@ -214,13 +217,13 @@ pub async fn remove_scope(
 ) -> ApiResult<StatusCode> {
     let result = uc
         .user
-        .remove_scope(UserScopeRequest {
+        .remove_scope(RemoveUserScopeUseCaseRequest {
             user_id: path.0,
             scope_id: path.1,
         })
         .await?;
 
-    match result {
+    match result.deleted {
         1 => Ok(StatusCode::NO_CONTENT),
         _ => Err(api_error!(
             ApiErrorCode::NotFound,
