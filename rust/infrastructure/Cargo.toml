@@ -38,7 +38,7 @@ metrics-exporter-prometheus = "0.15.0"
 async-trait = { workspace = true }
 bytes = "1.6.0"
 chrono = { workspace = true }
-clap = { version = "4.5.4", features = ["cargo", "derive"] }
+clap = { version = "4.5.7", features = ["cargo", "derive"] }
 config = "0.14.0"
 dotenvy = { workspace = true }
 futures = "0.3.30"
@@ -57,4 +57,4 @@ thiserror = { workspace = true }
 tokio = { workspace = true }
 uuid = { workspace = true }
 validator = { workspace = true }
-http-body-util = "0.1.1"
+http-body-util = "0.1.2"
