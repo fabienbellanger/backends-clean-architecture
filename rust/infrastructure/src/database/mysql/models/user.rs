@@ -74,7 +74,7 @@ mod tests {
             lastname: "Doe".to_owned(),
             firstname: "John".to_owned(),
             email: Email::new("john.doe@test.com").unwrap(),
-            password: Password::new("0000000", false).unwrap(),
+            password: Password::new("0000000", true).unwrap(),
             created_at: now,
             updated_at: now,
             deleted_at: None,
