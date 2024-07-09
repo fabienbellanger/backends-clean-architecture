@@ -34,7 +34,7 @@ impl User {
     ///     lastname: "Doe".to_owned(),
     ///     firstname: "John".to_owned(),
     ///     email: Email::new("john.doe@test.com").unwrap(),
-    ///     password: Password::new("1234567890").unwrap(),
+    ///     password: Password::new("1234567890", false).unwrap(),
     ///     created_at: Utc::now(),
     ///     updated_at: Utc::now(),
     ///     deleted_at: None,

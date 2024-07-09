@@ -21,7 +21,7 @@ pub async fn create_user(app: &TestApp) -> User {
         scopes: None,
     };
     let mut user = repository.create_user(request.clone()).await.unwrap();
-    user.password = Password::new(&password).unwrap();
+    user.password = Password::new(&password, false).unwrap();
 
     // Add scopes
     repository
