@@ -7,7 +7,7 @@ use validator::Validate;
 
 #[derive(Debug, Default, Clone, PartialEq, Eq, Validate)]
 pub struct Password {
-    #[validate(length(min = 4))]
+    #[validate(length(min = 8))]
     value: String,
 }
 
@@ -20,7 +20,7 @@ impl Password {
     /// use fake::faker::internet::fr_fr::Password as FakePassword;
     /// use clean_architecture_domain::value_objects::password::Password;
     ///
-    /// let valid_password: String = FakePassword(6..9).fake();
+    /// let valid_password: String = FakePassword(8..12).fake();
     /// let password = Password::new(&valid_password).unwrap();
     /// assert_eq!(password.value(), valid_password);
     ///
@@ -28,7 +28,7 @@ impl Password {
     /// println!("{password}");
     ///
     /// assert!(Password::new("").is_err());
-    /// let invalid_password: String = FakePassword(2..3).fake();
+    /// let invalid_password: String = FakePassword(2..7).fake();
     /// assert!(Password::new(&invalid_password).is_err());
     /// ```
     pub fn new(value: &str) -> ApiResult<Self> {
