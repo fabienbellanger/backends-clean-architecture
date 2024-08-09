@@ -36,15 +36,14 @@ metrics = "0.23.0"
 metrics-exporter-prometheus = "0.15.3"
 
 async-trait = { workspace = true }
-bytes = "1.6.1"
+bytes = "1.7.1"
 chrono = { workspace = true }
-clap = { version = "4.5.11", features = ["cargo", "derive"] }
+clap = { version = "4.5.14", features = ["cargo", "derive"] }
 config = "0.14.0"
 dotenvy = { workspace = true }
 futures = "0.3.30"
 http-auth-basic = "0.3.5"
 jsonwebtoken = { workspace = true }
-lazy_static = "1.5.0"
 lettre = "0.11.7"
 mime = "0.3.17"
 rand = { workspace = true }
