@@ -16,7 +16,7 @@ clean-architecture-shared = { workspace = true }
 axum = { workspace = true }
 
 # Tower
-tower = { version = "0.4.13", features = ["timeout"] }
+tower = { version = "0.5.0", features = ["timeout"] }
 tower-http = { version = "0.5.2", features = ["cors", "fs", "request-id", "util"] }
 
 # Hyper
@@ -38,7 +38,7 @@ metrics-exporter-prometheus = "0.15.3"
 async-trait = { workspace = true }
 bytes = "1.7.1"
 chrono = { workspace = true }
-clap = { version = "4.5.15", features = ["cargo", "derive"] }
+clap = { version = "4.5.16", features = ["cargo", "derive"] }
 config = "0.14.0"
 dotenvy = { workspace = true }
 futures = "0.3.30"

@@ -3,7 +3,7 @@
 use super::layers::{
     prometheus::PrometheusMetric,
     states::{SharedState, State},
-    MakeRequestUuid,
+    MakeRequestUuid, REQUEST_ID_HEADER,
 };
 use super::use_cases::AppUseCases;
 use super::{handlers, layers, logger, routes};
@@ -19,7 +19,8 @@ use std::time::Duration;
 use tokio::net::TcpListener;
 use tokio::signal;
 use tower::ServiceBuilder;
-use tower_http::{services::ServeDir, ServiceBuilderExt};
+use tower_http::request_id::{PropagateRequestIdLayer, SetRequestIdLayer};
+use tower_http::services::ServeDir;
 
 /// Starts API server
 pub async fn start_server() -> ApiResult<()> {
@@ -57,11 +58,11 @@ async fn get_app(settings: &Config) -> ApiResult<Router> {
 
     // Layers
     let layers = ServiceBuilder::new()
-        .set_x_request_id(MakeRequestUuid)
+        .layer(SetRequestIdLayer::new(REQUEST_ID_HEADER.clone(), MakeRequestUuid))
         .layer(layers::logger::LoggerLayer)
         .layer(HandleErrorLayer::new(handlers::timeout_error))
         .timeout(Duration::from_secs(settings.request_timeout))
-        .propagate_x_request_id();
+        .layer(PropagateRequestIdLayer::new(REQUEST_ID_HEADER.clone()));
 
     // Global state
     let global_state = SharedState::new(State::init(settings)?);

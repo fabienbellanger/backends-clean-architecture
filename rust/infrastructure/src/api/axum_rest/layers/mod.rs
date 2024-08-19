@@ -19,6 +19,7 @@ use bytes::Bytes;
 use clean_architecture_shared::api_error;
 use clean_architecture_shared::error::{ApiError, ApiErrorCode, ApiErrorMessage};
 use std::str::from_utf8;
+use std::sync::LazyLock;
 use tower_http::cors::{AllowOrigin, Any, CorsLayer};
 use tower_http::request_id::{MakeRequestId, RequestId};
 use uuid::Uuid;
@@ -63,6 +64,9 @@ pub fn header_value_to_str(value: Option<&HeaderValue>) -> &str {
 /// Request ID middleware
 #[derive(Clone, Copy)]
 pub struct MakeRequestUuid;
+
+/// Request ID header
+pub static REQUEST_ID_HEADER: LazyLock<HeaderName> = LazyLock::new(|| HeaderName::from_static("x-request-id"));
 
 impl MakeRequestId for MakeRequestUuid {
     fn make_request_id<B>(&mut self, _request: &Request<B>) -> Option<RequestId> {
