@@ -131,7 +131,7 @@ impl TestAppBuilder {
                 None,
                 None,
             )
-                .unwrap(),
+            .unwrap(),
         };
 
         SharedState::new(state)
