@@ -7,6 +7,7 @@ use crate::helpers::mysql::TestMySQL;
 use axum::body::Body;
 use axum::Router;
 use axum::{http::StatusCode, Extension};
+use clean_architecture_infrastructure::api::axum_rest::layers::REQUEST_ID_HEADER;
 use clean_architecture_infrastructure::api::axum_rest::{
     layers::{
         self,
@@ -24,7 +25,7 @@ use hyper::Request;
 use serde_json::Value;
 use std::collections::HashMap;
 use tower::{ServiceBuilder, ServiceExt};
-use tower_http::ServiceBuilderExt;
+use tower_http::request_id::SetRequestIdLayer;
 
 // HTTP response for test
 #[derive(Debug)]
@@ -130,7 +131,7 @@ impl TestAppBuilder {
                 None,
                 None,
             )
-            .unwrap(),
+                .unwrap(),
         };
 
         SharedState::new(state)
@@ -140,7 +141,7 @@ impl TestAppBuilder {
     pub fn with_logger(self) -> Self {
         logger::init("test", "", "").unwrap();
         let layers = ServiceBuilder::new()
-            .set_x_request_id(MakeRequestUuid)
+            .layer(SetRequestIdLayer::new(REQUEST_ID_HEADER.clone(), MakeRequestUuid))
             .layer(layers::logger::LoggerLayer)
             .into_inner();
 
