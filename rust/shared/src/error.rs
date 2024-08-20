@@ -9,7 +9,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::json;
 use thiserror::Error;
 
-/// Custom Result typefor `CliError`
+/// Custom Result type for `CliError`
 pub type CliResult<T> = Result<T, CliError>;
 
 /// Custom CLI Error
@@ -226,6 +226,55 @@ macro_rules! api_error {
             ApiErrorCode::UnprocessableEntity => ApiError::UnprocessableEntity {
                 message: $message.to_string(),
             },
+        }
+    };
+}
+
+/// Call `error!()` macro if the error is an `ApiError::InternalError`.
+///
+/// The error must be an `ApiError`.  
+/// The parameters must implement `Debug` and `Display` traits.
+///
+/// # Example
+/// ```
+/// use clean_architecture_shared::error::ApiError;
+/// use clean_architecture_shared::async_error;
+/// use std::fmt;
+///
+/// #[macro_use]
+/// extern crate tracing;
+///
+/// #[derive(Debug)]
+/// struct Body {
+///     data: String,
+/// }
+///
+/// impl fmt::Display for Body {
+///     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+///         write!(f, "{:?}", self.data)
+///     }
+/// }
+///
+/// fn main() {
+///     let err = ApiError::InternalError { message: "Internal Server Error".to_owned() };
+///     let request_id = "451545sfdqds454dsq5d4q5s";
+///     let body = Body { data: "My body".to_owned() };
+///
+///     async_error!(err, request_id: request_id, body: body);
+/// }
+/// ```
+#[macro_export]
+macro_rules! async_error {
+    ( $err:expr, $($name:ident: $value:expr),+ ) => {
+        use clean_architecture_shared::error::ApiError;
+
+        if let ApiError::InternalError{..} = $err {
+            error!(
+                $(
+                    $name = %$value,
+                )*
+                "{:?}", $err
+            );
         }
     };
 }
