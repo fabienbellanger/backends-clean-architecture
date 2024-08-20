@@ -24,15 +24,15 @@ struct LoggerMessage {
 
 impl Display for LoggerMessage {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "status_code: {}, method: {}, uri: {}, host: {}, request_id: {}, user_agent: {}, version: {}, latency: {:?}", 
-        self.status_code,
-            self.method,
-            self.uri,
-            self.host,
-            self.request_id,
-            self.user_agent,
-            self.version,
-            self.latency,
+        write!(f, "status_code: {}, method: {}, uri: {}, host: {}, request_id: {}, user_agent: {}, version: {}, latency: {:?}",
+               self.status_code,
+               self.method,
+               self.uri,
+               self.host,
+               self.request_id,
+               self.user_agent,
+               self.version,
+               self.latency,
         )
     }
 }
@@ -89,7 +89,16 @@ where
             message.version = format!("{:?}", response.version());
             message.latency = now.elapsed();
 
-            info!("{}", message);
+            info!(
+                status_code = %message.status_code,
+                method = %message.method,
+                uri = %message.uri,
+                host = %message.host,
+                request_id = %message.request_id,
+                user_agent = %message.user_agent,
+                version = %message.version,
+                latency = %format!("{:?}", message.latency),
+            );
 
             Ok(response)
         })
