@@ -9,6 +9,7 @@ use crate::config::Config;
 use axum::routing::{delete, get, patch, post};
 use axum::Router;
 use clean_architecture_domain::entities::scope::{SCOPE_ADMIN, SCOPE_USERS};
+use handlers::{scopes::Scopes, users::Users};
 use metrics_exporter_prometheus::PrometheusHandle;
 use std::future::ready;
 
@@ -43,10 +44,10 @@ pub fn prometheus(settings: &Config, handle: PrometheusHandle) -> Router<SharedS
 pub fn api(state: SharedState) -> Router<SharedState> {
     Router::new()
         // Public routes
-        .route("/login", post(handlers::users::login))
-        .route("/forgotten-password/:email", post(handlers::users::forgotten_password))
-        .route("/update-password/:token", patch(handlers::users::update_password))
-        .route("/refresh-token/:token", post(handlers::users::refresh_token))
+        .route("/login", post(Users::login))
+        .route("/forgotten-password/:email", post(Users::forgotten_password))
+        .route("/update-password/:token", patch(Users::update_password))
+        .route("/refresh-token/:token", post(Users::refresh_token))
         // Private routes
         .nest("/", api_protected(state))
 }
@@ -61,23 +62,23 @@ fn api_protected(state: SharedState) -> Router<SharedState> {
 /// Users API routes
 fn api_users() -> Router<SharedState> {
     Router::new()
-        .route("/", post(handlers::users::create_user))
-        .route("/", get(handlers::users::get_users))
-        .route("/:id", get(handlers::users::get_user))
-        .route("/:id", delete(handlers::users::delete_user))
+        .route("/", post(Users::create_user))
+        .route("/", get(Users::get_users))
+        .route("/:id", get(Users::get_user))
+        .route("/:id", delete(Users::delete_user))
         .nest(
             "/:id/scopes",
             Router::new()
-                .route("/", get(handlers::users::get_scopes))
-                .route("/", post(handlers::users::add_scope))
-                .route("/:scope_id", delete(handlers::users::remove_scope)),
+                .route("/", get(Users::get_scopes))
+                .route("/", post(Users::add_scope))
+                .route("/:scope_id", delete(Users::remove_scope)),
         )
 }
 
 /// Scopes API routes
 fn api_scopes() -> Router<SharedState> {
     Router::new()
-        .route("/", post(handlers::scopes::create))
-        .route("/", get(handlers::scopes::get_all))
-        .route("/:id", delete(handlers::scopes::delete))
+        .route("/", post(Scopes::create))
+        .route("/", get(Scopes::get_all))
+        .route("/:id", delete(Scopes::delete))
 }
