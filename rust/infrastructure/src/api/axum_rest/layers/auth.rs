@@ -37,7 +37,7 @@ pub struct JwtMiddleware<'a, S> {
     scopes: Vec<&'a str>,
 }
 
-impl<'a, S> Service<Request<Body>> for JwtMiddleware<'a, S>
+impl<S> Service<Request<Body>> for JwtMiddleware<'_, S>
 where
     S: Service<Request<Body>, Response = Response> + Send + 'static,
     S::Future: Send + 'static,

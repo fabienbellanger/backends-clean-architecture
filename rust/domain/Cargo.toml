@@ -21,4 +21,4 @@ tracing = { workspace = true }
 tokio = { workspace = true }
 
 [dev-dependencies]
-fake = { version = "2.9.2", features = ["chrono"] }
+fake = { version = "3.0.1", features = ["chrono"] }

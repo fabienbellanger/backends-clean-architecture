@@ -1,7 +1,9 @@
 //! Logger layer
 
 use super::header_value_to_str;
+use axum::body::HttpBody;
 use axum::{body::Body, http::Request, response::Response};
+use bytesize::ByteSize;
 use futures::future::BoxFuture;
 use std::{
     fmt::Display,
@@ -20,11 +22,12 @@ struct LoggerMessage {
     status_code: u16,
     version: String,
     latency: Duration,
+    body_size: u64,
 }
 
 impl Display for LoggerMessage {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "status_code: {}, method: {}, uri: {}, host: {}, request_id: {}, user_agent: {}, version: {}, latency: {:?}",
+        write!(f, "status_code: {}, method: {}, uri: {}, host: {}, request_id: {}, user_agent: {}, version: {}, latency: {:?}, body_size: {}",
                self.status_code,
                self.method,
                self.uri,
@@ -33,6 +36,7 @@ impl Display for LoggerMessage {
                self.user_agent,
                self.version,
                self.latency,
+               self.body_size,
         )
     }
 }
@@ -88,6 +92,7 @@ where
             message.status_code = response.status().as_u16();
             message.version = format!("{:?}", response.version());
             message.latency = now.elapsed();
+            message.body_size = response.body().size_hint().lower();
 
             info!(
                 status_code = %message.status_code,
@@ -98,6 +103,7 @@ where
                 user_agent = %message.user_agent,
                 version = %message.version,
                 latency = %format!("{:?}", message.latency),
+                body_size = %ByteSize::b(message.body_size),
             );
 
             Ok(response)
